@@ -1,25 +1,33 @@
 exports.init = (io) => {
-    // the socket room namespace
-    const name = io
-        .of('/name')
+    const chat = io
+        .of('/chat')
         .on('connection', function (socket) {
             try {
-                /**
-                 * it creates or joins a room
-                 */
+                /** It creates or joins a room
+                 * @param room The effective chat in which the messages will be sent.
+                 * @param userId It will be the user who joined the room */
                 socket.on('create or join', function (room, userId) {
                     socket.join(room);
-                    name.to(room).emit('joined', room, userId);
+                    chat.to(room).emit('joined', room, userId);
                 });
 
-                socket.on('name', function (room, userId, nameText) {
-                    name.to(room).emit('name', room, userId, nameText);
+                /** It uses the chat function
+                 * @param room The effective chat in which the messages will be sent.
+                 * @param userId It will be the user who joined the room.
+                 * @param chatText It will be the chat message to send in the room. */
+                socket.on('chat', function (room, userId, chatText) {
+                    chat.to(room).emit('chat', room, userId, chatText);
                 });
 
-                socket.on('disconnect', function () {
+                /** It disconnects userId from a room.
+                 * @param room The effective chat in which the messages will be sent.
+                 * @param userId It will be the user who left the room. */
+                socket.on('disconnect', function (room, userId) {
                     console.log('someone disconnected');
+                    chat.to(room).emit('chat', room, userId)
                 });
-            } catch (e) {
+            } catch (err) {
+                console.log(err)
             }
         });
 }
