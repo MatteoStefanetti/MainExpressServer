@@ -1,8 +1,10 @@
+/*import {io} from "socket.io-client";*/
+
 let chatUserName = null;
 let roomNo = null;
 let roomName = null;
-let chat = io.connect('/chat');
 let isChatOpened = false;
+let chat = io.connect('/chat');
 
 function initHome() {
     // @todo initialize the GUI
@@ -17,13 +19,13 @@ function initHome() {
     initChatSocket();
 }
 
-initChat(){
+function initChat(){
 
 }
 
 function clickChatBtn () {
     isChatOpened = true
-    document.getElementById('hideForChat').style.display = 'none'
+    document.getElementById('hideForChat').classList.remove('d-md-flex')
     document.getElementById('chatDiv').classList.remove('d-none')
     if(!localStorage.getItem('acceptedChatTerms'))
         showChatTerms()
