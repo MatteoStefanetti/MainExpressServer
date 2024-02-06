@@ -2,11 +2,48 @@ let chatUserName = null;
 let roomNo = null;
 let roomName = null;
 let chat = io.connect('/chat');
+let isChatOpened = false;
 
-function init() {
-    //@todo initialize the GUI
+function initHome() {
+    // @todo initialize the GUI
+    // Calling homepage routes
+    if(isChatOpened){
+        document.getElementById('chatDiv').classList.remove('d-none')
+    } else {
+        document.getElementById('chatIconBtn').addEventListener('onclick', clickChatBtn)
+    }
+    initChat();
+
     initChatSocket();
 }
+
+initChat(){
+
+}
+
+function clickChatBtn () {
+    isChatOpened = true
+    document.getElementById('hideForChat').style.display = 'none'
+    document.getElementById('chatDiv').classList.remove('d-none')
+    if(!localStorage.getItem('acceptedChatTerms'))
+        showChatTerms()
+}
+
+function hideChatBtn() {
+
+}
+
+function showChatTerms() {
+    document.getElementById('chatTerms').show()
+    document.getElementById('AcceptTermsBtn').addEventListener('onclick', acceptedTerms)
+}
+
+function acceptedTerms(){
+    if(!localStorage.getItem('acceptedChatTerms'))
+        localStorage.setItem('acceptedChatTerms', 'true')
+    document.getElementById('chatTerms').hide()
+}
+
 
 
 /* --------------- SOCKET --------------- */
