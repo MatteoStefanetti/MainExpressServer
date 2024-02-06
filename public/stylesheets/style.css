@@ -1,8 +1,43 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
+:root {
+  --darkgreen: #0B7A10;
+  --lightgreen: #0AA411;
 }
 
-a {
-  color: #00B7FF;
+* {
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+/* -- Colours -- */
+.text-darkgreen {
+  color: var(--darkgreen) !important;
+}
+
+.text-lightgreen {
+  color: var(--lightgreen) !important;
+}
+
+.bg-darkgreen{
+  background-color: var(--darkgreen) !important;
+}
+
+.bg-lightgreen{
+  background-color: var(--lightgreen) !important;
+}
+
+.border-darkgreen {
+  border-color: var(--darkgreen) !important;
+}
+
+.border-lightgreen {
+  border-color: var(--lightgreen) !important;
+}
+
+/* ------------- Header ------------- */
+#custom-header {
+  min-height: 100px !important;
+  background-color: var(--lightgreen) !important;
+  /*background-image: linear-gradient(var(--lightgreen) 70%, var(--darkgreen) 99%);*/
 }
