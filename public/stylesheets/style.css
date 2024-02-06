@@ -40,4 +40,5 @@
   min-height: 100px !important;
   background-color: var(--lightgreen) !important;
   /*background-image: linear-gradient(var(--lightgreen) 70%, var(--darkgreen) 99%);*/
+  box-shadow: 0 3px 7px -1px #505050 !important;
 }
