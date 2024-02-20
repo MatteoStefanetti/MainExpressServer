@@ -1,6 +1,5 @@
-exports.init = (io) => {
+module.exports = (io) => {
     const chat = io
-        .of('/chat')
         .on('connection', function (socket) {
             try {
                 /** It creates or joins a room
@@ -24,10 +23,10 @@ exports.init = (io) => {
                  * @param userId It will be the user who left the room. */
                 socket.on('disconnect', function (room, userId) {
                     console.log('someone disconnected');
-                    chat.to(room).emit('chat', room, userId)
+                    chat.to(room).emit('chat', room, userId, 'disconnected')
                 });
             } catch (err) {
                 console.log(err)
             }
         });
-}
+};

@@ -1,10 +1,8 @@
-/*import {io} from "socket.io-client";*/
-
 let chatUserName = null;
 let roomNo = null;
 let roomName = null;
 let isChatOpened = false;
-let chat = io.connect('/chat');
+const chatSocket = io();
 
 function initHome() {
     // @todo initialize the GUI
@@ -14,16 +12,11 @@ function initHome() {
     } else {
         document.getElementById('chatIconBtn').addEventListener('onclick', clickChatBtn)
     }
-    initChat();
-
     initChatSocket();
 }
 
-function initChat(){
-
-}
-
 function clickChatBtn () {
+    console.log('clicked')
     isChatOpened = true
     document.getElementById('hideForChat').classList.remove('d-md-flex')
     document.getElementById('chatDiv').classList.remove('d-none')
@@ -65,8 +58,8 @@ function generateRoom(str) {
 }
 
 /** HashCode function for strings.
-* @param {string} str the string to hash
-* @return {number} a hash code value for the given string, -1 if str is null */
+ * @param {string} str the string to hash
+ * @return {number} a hash code value for the given string, -1 if str is null */
 function hashCode(str) {
     if(str){
         let h = 0, l = str.length, i = 0;
@@ -80,7 +73,7 @@ function hashCode(str) {
 
 /** Initializing the chat socket. */
 function initChatSocket() {
-    chat.on('joined', function (room, userId) {
+    chatSocket.on('joined', function (room, userId) {
         if (userId === chatUserName) {
             hideLoginInterface(room, userId)
         } else {
@@ -88,13 +81,12 @@ function initChatSocket() {
         }
     })
 
-    chat.on('chat', function (room, userId, chatText) {
+    chatSocket.on('chat', function (room, userId, chatText) {
         let who = userId === chatUserName ? 'You' : userId;
         writeOnChat(room, who, chatText)
     })
 
-
-    chat.on('disconnect', function(room, userId){
+    chatSocket.on('disconnect', function(room, userId){
         /** Perhaps it could be launched by the {@link logOutFromChat} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
@@ -103,14 +95,14 @@ function initChatSocket() {
 /** Called when the "send" btn is pressed. It sends the message via socket */
 function sendChatText() {
     let chatText //  = get the text from document
-    chat.emit('chat', roomNo, chatUserName, chatText);
+    chatSocket.emit('chat', roomNo, chatUserName, chatText);
 }
 
 /** It connects the user to the chosen room. */
 function connectToRoom() {
     // @todo Get the room from document
     if (!chatUserName) chatUserName = 'User_' + Math.random()
-    chat.emit('create or join', roomNo, chatUserName)
+    chatSocket.emit('create or join', roomNo, chatUserName)
 }
 
 /** It appends the given html text to the chat div
@@ -137,6 +129,6 @@ function hideLoginInterface(room, userId) {
  * @param room the current room
  * @param userId the userName */
 function logOutFromChat(room, userId){
-    chat.emit('disconnect', room, userId)
+    chatSocket.emit('disconnect', room, userId)
     // todo
 }
