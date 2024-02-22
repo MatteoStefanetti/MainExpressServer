@@ -1,45 +1,69 @@
 let chatUserName = null;
 let roomNo = null;
 let roomName = null;
-let isChatOpened = false;
+// This creates the localStorage variable for the chat, if it doesn't exist yet!
+if(!localStorage.getItem('isChatOpened'))
+    localStorage.setItem('isChatOpened', 'false');
 const chatSocket = io();
 
 function initHome() {
     // @todo initialize the GUI
     // Calling homepage routes
-    if(isChatOpened){
-        document.getElementById('chatDiv').classList.remove('d-none')
-    } else {
-        document.getElementById('chatIconBtn').addEventListener('onclick', clickChatBtn)
-    }
+    addBtnFunctions();
+    toggleChatElements();
     initChatSocket();
 }
 
-function clickChatBtn () {
-    console.log('clicked')
-    isChatOpened = true
-    document.getElementById('hideForChat').classList.remove('d-md-flex')
-    document.getElementById('chatDiv').classList.remove('d-none')
-    if(!localStorage.getItem('acceptedChatTerms'))
-        showChatTerms()
+/** This function assigns all the 'onclick' attributes in the page. */
+function addBtnFunctions() {
+    document.getElementById('chatIconBtn').onclick = clickChatBtn;
+    document.getElementById('closeChat').onclick = closeChat;
+    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+    document.getElementById('declineTermsBtn').onclick = closeChat;
 }
 
-function hideChatBtn() {
+/** Function used to set the initial chat divs and buttons at every page-load.
+ * Called by the init function. */
+function toggleChatElements() {
+    const hideForChat = document.getElementById('hideForChat');
+    const chatDiv = document.getElementById('chatDiv');
+    const chatIconBtn = document.getElementById('chatIconBtn');
+    console.log('chat: ', localStorage.getItem('isChatOpened') === 'true', ' elem: ' , localStorage.getItem('isChatOpened'))
+    if(localStorage.getItem('isChatOpened') !== 'true'){
+        document.getElementById('chatIconBtn').style.display = 'block';
+        hideForChat.classList.add('d-lg-flex');
+        if(chatDiv.classList.contains('d-lg-flex'))
+            chatDiv.classList.remove('d-lg-flex');
+    } else {
+        chatIconBtn.style.display = 'none';
+        hideForChat.classList.remove('d-lg-flex');
+        chatDiv.classList.add('d-lg-flex');
+    }
+}
 
+/** Function called whenever the chat button is clicked. */
+function clickChatBtn () {
+    localStorage.setItem('isChatOpened', 'true');
+    if(!localStorage.getItem('acceptedChatTerms') || true)
+        showChatTerms();
+    toggleChatElements();
 }
 
 function showChatTerms() {
-    document.getElementById('chatTerms').show()
-    document.getElementById('AcceptTermsBtn').addEventListener('onclick', acceptedTerms)
+    if(document.getElementById('chatTerms').classList.contains('d-none'))
+        document.getElementById('chatTerms').classList.remove('d-none');
 }
 
 function acceptedTerms(){
     if(!localStorage.getItem('acceptedChatTerms'))
-        localStorage.setItem('acceptedChatTerms', 'true')
-    document.getElementById('chatTerms').hide()
+        localStorage.setItem('acceptedChatTerms', 'true');
+    document.getElementById('chatTerms').classList.add('d-none');
 }
 
-
+function closeChat() {
+    localStorage.setItem('isChatOpened', 'false');
+    toggleChatElements();
+}
 
 /* --------------- SOCKET --------------- */
 
