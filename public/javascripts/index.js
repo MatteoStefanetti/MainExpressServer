@@ -28,7 +28,6 @@ function toggleChatElements() {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
     const chatIconBtn = document.getElementById('chatIconBtn');
-    console.log('chat: ', localStorage.getItem('isChatOpened') === 'true', ' elem: ' , localStorage.getItem('isChatOpened'))
     if(localStorage.getItem('isChatOpened') !== 'true'){
         document.getElementById('chatIconBtn').style.display = 'block';
         hideForChat.classList.add('d-lg-flex');
