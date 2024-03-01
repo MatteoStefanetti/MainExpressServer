@@ -1,50 +1,68 @@
 let chatUserName = null;
 let roomNo = null;
 let roomName = null;
-let chat = io.connect('/chat');
-let isChatOpened = false;
+// This creates the localStorage variable for the chat, if it doesn't exist yet!
+if(!localStorage.getItem('isChatOpened'))
+    localStorage.setItem('isChatOpened', 'false');
+const chatSocket = io();
 
 function initHome() {
     // @todo initialize the GUI
     // Calling homepage routes
-    if(isChatOpened){
-        document.getElementById('chatDiv').classList.remove('d-none')
-    } else {
-        document.getElementById('chatIconBtn').addEventListener('onclick', clickChatBtn)
-    }
-    initChat();
-
+    addBtnFunctions();
+    toggleChatElements();
     initChatSocket();
 }
 
-initChat(){
-
+/** This function assigns all the 'onclick' attributes in the page. */
+function addBtnFunctions() {
+    document.getElementById('chatIconBtn').onclick = clickChatBtn;
+    document.getElementById('closeChat').onclick = closeChat;
+    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+    document.getElementById('declineTermsBtn').onclick = closeChat;
 }
 
+/** Function used to set the initial chat divs and buttons at every page-load.
+ * Called by the init function. */
+function toggleChatElements() {
+    const hideForChat = document.getElementById('hideForChat');
+    const chatDiv = document.getElementById('chatDiv');
+    const chatIconBtn = document.getElementById('chatIconBtn');
+    if(localStorage.getItem('isChatOpened') !== 'true'){
+        document.getElementById('chatIconBtn').style.display = 'block';
+        hideForChat.classList.add('d-lg-flex');
+        if(chatDiv.classList.contains('d-lg-flex'))
+            chatDiv.classList.remove('d-lg-flex');
+    } else {
+        chatIconBtn.style.display = 'none';
+        hideForChat.classList.remove('d-lg-flex');
+        chatDiv.classList.add('d-lg-flex');
+    }
+}
+
+/** Function called whenever the chat button is clicked. */
 function clickChatBtn () {
-    isChatOpened = true
-    document.getElementById('hideForChat').style.display = 'none'
-    document.getElementById('chatDiv').classList.remove('d-none')
-    if(!localStorage.getItem('acceptedChatTerms'))
-        showChatTerms()
-}
-
-function hideChatBtn() {
-
+    localStorage.setItem('isChatOpened', 'true');
+    if(!localStorage.getItem('acceptedChatTerms') || true)
+        showChatTerms();
+    toggleChatElements();
 }
 
 function showChatTerms() {
-    document.getElementById('chatTerms').show()
-    document.getElementById('AcceptTermsBtn').addEventListener('onclick', acceptedTerms)
+    if(document.getElementById('chatTerms').classList.contains('d-none'))
+        document.getElementById('chatTerms').classList.remove('d-none');
 }
 
 function acceptedTerms(){
     if(!localStorage.getItem('acceptedChatTerms'))
-        localStorage.setItem('acceptedChatTerms', 'true')
-    document.getElementById('chatTerms').hide()
+        localStorage.setItem('acceptedChatTerms', 'true');
+    document.getElementById('chatTerms').classList.add('d-none');
 }
 
-
+function closeChat() {
+    localStorage.setItem('isChatOpened', 'false');
+    toggleChatElements();
+}
 
 /* --------------- SOCKET --------------- */
 
@@ -63,8 +81,8 @@ function generateRoom(str) {
 }
 
 /** HashCode function for strings.
-* @param {string} str the string to hash
-* @return {number} a hash code value for the given string, -1 if str is null */
+ * @param {string} str the string to hash
+ * @return {number} a hash code value for the given string, -1 if str is null */
 function hashCode(str) {
     if(str){
         let h = 0, l = str.length, i = 0;
@@ -78,7 +96,7 @@ function hashCode(str) {
 
 /** Initializing the chat socket. */
 function initChatSocket() {
-    chat.on('joined', function (room, userId) {
+    chatSocket.on('joined', function (room, userId) {
         if (userId === chatUserName) {
             hideLoginInterface(room, userId)
         } else {
@@ -86,13 +104,12 @@ function initChatSocket() {
         }
     })
 
-    chat.on('chat', function (room, userId, chatText) {
+    chatSocket.on('chat', function (room, userId, chatText) {
         let who = userId === chatUserName ? 'You' : userId;
         writeOnChat(room, who, chatText)
     })
 
-
-    chat.on('disconnect', function(room, userId){
+    chatSocket.on('disconnect', function(room, userId){
         /** Perhaps it could be launched by the {@link logOutFromChat} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
@@ -101,14 +118,14 @@ function initChatSocket() {
 /** Called when the "send" btn is pressed. It sends the message via socket */
 function sendChatText() {
     let chatText //  = get the text from document
-    chat.emit('chat', roomNo, chatUserName, chatText);
+    chatSocket.emit('chat', roomNo, chatUserName, chatText);
 }
 
 /** It connects the user to the chosen room. */
 function connectToRoom() {
     // @todo Get the room from document
     if (!chatUserName) chatUserName = 'User_' + Math.random()
-    chat.emit('create or join', roomNo, chatUserName)
+    chatSocket.emit('create or join', roomNo, chatUserName)
 }
 
 /** It appends the given html text to the chat div
@@ -135,6 +152,6 @@ function hideLoginInterface(room, userId) {
  * @param room the current room
  * @param userId the userName */
 function logOutFromChat(room, userId){
-    chat.emit('disconnect', room, userId)
+    chatSocket.emit('disconnect', room, userId)
     // todo
 }
