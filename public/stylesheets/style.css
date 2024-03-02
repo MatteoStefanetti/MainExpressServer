@@ -2,6 +2,9 @@
 :root {
   --darkgreen: #0B7A10;
   --lightgreen: #0AA411;
+  --header-height: 100px;
+  --footer-height: 50px;
+  --chatLandingElems: 10px
 }
 
 * {
@@ -35,9 +38,70 @@
   border-color: var(--lightgreen) !important;
 }
 
+<<<<<<< Updated upstream
+=======
+.btn-lightgreen {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--lightgreen);
+  --bs-btn-border-color: var(--lightgreen);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--darkgreen);
+  --bs-btn-hover-border-color: var(--darkgreen);
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--darkgreen);
+  --bs-btn-active-border-color: var(--darkgreen);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--lightgreen);
+  --bs-btn-disabled-border-color: var(--lightgreen);
+}
+
+.btn-darkgreen {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--darkgreen);
+  --bs-btn-border-color: var(--darkgreen);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--lightgreen);
+  --bs-btn-hover-border-color: var(--lightgreen);
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--lightgreen);
+  --bs-btn-active-border-color: var(--darkgreen);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--lightgreen);
+  --bs-btn-disabled-border-color: var(--lightgreen);
+}
+
+>>>>>>> Stashed changes
 /* ------------- Header ------------- */
 #custom-header {
-  min-height: 100px !important;
+  min-height: var(--header-height) !important;
   background-color: var(--lightgreen) !important;
   /*background-image: linear-gradient(var(--lightgreen) 70%, var(--darkgreen) 99%);*/
+<<<<<<< Updated upstream
+=======
+  box-shadow: 0 3px 7px -1px #505050 !important;
+}
+
+#chatDiv {
+  height: calc(100vh - var(--header-height));
+}
+
+#chatIconBtn {
+  right: 5rem;
+>>>>>>> Stashed changes
+}
+
+#chatTerms {
+  background-color: #c4c4c4;
+  z-index: 5;
+  overflow-y: scroll;
+}
+
+@media (max-height: 605px) {
+  #ads-div {
+    display: none !important;
+  }
 }

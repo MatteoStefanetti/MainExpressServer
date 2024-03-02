@@ -8,6 +8,72 @@ function init() {
     initChatSocket();
 }
 
+<<<<<<< Updated upstream
+=======
+/** This function assigns all the 'onclick' attributes in the page. */
+function addBtnFunctions() {
+    document.getElementById('chatIconBtn').onclick = clickChatBtn;
+    document.getElementById('closeChat').onclick = closeChat;
+    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+    document.getElementById('declineTermsBtn').onclick = closeChat;
+}
+
+/** Function used to set the initial chat divs and buttons at every page-load.
+ * Called by the init function. */
+function toggleChatElements() {
+    const hideForChat = document.getElementById('hideForChat');
+    const chatDiv = document.getElementById('chatDiv');
+    const chatIconBtn = document.getElementById('chatIconBtn');
+    if(localStorage.getItem('isChatOpened') !== 'true'){
+        document.getElementById('chatIconBtn').style.display = 'block';
+        hideForChat.classList.add('d-lg-flex');
+        if(chatDiv.classList.contains('d-lg-flex'))
+            chatDiv.classList.remove('d-lg-flex');
+    } else {
+        chatIconBtn.style.display = 'none';
+        hideForChat.classList.remove('d-lg-flex');
+        chatDiv.classList.add('d-lg-flex');
+        if(localStorage.getItem('acceptedChatTerms'))
+            closeChatTerms();
+    }
+}
+
+/** Function called whenever the chat button is clicked. */
+function clickChatBtn () {
+    localStorage.setItem('isChatOpened', 'true');
+    toggleChatElements();
+    console.log('not to load: ', localStorage.getItem('acceptedChatTerms'))
+    if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
+        showChatTerms();
+}
+
+function showChatTerms() {
+    let chatTerms = document.getElementById('chatTerms');
+    if(chatTerms.classList.contains('d-none'))
+        chatTerms.classList.remove('d-none');
+    let loginBtn = document.getElementById('submitForm');
+    let loginRect = loginBtn.getBoundingClientRect();
+    chatTerms.style.minHeight = '100px';
+    chatTerms.style.height = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
+    chatTerms.style.maxHeight = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
+}
+
+function acceptedTerms(){
+    console.log('clicked with ', localStorage.getItem('acceptedChatTerms'))
+    if(!localStorage.getItem('acceptedChatTerms'))
+        localStorage.setItem('acceptedChatTerms', 'true');
+    closeChatTerms();
+}
+
+function closeChatTerms() {
+    document.getElementById('chatTerms').classList.add('d-none');
+}
+
+function closeChat() {
+    localStorage.setItem('isChatOpened', 'false');
+    toggleChatElements();
+}
+>>>>>>> Stashed changes
 
 /* --------------- SOCKET --------------- */
 
