@@ -8,8 +8,6 @@ function init() {
     initChatSocket();
 }
 
-<<<<<<< Updated upstream
-=======
 /** This function assigns all the 'onclick' attributes in the page. */
 function addBtnFunctions() {
     document.getElementById('chatIconBtn').onclick = clickChatBtn;
@@ -73,7 +71,6 @@ function closeChat() {
     localStorage.setItem('isChatOpened', 'false');
     toggleChatElements();
 }
->>>>>>> Stashed changes
 
 /* --------------- SOCKET --------------- */
 
