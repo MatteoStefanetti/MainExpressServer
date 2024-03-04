@@ -38,8 +38,6 @@
   border-color: var(--lightgreen) !important;
 }
 
-<<<<<<< Updated upstream
-=======
 .btn-lightgreen {
   --bs-btn-color: #fff;
   --bs-btn-bg: var(--lightgreen);
@@ -74,24 +72,20 @@
   --bs-btn-disabled-border-color: var(--lightgreen);
 }
 
->>>>>>> Stashed changes
 /* ------------- Header ------------- */
 #custom-header {
   min-height: var(--header-height) !important;
   background-color: var(--lightgreen) !important;
   /*background-image: linear-gradient(var(--lightgreen) 70%, var(--darkgreen) 99%);*/
-<<<<<<< Updated upstream
-=======
   box-shadow: 0 3px 7px -1px #505050 !important;
-}
-
-#chatDiv {
-  height: calc(100vh - var(--header-height));
 }
 
 #chatIconBtn {
   right: 5rem;
->>>>>>> Stashed changes
+}
+
+#chatDiv {
+  height: calc(100vh - var(--header-height));
 }
 
 #chatTerms {
