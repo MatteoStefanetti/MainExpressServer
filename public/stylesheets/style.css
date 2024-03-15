@@ -2,9 +2,10 @@
 :root {
   --darkgreen: #0B7A10;
   --lightgreen: #0AA411;
+  --darkgreen-disabled: rgba(11, 122, 16, 0.5);
+  --lightgreen-disabled: rgba(10, 164, 17, 0.5);
   --header-height: 100px;
   --footer-height: 50px;
-  --chatLandingElems: 10px
 }
 
 * {
@@ -51,8 +52,8 @@
   --bs-btn-active-border-color: var(--darkgreen);
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: var(--lightgreen);
-  --bs-btn-disabled-border-color: var(--lightgreen);
+  --bs-btn-disabled-bg: var(--lightgreen-disabled);
+  --bs-btn-disabled-border-color: var(--lightgreen-disabled);
 }
 
 .btn-darkgreen {
@@ -68,8 +69,8 @@
   --bs-btn-active-border-color: var(--darkgreen);
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: var(--lightgreen);
-  --bs-btn-disabled-border-color: var(--lightgreen);
+  --bs-btn-disabled-bg: var(--darkgreen-disabled);
+  --bs-btn-disabled-border-color: var(--darkgreen-disabled);
 }
 
 /* ------------- Header ------------- */
@@ -78,6 +79,7 @@
   background-color: var(--lightgreen) !important;
   /*background-image: linear-gradient(var(--lightgreen) 70%, var(--darkgreen) 99%);*/
   box-shadow: 0 3px 7px -1px #505050 !important;
+  z-index: 100;
 }
 
 #chatIconBtn {
