@@ -6,6 +6,7 @@
   --lightgreen-disabled: rgba(10, 164, 17, 0.5);
   --header-height: 100px;
   --footer-height: 50px;
+  --footer-items-height: 1.1rem;
 }
 
 * {
@@ -74,12 +75,16 @@
 }
 
 /* ------------- Header ------------- */
-#custom-header {
+#customHeader {
   min-height: var(--header-height) !important;
   background-color: var(--lightgreen) !important;
   /*background-image: linear-gradient(var(--lightgreen) 70%, var(--darkgreen) 99%);*/
   box-shadow: 0 3px 7px -1px #505050 !important;
   z-index: 100;
+}
+
+#homeContent {
+  height: calc(100vh - var(--header-height) + 100vh) ;
 }
 
 #chatIconBtn {
@@ -88,6 +93,7 @@
 
 #chatDiv {
   height: calc(100vh - var(--header-height));
+  z-index: 10;
 }
 
 #chatTerms {
@@ -97,7 +103,34 @@
 }
 
 @media (max-height: 605px) {
-  #ads-div {
+  #adsDiv {
     display: none !important;
   }
+}
+
+@media (max-height: 680px) {
+  #adsDiv {
+    max-height: 55vh;
+  }
+}
+
+.chat-position {
+  position: fixed;
+  right: 0;
+}
+
+#customFooter {
+  height: var(--footer-height);
+  font-size: 0.7rem;
+  z-index: 0;
+}
+
+#customFooterImg {
+  height: calc(var(--footer-height) - var(--footer-items-height));
+  background-image: url('../images/grass_img.svg');
+  background-position: center;
+}
+
+#footerItems {
+  height: var(--footer-items-height);
 }
