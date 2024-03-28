@@ -37,28 +37,50 @@ function toggleChatElements() {
         chatIconBtn.style.display = 'none';
         hideForChat.classList.remove('d-lg-flex');
         chatDiv.classList.add('d-lg-flex');
+        if(localStorage.getItem('acceptedChatTerms'))
+            closeChatTerms();
     }
 }
 
 /** Function called whenever the chat button is clicked. */
 function clickChatBtn () {
     localStorage.setItem('isChatOpened', 'true');
-    if(!localStorage.getItem('acceptedChatTerms') || true)
-        showChatTerms();
     toggleChatElements();
+    if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
+        showChatTerms();
 }
 
+/** Function called to show the chat **terms** in the chat div. */
 function showChatTerms() {
-    if(document.getElementById('chatTerms').classList.contains('d-none'))
-        document.getElementById('chatTerms').classList.remove('d-none');
+    let chatTerms = document.getElementById('chatTerms');
+    if(chatTerms.classList.contains('d-none'))
+        chatTerms.classList.remove('d-none');
+    setTermsHeight(chatTerms);
 }
 
+/** Function used to set the **height** of the terms-div dynamically.
+ * @param chatTerms {HTMLElement} It is the DOM element of the chat terms. */
+function setTermsHeight(chatTerms){
+    let loginRect = document.getElementById('submitForm').getBoundingClientRect();
+    chatTerms.style.minHeight = '100px';
+    chatTerms.style.height = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
+    chatTerms.style.maxHeight = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
+}
+
+/** Function called when the terms are accepted.
+ * @note It must show the terms only one per device. */
 function acceptedTerms(){
     if(!localStorage.getItem('acceptedChatTerms'))
         localStorage.setItem('acceptedChatTerms', 'true');
+    closeChatTerms();
+}
+
+/** This function only assures to close the chat terms. */
+function closeChatTerms() {
     document.getElementById('chatTerms').classList.add('d-none');
 }
 
+/** This function closes the chat and updates the localStorage variable. */
 function closeChat() {
     localStorage.setItem('isChatOpened', 'false');
     toggleChatElements();
@@ -138,7 +160,7 @@ function writeOnChat(room, userId, text) {
         // - Will use chatBox.appendChild of the message to display it properly
         // - Reset the paragraph editable text.
     } else
-        console.log('Text to send is null.')
+        console.error('Text to send is null.')
 }
 
 /** It hides the initial form and shows the chat.
