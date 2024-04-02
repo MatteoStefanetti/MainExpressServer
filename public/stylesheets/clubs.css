@@ -1,0 +1,69 @@
+
+:root {
+    --transparent-active: rgba(180, 180, 180, 0.7);
+    --custom-accordion-lightgrey: rgb(220, 220, 220);
+    --darkgrey: rgb(169, 169, 169);
+}
+
+* {
+    padding: 0;
+    margin: 0 !important;
+    font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+/* ------------ lubs ------------ */
+
+.btn-search {
+    --bs-btn-color: var(--darkgreen);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: white;
+    --bs-btn-hover-bg: var(--lightgreen);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: white;
+    --bs-btn-active-bg: var(--darkgreen);
+    --bs-btn-active-border-color: var(--darkgreen);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: var(--darkgreen-disabled);
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: var(--lightgreen);
+}
+
+.btn-search:hover > span , .btn-search:active > span {
+    color: #fff !important;
+}
+
+.btn-search:focus span {
+    color: #fff !important;
+}
+
+.accordion-item {
+    border: 0;
+}
+
+.custom-accordion {
+    border: 1px solid var(--darkgrey);
+    background-color: var(--custom-accordion-lightgrey);
+}
+
+.custom-accordion.collapsed {
+    border-radius: .25rem;
+}
+
+.custom-accordion:not(.collapsed) {
+    background-color: var(--darkgreen-disabled);
+    box-shadow: inset 0 -1 0 var(--darkgreen-disabled);
+    font-weight: 700;
+    color: #000;
+}
+
+.custom-accordion:focus {
+    border-color: var(--darkgreen-disabled);
+    box-shadow: 0 0 0 2px var(--darkgreen);
+}
