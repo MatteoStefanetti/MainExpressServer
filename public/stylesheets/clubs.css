@@ -5,18 +5,7 @@
     --darkgrey: rgb(169, 169, 169);
 }
 
-* {
-    padding: 0;
-    margin: 0 !important;
-    font-family: 'Roboto', 'Helvetica', sans-serif;
-}
-
-a {
-    text-decoration: none;
-    color: black;
-}
-
-/* ------------ lubs ------------ */
+/* ------------ Clubs ------------ */
 
 .btn-search {
     --bs-btn-color: var(--darkgreen);
