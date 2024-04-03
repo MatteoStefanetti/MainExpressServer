@@ -1,6 +1,4 @@
-let chatUserName = null;
-let roomNo = null;
-let roomName = null;
+
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
 if(!localStorage.getItem('isChatOpened'))
     localStorage.setItem('isChatOpened', 'false');
@@ -33,3 +31,4 @@ function addBtnFunctions() {
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
 }
+

@@ -1,3 +1,5 @@
+let chatUserName = null;
+let roomName = null;
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
@@ -79,24 +81,9 @@ function closeChat() {
 function generateRoom(str) {
     if(str){
         roomName = str.toLowerCase()
-        roomNo = hashCode(roomName);
         // Add the room to the room list
         // Set the title of the current chat as "str"
     }
-}
-
-/** HashCode function for strings.
- * @param {string} str the string to hash
- * @return {number} a hash code value for the given string, -1 if str is null */
-function hashCode(str) {
-    if(str){
-        let h = 0, l = str.length, i = 0;
-        if ( l > 0 )
-            while (i < l)
-                h = (h << 5) - h + str.charCodeAt(i++) | 0;
-        return h;
-    }
-    return -1
 }
 
 /** Initializing the chat socket. */
@@ -110,8 +97,11 @@ function initChatSocket() {
     })
 
     chatSocket.on('chat', function (room, userId, chatText) {
-        let who = userId === chatUserName ? 'You' : userId;
-        writeOnChat(room, who, chatText)
+        writeOnChat(room, userId, chatText)
+    })
+
+    chatSocket.on('leave conversation', (room, userID) => {
+        writeOnChat(room, userID, "leaved the conversation")
     })
 
     chatSocket.on('disconnect', function(room, userId){
@@ -121,22 +111,27 @@ function initChatSocket() {
 }
 
 /** Called when the "send" btn is pressed. It sends the message via socket */
-function sendChatText() {
+function sendChatText() { // @todo
     let chatText //  = get the text from document
-    chatSocket.emit('chat', roomNo, chatUserName, chatText);
+    chatSocket.emit('chat', roomName, chatUserName, chatText);
 }
 
 /** It connects the user to the chosen room. */
 function connectToRoom() {
     // @todo Get the room from document
     if (!chatUserName) chatUserName = 'User_' + Math.random()
-    chatSocket.emit('create or join', roomNo, chatUserName)
+    chatSocket.emit('create or join', roomName, chatUserName)
 }
 
 /** It appends the given html text to the chat div
- * @params {string} text the text to append */
+ * @param room where to write the message (is necessary?) @todo
+ * @param userId who sent the message
+ * @param text message content
+ * */
 function writeOnChat(room, userId, text) {
+    // handle userId == null case
     if(text && String(text).trim().length !== 0){
+        const sender = userId===chatUserName ? "You" : userId
         // @todo:
         // - the chat box, the paragraph where the message will be written,
         // - the default elements of a chat message (joined & disconnected, message from someone)
