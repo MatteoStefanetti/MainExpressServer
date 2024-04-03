@@ -6,25 +6,27 @@
     <title>Football Lens - Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="/socket.io/socket-io.js"></script>
-    <script src="javascripts/index.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
+    <script src="javascripts/chat.js"></script>
+    <script src="javascripts/index.js"></script>
 </head>
 <body onload="initHome()">
 <div class="container-fluid p-0 position-relative ">
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
         <nav class="navbar navbar-dark navbar-expand-sm mx-auto mh-100">
-            <a href="" class="navbar-brand ms-5"><img class="img-fluid" src="images/football_lens_logo.svg" alt="Football Lens"></a>
+            <a href="index.html" class="navbar-brand ms-5"><img class="img-fluid" src="images/football_lens_logo.svg" alt="Football Lens"></a>
             <button class="navbar-toggler me-5" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-sm-5 mb-2 mb-sm-0">
-                    <li class="nav-item ms-5"><a href="" class="nav-link text-light fw-bold">Competitions</a></li>
-                    <li class="nav-item ms-5"><a href="" class="nav-link text-light fw-bold">Clubs</a></li>
-                    <li class="nav-item ms-5"><a href="" class="nav-link text-light fw-bold">Players</a></li>
+                    <li class="nav-item ms-5"><a href="competitions.html" class="nav-link text-light fw-bold">Competitions</a></li>
+                    <li class="nav-item ms-5"><a href="clubs.html" class="nav-link text-light fw-bold">Clubs</a></li>
+                    <li class="nav-item ms-5"><a href="players.html" class="nav-link text-light fw-bold">Players</a></li>
                 </ul>
             </div>
         </nav>
@@ -49,7 +51,7 @@
             </div>
         </div>
         <!-- Chat and Ads Space -->
-        <div class="col-*-0 col-lg-3 pt-4 px-5 h-100 d-none d-lg-flex chat-position" id="hideForChat" style="min-height: 65vh; max-height: 65vh">
+        <div class="col-*-0 col-lg-3 pt-4 px-5 h-100 d-none d-lg-flex chat-position" id="hideForChat" style="max-height: 65vh">
             <div id="adsDiv" class="container bg-dark d-flex justify-content-center align-items-center p-0">
                 <a class="text-light">
                     <img class="img-fluid adjust-content-center" src="" alt="No ads available">
@@ -114,17 +116,17 @@
             </div>
         </div>
     </div>
-    <!-- Footer -->
-    <div class="d-sm-flex d-lg-block justify-content-center w-100" id="customFooter">
-        <div class="position-relative w-100">
-            <div class="m-0 p-0" id="customFooterImg"></div>
-            <div class="d-flex bg-darkgreen w-100 justify-content-around adjust-content-start p-0 m-0" id="footerItems">
-                <a href="http://not-exists.en" class="text-light p-0 m-0 text-center">2024 Footballens, Inc. All Rights Reserved</a>
-                <a href="http://not-exists.en" class="text-light p-0 m-0 text-center">Contacts</a>
-                <a href="http://not-exists.en" class="text-light p-0 m-0 text-center">Terms of Use</a>
-                <a href="http://not-exists.en" class="text-light p-0 m-0 text-center">Privacy & Cookie Policy</a>
-            </div>
-        </div>
+</div>
+<!-- Footer -->
+<div class="d-sm-flex d-lg-block justify-content-center w-100" id="customFooter">
+    <div class="position-relative w-100">
+        <div class="m-0 p-0" id="customFooterImg"></div>
+        <ul class="nav d-flex bg-darkgreen w-100 justify-content-around adjust-content-start p-0 m-0" id="footerItems">
+            <li class="nav-item"><a href="index.html" class="nav-link text-light p-0 m-0 text-center">2024 Footballens, Inc. All Rights Reserved</a></li>
+            <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Contacts</a></li>
+            <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Terms of Use</a></li>
+            <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Privacy & Cookie Policy</a></li>
+        </ul>
     </div>
 </div>
 </body>

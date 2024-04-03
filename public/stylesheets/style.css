@@ -75,6 +75,7 @@
 }
 
 /* ------------- Header ------------- */
+
 #customHeader {
   min-height: var(--header-height) !important;
   background-color: var(--lightgreen) !important;
@@ -83,8 +84,24 @@
   z-index: 100;
 }
 
+.nav-item.current {
+  text-decoration: underline rgb(var(--bs-light-rgb));;
+}
+
+.nav-item:hover {
+  text-decoration: underline rgb(var(--bs-light-rgb));
+  text-decoration-thickness: 1px;
+}
+
+.nav-item:active {
+  text-decoration: underline rgb(var(--bs-light-rgb));
+  text-decoration-thickness: 0.1rem;
+}
+
+/* -------- End of common Header -------- */
+
 #homeContent {
-  height: calc(100vh - var(--header-height) + 100vh) ;
+  min-height: calc(100vh - var(--header-height) + 100vh) ;
 }
 
 #chatIconBtn {
@@ -118,6 +135,8 @@
   position: fixed;
   right: 0;
 }
+
+/* ------------ Footer ------------ */
 
 #customFooter {
   height: var(--footer-height);
