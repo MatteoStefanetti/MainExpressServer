@@ -1,0 +1,6 @@
+#backgroundImg {
+    background-image: url("../images/players_bg.svg");
+    background-position: center 100px;
+    background-repeat: no-repeat;
+    height: calc(100vh - var(--header-height) - var(--footer-height));
+}
