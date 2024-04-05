@@ -1,6 +1,21 @@
-#backgroundImg {
-    background-image: url("../images/players_bg.svg");
-    background-position: center 100px;
-    background-repeat: no-repeat;
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap');
+
+#glitchFont {
+    font-family: 'Rubick Glitch', 'Arial', system-ui;
+}
+
+.rubik-glitch-regular {
+    font-family: "Rubik Glitch", 'Arial', system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.content-height{
     height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+.content-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
