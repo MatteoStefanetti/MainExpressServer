@@ -16,6 +16,7 @@ function initHome() {
 /** Called by the clubs.html page. */
 function initClubs() {
     commonInitOfPage();
+    flags = getAllFlags();
 }
 
 /* -------- End of init()s -------- */
@@ -32,4 +33,17 @@ function addBtnFunctions() {
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
+}
+
+function getAllFlags() {
+    axios.get('get_flags')
+        .then(data => {
+            console.log('flags: ', data.data.flags);
+            console.log('data: ', data.data);
+            return data.data.flags;
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    return null;
 }
