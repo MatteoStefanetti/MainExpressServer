@@ -100,8 +100,8 @@
 
 /* -------- End of common Header -------- */
 
-#homeContent {
-  min-height: calc(100vh - var(--header-height) + 100vh) ;
+#contentHeight {
+  min-height: calc(100vh - var(--header-height)) ;
 }
 
 #chatIconBtn {
