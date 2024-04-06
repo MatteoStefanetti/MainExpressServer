@@ -11,9 +11,9 @@ router.get('/get_flags', function(req,res,next) {
         headers: { 'Content-Type': 'application/json' },
         method: 'get'
     })
-        .then(res => res.json()) // expecting a json response e.g. {field1: 'xxx', field 2: 'yyy'}
+        .then(res => res.json())
         .then(json => res.status(200).json(json))
-        .catch(err => res.render('index', {title: err}));
+        .catch(err => console.log(err));
 });
 
 module.exports = router;

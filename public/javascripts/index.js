@@ -14,9 +14,16 @@ function initHome() {
 }
 
 /** Called by the clubs.html page. */
-function initClubs() {
+async function initClubs() {
     commonInitOfPage();
-    flags = getAllFlags();
+    await getAllFlags()
+        .then(res => {
+            flags = res;
+        })
+        .catch(err => console.log(err))
+    flags.forEach((value, key) => {
+        createAccordion('clubAccordion', key);
+    })
 }
 
 /* -------- End of init()s -------- */
@@ -35,15 +42,25 @@ function addBtnFunctions() {
     document.getElementById('declineTermsBtn').onclick = closeChat;
 }
 
-function getAllFlags() {
-    axios.get('get_flags')
+/** This is an EXPRESS GET function:
+ * @returns {Promise} a promise from the Axios GET.
+ * The promise will return a {@link Map} to take trace of flags and nations.
+ * @throws TypeError if the Axios GET fails. */
+async function getAllFlags() {
+    return axios.get('/get_flags')
         .then(data => {
-            console.log('flags: ', data.data.flags);
-            console.log('data: ', data.data);
-            return data.data.flags;
+            const dataR = Array(data.data)[0];
+            let flagList = new Map();
+            for(let i in dataR){
+                flagList.set(dataR[i].domestic_league_code, {
+                    'countryName': String(dataR[i].country_name),
+                    'flagURL': String(dataR[i].flag_url)
+                });
+            }
+            return flagList;
         })
         .catch(err => {
             console.log(err);
+            throw new TypeError('Error occurred during \'flags\' GET');
         })
-    return null;
 }

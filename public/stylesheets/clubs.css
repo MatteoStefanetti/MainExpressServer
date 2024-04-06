@@ -58,3 +58,7 @@
     border-color: var(--darkgreen-disabled);
     box-shadow: 0 0 0 2px var(--darkgreen);
 }
+
+.custom-rounded-0_5 {
+    border-radius: 2px;
+}
