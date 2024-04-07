@@ -26,6 +26,10 @@ async function initClubs() {
     })
 }
 
+function initPlayers(){
+    commonInitOfPage();
+}
+
 /* -------- End of init()s -------- */
 
 /** Function called by the **main** *"init"* functions to set common attributes and features. */
