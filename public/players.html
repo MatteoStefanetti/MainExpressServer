@@ -18,7 +18,7 @@
     <script src="javascripts/chat.js"></script>
     <script src="javascripts/index.js"></script>
 </head>
-<body onload="initPlayers()">
+<body onload="initPlayers()" class="body-bg">
 <div class="container-fluid p-0 position-relative ">
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
@@ -44,12 +44,12 @@
     <!-- Content -->
     <div class="row m-0 align-content-stretch content-height" id="playerContent">
         <!-- Things -->
-        <div class="col-*-12 col-lg-12 p-0 content-center">
+        <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
             <div class="row m-0 align-content-stretch">
-                <div class="col-*-12 col-lg-12 p-0 content-center">
+                <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
                     <p class="h1 text-center text-lightgreen rubik-glitch-regular">Search a Player</p>
                 </div>
-                <div class="col-*-12 col-lg-12 p-0 content-center">
+                <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
                     <form class="form d-flex justify-content-start align-items-center ms-3 ms-sm-0">
                         <input for="player" class="form-control rounded-4 w-75 py-1 px-2 fst-italic" type="text" id="player" placeholder="Search a player..." name="player">
                         <button class="ms-2 btn rounded-circle btn-search" type="submit">

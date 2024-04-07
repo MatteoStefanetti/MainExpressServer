@@ -14,8 +14,12 @@
     height: calc(100vh - var(--header-height) - var(--footer-height));
 }
 
-.content-center{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.body-bg{
+    background-image: url("../images/players_bg.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
 }
