@@ -1,6 +1,10 @@
 let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
 let roomName = 'global';
-let submitForm = document.getElementById('submitForm')
+const chatSocket = io();
+
+// This creates the localStorage variable for the chat, if it doesn't exist yet!
+if(!localStorage.getItem('isChatOpened'))
+    localStorage.setItem('isChatOpened', 'false');
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
@@ -74,17 +78,6 @@ function closeChat() {
 
 /* --------------- SOCKET --------------- */
 // @todo: check all functions below
-/**
- * called to generate a random room number
- * This is a simplification. A real world implementation would ask the server to generate a unique room number
- * so to make sure that the room number is not accidentally repeated across uses
- */
-function generateRoom(str) {
-    if(str){
-        roomName = str.toLowerCase()
-        // Set the title of the current chat as "str"
-    }
-}
 
 /** Initializing the chat socket. */
 function initChatSocket() {
@@ -122,7 +115,7 @@ function sendChatText() { // @todo
 }
 
 function connectToRoom(event) {//connect button function
-    submitForm.disabled = true
+    document.getElementById('submitForm').disabled = true
     // @todo: able log out button
     let formData = extractFormData("chatLoginForm");
     chatUserName = !formData.customName ? chatUserName : formData.customName
@@ -145,11 +138,10 @@ function extractFormData(formId) {
 }
 
 /** It appends the given html text to the chat div
- * @param room where to write the message (is necessary?) @todo
  * @param userId who sent the message
  * @param text message content
  * */
-function writeOnChat(room, userId, text) {
+function writeOnChat(userId, text) {
     // handle userId == null case
     if(text && String(text).trim().length !== 0){
         const sender = userId===chatUserName ? "You" : userId

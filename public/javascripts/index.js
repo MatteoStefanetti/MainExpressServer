@@ -1,9 +1,4 @@
 
-// This creates the localStorage variable for the chat, if it doesn't exist yet!
-if(!localStorage.getItem('isChatOpened'))
-    localStorage.setItem('isChatOpened', 'false');
-const chatSocket = io();
-
 /** Called by the index.html page. */
 function initHome() {
     // @todo initialize the GUI
