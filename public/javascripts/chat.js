@@ -72,7 +72,7 @@ function closeChat() {
 }
 
 /* --------------- SOCKET --------------- */
-
+// @todo: check all functions below
 /**
  * called to generate a random room number
  * This is a simplification. A real world implementation would ask the server to generate a unique room number
@@ -81,7 +81,6 @@ function closeChat() {
 function generateRoom(str) {
     if(str){
         roomName = str.toLowerCase()
-        // Add the room to the room list
         // Set the title of the current chat as "str"
     }
 }
@@ -94,6 +93,11 @@ function initChatSocket() {
         } else {
             // write on chat that userId has entered
         }
+        let chatHeader = document.getElementById("chatHeader")
+        chatHeader.classList.add('bg-light border_bottom')
+        let chatHeaderText = document.getElementById('chatHeaderText')
+        chatHeaderText.classList.add('h2 h-75')
+        chatHeaderText.innerText = roomName
     })
 
     chatSocket.on('chat', function (room, userId, chatText) {
@@ -117,10 +121,43 @@ function sendChatText() { // @todo
 }
 
 /** It connects the user to the chosen room. */
-function connectToRoom() {
+/*
+function submitForm(event) {
+    let formData = extractFormData();
+    axios.post('/form_submission', formData)
+        .then (data=>{
+            data = data.data;
+            document.getElementById("form_container").style.display='none';
+            document.getElementById("result_container").style.display='block';
+            document.getElementById('result_div').innerHTML=data;
+        })
+        .catch(error => {
+            alert('error!!!: '+ error)
+        })
+
+    // prevent the form from reloading the page (normal behaviour for forms)
+    // never forget this when you use axios!!
+    event.preventDefault();
+}
+*/
+
+function connectToRoom(event) {//connect button function
     // @todo Get the room from document
-    if (!chatUserName) chatUserName = 'User_' + Math.random()
+    let formData = extractFormData("chatLoginForm");
+    chatUserName = !formData.customName ? 'Guest_' + Math.random() : formData.customName
+    roomName = !formData.customRoom ? 'global' : formData.customRoom
     chatSocket.emit('create or join', roomName, chatUserName)
+}
+
+function extractFormData(formId) {
+    let formElements = document.getElementById(formId).children;
+    let formData={};
+    for (let ix = 0; ix < formElements.length; ix++) {
+        if (formElements[ix].name) {
+            formData[formElements[ix].name] = formElements[ix].value;
+        }
+    }
+    return formData;
 }
 
 /** It appends the given html text to the chat div

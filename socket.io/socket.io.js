@@ -20,7 +20,7 @@ module.exports = function(io) {
 
                 /** It uses the chat function
                  * @param room The effective chat in which the messages will be sent.
-                 * @param userId It will be the user who joined the room.
+                 * @param userId It will be the username who joined the room.
                  * @param chatText It will be the chat message to send in the room. */
                 socket.on('chat', function (room, userId, chatText) {
                     chat.to(room).emit('chat', room, userId, chatText);
@@ -28,15 +28,15 @@ module.exports = function(io) {
 
                 /** It disconnects userId from a room.
                  * @param room The effective chat in which the messages will be sent.
-                 * @param userId It will be the user who left the room. */
-                socket.on('leave conversation', (room, userId) => {
+                 * @param userId It will be the username who left the room. */
+                socket.on('leave conversation', (room, userId) => { //check during tests if room exists
                     io.to(room).emit('leave conversation', userId)
                     removeUserFromRoom(room)
                     socket.leave(room)
                 });
 
                 socket.on('disconnect', () => {
-                    console.log('A user disconnected.');
+                    console.log('A user disconnected.');// todo: this could fill of trash the console
                 });
 
             } catch (err) {
@@ -59,12 +59,12 @@ function addUserToRoom(roomName) {
 }
 
 /** It finds elems in roomsMap and decrements the user count, removing in case
+ * pre: the room "roomName" must exist
  * @param roomName Name of the chat that needs to be updated.
  * */
 function removeUserFromRoom(roomName) {
     let usersNum = roomsMap.get(roomName)
     if(!roomName){
-        //@todo: throw ad error? Someone is leaving an unmemorized/not existing room
     } else if(roomName===1){
         roomsMap.delete(roomName)
     } else {
