@@ -4,6 +4,15 @@
   --lightgreen: #0AA411;
   --darkgreen-disabled: rgba(11, 122, 16, 0.5);
   --lightgreen-disabled: rgba(10, 164, 17, 0.5);
+  --transparent-active: rgba(180, 180, 180, 0.7);
+  --custom-accordion-lightgrey: rgb(220, 220, 220);
+  --darkgrey: rgb(169, 169, 169);
+
+  --lightgreen-disabled-rgb: 10, 164, 17;
+  --darkgreen-disabled-rgb: 11, 122, 16;
+  --custom-accordion-lightgrey-rgb: 10, 164, 17;
+  --darkgrey-rgb: 10, 164, 17;
+
   --header-height: 100px;
   --footer-height: 50px;
   --footer-items-height: 1.1rem;
@@ -13,6 +22,12 @@
   padding: 0;
   margin: 0 !important;
   font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+.form-control:focus {
+  border-color: var(--lightgreen);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(var(--lightgreen-disabled-rgb), 0.25);
 }
 
 /* -- Colours -- */

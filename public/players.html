@@ -35,7 +35,7 @@
                     <li class="nav-item ms-5"><a href="competitions.html" class="nav-link text-light fw-bold">Competitions</a>
                     </li>
                     <li class="nav-item ms-5"><a href="clubs.html" class="nav-link text-light fw-bold">Clubs</a></li>
-                    <li class="nav-item ms-5"><a href="players.html" class="nav-link text-light fw-bold">Players</a>
+                    <li class="nav-item ms-5 current"><a href="#" class="nav-link text-light fw-bold">Players</a>
                     </li>
                 </ul>
             </div>
@@ -50,9 +50,10 @@
                     <p class="h1 text-center text-lightgreen rubik-glitch-regular">Search a Player</p>
                 </div>
                 <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
-                    <form class="form d-flex justify-content-start align-items-center ms-3 ms-sm-0">
-                        <input for="player" class="form-control rounded-4 w-75 py-1 px-2 fst-italic" type="text" id="player" placeholder="Search a player..." name="player">
-                        <button class="ms-2 btn rounded-circle btn-search" type="submit">
+                    <form class="form w-100 d-flex justify-content-center align-items-center">
+                        <label for="player" class="d-none" aria-hidden="true">Player</label>
+                        <input class="form-control rounded-5 w-75 py-1 px-2 ps-sm-3 pe-sm-5 fs-5 fst-italic" type="text" id="player" placeholder="Search a player..." name="player">
+                        <button class="btn btn-small ms-2 ms-md-3 rounded-circle btn-search-to-white" type="submit">
                             <span class="bi bi-search text-lightgreen fs-5"></span>
                         </button>
                     </form>
