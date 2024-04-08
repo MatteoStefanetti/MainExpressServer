@@ -31,6 +31,7 @@ function createAccordion(fatherId, localCompetitionCode) {
     accordionButton.setAttribute('aria-expanded', 'false');
     accordionButton.setAttribute('aria-controls', '#'+String(localCompetitionCode));
     accordionButton.setAttribute('data-bs-target', '#'+String(localCompetitionCode));
+    accordionButton.addEventListener('click', openAccordionClubs.bind(null, localCompetitionCode));
     header.appendChild(accordionButton);
     let flagImg = document.createElement('img');
     flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
@@ -58,4 +59,33 @@ function getFlagOf(localCompetitionCode) {
 
 function getNationNameOf(localCompetitionCode) {
     return flags.get(localCompetitionCode).countryName;
+}
+
+/** Function that sends a SPRINGBOOT GET to retrieve the data about clubs of a localCompetitionCode.
+ * @param id {string} is the localCompetitionCode used as ID of the accordion button.
+ * @throws TypeError if catch case of the axios GET occurs.
+ * */
+function openAccordionClubs(id) {
+    console.log('entered')
+    // @todo maybe insert a spinning element
+    axios.get(`/get_clubs_by_local_competition_code/${id}`, {
+        headers: {'Content-Type': 'application/json'},
+        method: 'get'
+    })
+        .then(data => {
+            console.log('then(data)')
+            let dataResponse = Array(data.data)[0];
+            let dataList = new Map();
+            for(let i in dataResponse){
+                dataList.set(dataResponse[i].clubId, String(dataResponse[i].clubName));
+            }
+            console.log('dataRes: ', dataResponse, 'dataList: ', dataList); // DEBUG PRINT
+            // @todo - uses the list to generate the HTML elements via function call
+
+        })
+        .catch(err => {
+            console.log(err);
+            throw new TypeError('Error occurred during \'clubs_by_local_competition_code\' GET');
+        })
+    console.log('exited')
 }
