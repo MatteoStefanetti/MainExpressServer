@@ -1,5 +1,6 @@
-let chatUserName = null;
-let roomName = null;
+let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
+let roomName = 'global';
+let submitForm = document.getElementById('submitForm')
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
@@ -94,9 +95,9 @@ function initChatSocket() {
             // write on chat that userId has entered
         }
         let chatHeader = document.getElementById("chatHeader")
-        chatHeader.classList.add('bg-light border_bottom')
+        chatHeader.classList.add('bg-light','border_bottom')
         let chatHeaderText = document.getElementById('chatHeaderText')
-        chatHeaderText.classList.add('h2 h-75')
+        chatHeaderText.classList.add('h2','h-75')
         chatHeaderText.innerText = roomName
     })
 
@@ -120,33 +121,16 @@ function sendChatText() { // @todo
     chatSocket.emit('chat', roomName, chatUserName, chatText);
 }
 
-/** It connects the user to the chosen room. */
-/*
-function submitForm(event) {
-    let formData = extractFormData();
-    axios.post('/form_submission', formData)
-        .then (data=>{
-            data = data.data;
-            document.getElementById("form_container").style.display='none';
-            document.getElementById("result_container").style.display='block';
-            document.getElementById('result_div').innerHTML=data;
-        })
-        .catch(error => {
-            alert('error!!!: '+ error)
-        })
-
-    // prevent the form from reloading the page (normal behaviour for forms)
-    // never forget this when you use axios!!
-    event.preventDefault();
-}
-*/
-
 function connectToRoom(event) {//connect button function
-    // @todo Get the room from document
+    submitForm.disabled = true
+    // @todo: able log out button
     let formData = extractFormData("chatLoginForm");
-    chatUserName = !formData.customName ? 'Guest_' + Math.random() : formData.customName
-    roomName = !formData.customRoom ? 'global' : formData.customRoom
+    chatUserName = !formData.customName ? chatUserName : formData.customName
+    roomName = !formData.customRoom ? roomName : formData.customRoom
     chatSocket.emit('create or join', roomName, chatUserName)
+    console.log("roomName: " + roomName + ", username: " + chatUserName)
+
+    event.preventDefault();
 }
 
 function extractFormData(formId) {

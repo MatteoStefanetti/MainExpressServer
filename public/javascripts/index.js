@@ -30,5 +30,6 @@ function addBtnFunctions() {
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
+    document.getElementById("submitForm").onclick =  connectToRoom;
 }
 
