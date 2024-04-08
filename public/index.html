@@ -79,7 +79,8 @@
                             <label for="customName" class="form-label"><b>Chose your username:</b></label>
                             <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customName" id="customName" placeholder="Guest">
                             <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary">(or create one)</i></label>
-                            <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customRoom" id="customRoom" placeholder="global">
+                            <input class="form-control rounded-4 mb-3 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" placeholder="global">
+                            <datalist id="roomsList"></datalist>
                             <button class="btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
                         </form>
                     </div>

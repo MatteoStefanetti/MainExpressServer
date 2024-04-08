@@ -8,7 +8,11 @@ module.exports = function(io) {
     /** It is a map where keys are rooms names and value are users logged in. */
     const chat = io
         .on('connection', function (socket) {
+
+            sendRooms(socket)
+
             try {
+
                 /** It creates or joins a room
                  * @param room The effective chat in which the messages will be sent.
                  * @param userId It will be the user who joined the room */
@@ -70,4 +74,13 @@ function removeUserFromRoom(roomName) {
     } else {
         roomsMap.set(roomName, usersNum-1)
     }
+}
+
+/** It sends all custom and default rooms keys to a socket */
+function sendRooms(socket) {
+    let keys = []
+    for (const key of roomsMap.keys()){
+        keys.push(key)
+    }
+    socket.emit('rooms list', keys)
 }

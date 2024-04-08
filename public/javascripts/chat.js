@@ -94,6 +94,19 @@ function initChatSocket() {
         chatHeaderText.innerText = roomName
     })
 
+    /** It receives a list of all rooms opened with the server and add them to the list of rooms in the chat form*/
+    chatSocket.on("rooms list", (list)=>{
+        console.log("received")
+        let roomsList = document.getElementById("roomsList")
+        let node
+        console.log("roomList: ", list)
+        for( let room of list){
+            node = document.createElement('option')
+            node.value = room
+            roomsList.appendChild(node)
+        }
+    })
+
     chatSocket.on('chat', function (room, userId, chatText) {
         writeOnChat(room, userId, chatText)
     })
@@ -106,6 +119,7 @@ function initChatSocket() {
         /** Perhaps it could be launched by the {@link logOutFromChat} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
+
 }
 
 /** Called when the "send" btn is pressed. It sends the message via socket */
