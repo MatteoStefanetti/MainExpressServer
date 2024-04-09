@@ -169,6 +169,14 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
   right: 0;
 }
 
+.tuple-btn:hover {
+  background-color: var(--darkgreen) !important;
+}
+
+.tuple-btn:active {
+  background-color: var(--lightgreen) !important;
+}
+
 /* ------------ Footer ------------ */
 
 #customFooter {
