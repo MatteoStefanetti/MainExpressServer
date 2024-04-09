@@ -21,6 +21,7 @@ async function initClubs() {
 
 function initPlayers(){
     commonInitOfPage();
+    localStorage.setItem('isChatOpened', 'false')
 }
 
 /* -------- End of init()s -------- */
@@ -61,4 +62,9 @@ async function getAllFlags() {
             console.log(err);
             throw new TypeError('Error occurred during \'flags\' GET');
         })
+}
+
+function getClubById(id) {
+    // @todo maybe insert a spinning element
+    console.log('Club called with id: ', id);
 }
