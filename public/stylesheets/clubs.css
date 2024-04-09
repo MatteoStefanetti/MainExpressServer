@@ -1,10 +1,3 @@
-
-:root {
-    --transparent-active: rgba(180, 180, 180, 0.7);
-    --custom-accordion-lightgrey: rgb(220, 220, 220);
-    --darkgrey: rgb(169, 169, 169);
-}
-
 /* ------------ Clubs ------------ */
 
 .btn-search {
@@ -32,6 +25,10 @@
     color: #fff !important;
 }
 
+.btn-search:focus {
+    --bs-btn-focus-shadow-rgb: var(--lightgreen-disabled-rgb);
+}
+
 .accordion-item {
     border: 0;
 }
@@ -48,6 +45,8 @@
 .custom-accordion:not(.collapsed) {
     background-color: var(--darkgreen-disabled);
     box-shadow: inset 0 -1 0 var(--darkgreen-disabled);
+    border-color: var(--darkgreen);
+    border-radius: 0.25rem;
     font-weight: 700;
     color: #000;
 }
@@ -55,4 +54,8 @@
 .custom-accordion:focus {
     border-color: var(--darkgreen-disabled);
     box-shadow: 0 0 0 2px var(--darkgreen);
+}
+
+.custom-rounded-0_5 {
+    border-radius: 2px;
 }

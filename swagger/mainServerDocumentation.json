@@ -1,0 +1,16 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "MainExpressServer",
+    "description": "Frontend server",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001/",
+      "description": "local frontend server"
+    }
+  ],
+  "paths": {
+  }
+}
