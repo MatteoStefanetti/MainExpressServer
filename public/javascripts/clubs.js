@@ -82,18 +82,25 @@ function openAccordionClubs(id) {
             let alternatorCounter = 0;
             dataList.forEach((value, key) => {
                 let listItem = document.createElement('li');
-                if(alternatorCounter) {
-                    listItem.classList.add('bg-warning');
+                if(alternatorCounter % 2 !== 0) {
+                    listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+                    listItem.style.backgroundImage =
+                        'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+                        ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+                        'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
                 }
+                alternatorCounter++;
                 listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2',
                     'border-black', 'border-1', 'border-bottom', 'border-opacity-25');
                 listItem.id = String(key);
                 let imgContainer = document.createElement('div')
                 imgContainer.classList.add('rounded-3');
                 imgContainer.style.width = '2.75rem';
+                imgContainer.style.minWidth = '2.75rem';
                 imgContainer.style.height = '2.75rem';
-                imgContainer.style.backgroundColor = 'gray';
-                imgContainer.style.backgroundImage = 'linear-gradient(45deg, gray 2%, lightgray 55%, white)';
+                imgContainer.style.minHeight = '2.75rem';
+                imgContainer.style.backgroundColor = 'grey';
+                imgContainer.style.backgroundImage = 'linear-gradient(45deg, grey 2%, lightgrey 55%, white)';
                 let clubLogoImg = document.createElement('img');
                 imgContainer.appendChild(clubLogoImg);
                 listItem.appendChild(imgContainer);
@@ -101,12 +108,9 @@ function openAccordionClubs(id) {
                 nameSpan.classList.add('ms-3');
                 nameSpan.innerText = String(value);
                 listItem.appendChild(nameSpan);
-                listItem.addEventListener('click', (ev, id) => {
-                    console.log('club called with id: ', id);
-                })
+                listItem.addEventListener('click', getClubById.bind(null, key));
                 unList.appendChild(listItem);
             });
-            console.log('body: ', document.getElementById(id).firstElementChild)
             document.getElementById(id).firstElementChild.appendChild(unList);
         })
         .catch(err => {
