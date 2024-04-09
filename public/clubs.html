@@ -69,21 +69,29 @@
             </button>
         </div>
         <!-- Chat div (default set on d-none) -->
-        <div class="col-*-0 col-lg-3 d-none p-0 d-lg-flex border-start bg-light align-self-stretch chat-position end-0 bottom-0" id="chatDiv">
-            <div class="d-block">
+        <div class="col-lg-3 d-none p-0 d-lg-flex border-start bg-light align-self-stretch chat-position end-0 bottom-0" id="chatDiv">
+            <div class="d-block w-100">
                 <div class="d-block w-100" id="chatLandingElems">
                     <div class="p-3 bg-dark">
-                        <p class="h5 text-light text-center fw-bold">This space can be yours!<br>Call +44 391 3004242</p>
+                        <p class="h5 text-light text-center fw-bold">This space can be yours!<br>Call +44 391 3004242
+                        </p>
                     </div>
-                    <div class="row my-2 align-items-center">
+                    <div class="row my-2 align-items-center" id="chatHeader">
                         <button type="button" class="btn-close fs-5 col-2 ms-1 p-2" aria-label="Close" id="closeChat"></button>
-                        <p class="text text-lightgreen col-10 flex-grow-1"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
+                        <p class="text-lightgreen col-10 flex-grow-1" id="chatHeaderText"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
                     </div>
                     <!-- Chat LogIn Form -->
                     <div class="mx-auto d-block w-75" id="loginForm">
                         <form class="form" id="chatLoginForm">
-                            <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary text-italic">(or create one)</i></label>
-                            <input class="form-control mb-3 w-75" type="text" pattern="[a-zA-z]+[a-zA-Z]+\u002D?\u005F?([a-zA-z]*[0-9]*)+.{4,}" name="customRoom" id="customRoom" placeholder="Still WIP">
+                            <label for="customName" class="form-label"><b>Chose your username:</b></label>
+                            <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customName" id="customName" placeholder="Guest">
+                            <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary">(or create one)</i></label>
+                            <input class="form-control rounded-4 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" placeholder="global">
+                            <datalist id="roomsList"></datalist>
+                            <div class="d-flex align-items-center mt-1 mb-4">
+                                <input class="form-check-input me-2" type="checkbox" name="makePublic" id="makePublic">
+                                <label for="makePublic" class="form-check-label" style="font-size: 0.9rem">Make it visible to everyone</label>
+                            </div>
                             <button class="btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
                         </form>
                     </div>
