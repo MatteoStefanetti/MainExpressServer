@@ -108,12 +108,22 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
   text-decoration: underline rgb(var(--bs-light-rgb));;
 }
 
-.nav-item:hover {
+*:not(.accordion-body) .nav-item:hover {
   text-decoration: underline rgb(var(--bs-light-rgb));
   text-decoration-thickness: 1px;
 }
 
-.nav-item:active {
+.accordion-body .nav-item:hover {
+  text-decoration: underline black;
+  text-decoration-thickness: 1px;
+}
+
+.accordion-body .nav-item:active {
+  text-decoration: underline black;
+  text-decoration-thickness: 0.1rem;
+}
+
+*:not(.accordion-body) .nav-item:active {
   text-decoration: underline rgb(var(--bs-light-rgb));
   text-decoration-thickness: 0.1rem;
 }

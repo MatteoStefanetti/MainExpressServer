@@ -48,7 +48,6 @@ function createAccordion(fatherId, localCompetitionCode) {
     wrapperDiv.appendChild(collapseDiv);
     let accBody = document.createElement('div');
     accBody.classList.add('accordion-body');
-    accBody.innerText = 'try #1';   // @todo insert the inner part of the accordion
     collapseDiv.appendChild(accBody);
     document.getElementById(fatherId).appendChild(wrapperDiv);
 }
@@ -66,26 +65,52 @@ function getNationNameOf(localCompetitionCode) {
  * @throws TypeError if catch case of the axios GET occurs.
  * */
 function openAccordionClubs(id) {
-    console.log('entered')
     // @todo maybe insert a spinning element
     axios.get(`/get_clubs_by_local_competition_code/${id}`, {
         headers: {'Content-Type': 'application/json'},
         method: 'get'
     })
         .then(data => {
-            console.log('then(data)')
             let dataResponse = Array(data.data)[0];
             let dataList = new Map();
-            for(let i in dataResponse){
+            for(let i in dataResponse) {
                 dataList.set(dataResponse[i].clubId, String(dataResponse[i].clubName));
             }
-            console.log('dataRes: ', dataResponse, 'dataList: ', dataList); // DEBUG PRINT
             // @todo - uses the list to generate the HTML elements via function call
-
+            let unList = document.createElement('ul');
+            unList.classList.add('nav', 'px-2', 'flex-column');
+            let alternatorCounter = 0;
+            dataList.forEach((value, key) => {
+                let listItem = document.createElement('li');
+                if(alternatorCounter) {
+                    listItem.classList.add('bg-warning');
+                }
+                listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2',
+                    'border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+                listItem.id = String(key);
+                let imgContainer = document.createElement('div')
+                imgContainer.classList.add('rounded-3');
+                imgContainer.style.width = '2.75rem';
+                imgContainer.style.height = '2.75rem';
+                imgContainer.style.backgroundColor = 'gray';
+                imgContainer.style.backgroundImage = 'linear-gradient(45deg, gray 2%, lightgray 55%, white)';
+                let clubLogoImg = document.createElement('img');
+                imgContainer.appendChild(clubLogoImg);
+                listItem.appendChild(imgContainer);
+                let nameSpan = document.createElement('span');
+                nameSpan.classList.add('ms-3');
+                nameSpan.innerText = String(value);
+                listItem.appendChild(nameSpan);
+                listItem.addEventListener('click', (ev, id) => {
+                    console.log('club called with id: ', id);
+                })
+                unList.appendChild(listItem);
+            });
+            console.log('body: ', document.getElementById(id).firstElementChild)
+            document.getElementById(id).firstElementChild.appendChild(unList);
         })
         .catch(err => {
             console.log(err);
             throw new TypeError('Error occurred during \'clubs_by_local_competition_code\' GET');
         })
-    console.log('exited')
 }
