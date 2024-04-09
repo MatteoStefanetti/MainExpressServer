@@ -10,8 +10,8 @@
 
   --lightgreen-disabled-rgb: 10, 164, 17;
   --darkgreen-disabled-rgb: 11, 122, 16;
-  --custom-accordion-lightgrey-rgb: 10, 164, 17;
-  --darkgrey-rgb: 10, 164, 17;
+  --custom-accordion-lightgrey-rgb: 220, 220, 220;
+  --darkgrey-rgb: 169, 169, 169;
 
   --header-height: 100px;
   --footer-height: 50px;
@@ -108,13 +108,25 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
   text-decoration: underline rgb(var(--bs-light-rgb));;
 }
 
-.nav-item:hover {
+*:not(.accordion-body) .nav-item:hover {
   text-decoration: underline rgb(var(--bs-light-rgb));
   text-decoration-thickness: 1px;
 }
 
-.nav-item:active {
+.accordion-body .nav-item:hover {
+  color: var(--lightgreen);
+  text-decoration: underline var(--lightgreen);
+  text-decoration-thickness: 1px;
+}
+
+*:not(.accordion-body) .nav-item:active {
   text-decoration: underline rgb(var(--bs-light-rgb));
+  text-decoration-thickness: 0.1rem;
+}
+
+.accordion-body .nav-item:active {
+  color: var(--darkgreen);
+  text-decoration: underline var(--darkgreen);
   text-decoration-thickness: 0.1rem;
 }
 
@@ -155,6 +167,14 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
 .chat-position {
   position: fixed;
   right: 0;
+}
+
+.tuple-btn:hover {
+  background-color: var(--darkgreen) !important;
+}
+
+.tuple-btn:active {
+  background-color: var(--lightgreen) !important;
 }
 
 /* ------------ Footer ------------ */
