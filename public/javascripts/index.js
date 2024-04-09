@@ -1,10 +1,3 @@
-let chatUserName = null;
-let roomNo = null;
-let roomName = null;
-// This creates the localStorage variable for the chat, if it doesn't exist yet!
-if(!localStorage.getItem('isChatOpened'))
-    localStorage.setItem('isChatOpened', 'false');
-const chatSocket = io();
 
 /** Called by the index.html page. */
 function initHome() {
@@ -44,6 +37,7 @@ function addBtnFunctions() {
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
+    document.getElementById("submitForm").onclick =  connectToRoom;
 }
 
 /** This is an EXPRESS GET function:
