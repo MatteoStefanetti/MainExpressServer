@@ -111,7 +111,7 @@ function openAccordionClubs(id) {
                     nameSpan.innerText = String(value);
                     listItem.appendChild(nameSpan);
                     let desktopBtn = document.createElement('div');
-                    desktopBtn.classList.add('d-flex', 'justify-content-center', 'align-items-center',
+                    desktopBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
                         'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn');
                     desktopBtn.style.width = '2.5rem';
                     desktopBtn.style.minWidth = '2.5rem';
