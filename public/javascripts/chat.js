@@ -8,6 +8,10 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
+    document.getElementById('closeChat').onclick = closeChat;
+    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+    document.getElementById('declineTermsBtn').onclick = closeChat;
+    document.getElementById("submitForm").onclick =  connectToRoom;
     toggleChatElements();
     initChatSocket();
 }
@@ -96,10 +100,8 @@ function initChatSocket() {
 
     /** It receives a list of all rooms opened with the server and add them to the list of rooms in the chat form*/
     chatSocket.on("rooms list", (list)=>{
-        console.log("received")
         let roomsList = document.getElementById("roomsList")
         let node
-        console.log("roomList: ", list)
         for( let room of list){
             node = document.createElement('option')
             node.value = room
@@ -135,7 +137,6 @@ function connectToRoom(event) {//connect button function
     chatUserName = !formData.customName ? chatUserName : formData.customName
     roomName = !formData.customRoom ? roomName : formData.customRoom
     chatSocket.emit('create or join', roomName, chatUserName)
-    console.log("roomName: " + roomName + ", username: " + chatUserName)
 
     event.preventDefault();
 }

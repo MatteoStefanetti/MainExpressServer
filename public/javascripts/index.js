@@ -21,6 +21,7 @@ async function initClubs() {
 
 function initPlayers(){
     commonInitOfPage();
+    localStorage.setItem("isChatOpened", "false")
 }
 
 /* -------- End of init()s -------- */
@@ -28,16 +29,11 @@ function initPlayers(){
 /** Function called by the **main** *"init"* functions to set common attributes and features. */
 function commonInitOfPage() {
     addBtnFunctions();
-    initChat();
 }
 
 /** This function assigns **ALL** the *'onclick'* attributes in the page. */
 function addBtnFunctions() {
     document.getElementById('chatIconBtn').onclick = clickChatBtn;
-    document.getElementById('closeChat').onclick = closeChat;
-    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
-    document.getElementById('declineTermsBtn').onclick = closeChat;
-    document.getElementById("submitForm").onclick =  connectToRoom;
 }
 
 /** This is an EXPRESS GET function:
