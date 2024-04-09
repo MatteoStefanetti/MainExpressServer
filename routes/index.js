@@ -18,7 +18,7 @@ router.get('/get_flags', function(req,res,next) {
 
 router.get(`/get_clubs_by_local_competition_code/:localCompetitionCode`, function(req, res, next) {
     if(req.params.localCompetitionCode) {
-        fetch('http://localhost:8081/clubs_by_nation/' + String(req.params.localCompetitionCode), {
+        fetch('http://localhost:8081/clubs/clubs_by_nation/' + String(req.params.localCompetitionCode), {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
         })
