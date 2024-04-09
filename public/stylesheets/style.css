@@ -24,10 +24,14 @@
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
-.form-control:focus {
-  border-color: var(--lightgreen);
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(var(--lightgreen-disabled-rgb), 0.25);
+input:focus , button:not(.custom-accordion):focus , a:focus {
+  border-color: var(--lightgreen) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.25rem rgba(var(--darkgreen-disabled-rgb), 0.25) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--darkgreen);
 }
 
 /* -- Colours -- */
