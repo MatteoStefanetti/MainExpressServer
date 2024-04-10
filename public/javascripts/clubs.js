@@ -133,7 +133,7 @@ function openAccordionClubs(id) {
                 loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
                 loadMoreElem.id = String(id + 'Loader');
                 let loaderSpan = document.createElement('span');
-                loaderSpan.classList.add('text-center')
+                loaderSpan.classList.add('text-center', 'px-5');
                 loaderSpan.innerText = 'Load more...';
                 loadMoreElem.appendChild(loaderSpan);
                 loadMoreElem.addEventListener('click', loadRemainingElements.bind(null, String(id + 'Loader')));
