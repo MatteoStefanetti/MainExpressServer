@@ -72,11 +72,11 @@ function openAccordionClubs(id) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
+                dataResponse.sort((st, nd) => { return String(st.clubName).localeCompare(String(nd.clubName)) });
                 let dataList = new Map();
                 for (let i in dataResponse) {
                     dataList.set(dataResponse[i].clubId, String(dataResponse[i].clubName));
                 }
-                // @todo - uses the list to generate the HTML elements via function call
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'px-2', 'flex-column');
                 let alternatorCounter = 0;
@@ -89,9 +89,12 @@ function openAccordionClubs(id) {
                             ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
                             'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
                     }
+                    listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
+                    if(alternatorCounter !== (dataList.size - 1) )
+                        listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+                    if(alternatorCounter > Math.floor(dataList.size / 2))
+                        listItem.classList.add('d-none');
                     alternatorCounter++;
-                    listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2',
-                        'border-black', 'border-1', 'border-bottom', 'border-opacity-25');
                     listItem.id = String(key);
                     let imgContainer = document.createElement('div')
                     imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center',
@@ -125,6 +128,16 @@ function openAccordionClubs(id) {
                     listItem.addEventListener('click', getClubById.bind(null, key));
                     unList.appendChild(listItem);
                 });
+                // Adding the 'load more...' element
+                let loadMoreElem = document.createElement('li');
+                loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
+                loadMoreElem.id = String(id + 'Loader');
+                let loaderSpan = document.createElement('span');
+                loaderSpan.classList.add('text-center')
+                loaderSpan.innerText = 'Load more...';
+                loadMoreElem.appendChild(loaderSpan);
+                loadMoreElem.addEventListener('click', loadRemainingElements.bind(null, String(id + 'Loader')));
+                unList.appendChild(loadMoreElem);
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
@@ -132,4 +145,14 @@ function openAccordionClubs(id) {
                 throw new TypeError('Error occurred during \'clubs_by_local_competition_code\' GET');
             })
     }
+}
+
+/** Function that loads the remaining elements of the `<ul>` list.
+ * @param id {string} the id attribute of the _'loadMore'_ {@link HTMLElement}*/
+function loadRemainingElements(id) {
+    const loader = document.getElementById(id);
+    const clubsUnList = loader.parentElement;
+    loader.remove();
+    for(let i = Math.floor(clubsUnList.children.length / 2) + 1; i < clubsUnList.children.length; i++)
+        clubsUnList.children.item(i).classList.remove('d-none');
 }
