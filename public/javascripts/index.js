@@ -20,8 +20,9 @@ async function initClubs() {
 }
 
 function initPlayers(){
+    localStorage.setItem('isChatOpened', 'false');
     commonInitOfPage();
-    localStorage.setItem('isChatOpened', 'false')
+    document.getElementById('submitPlayerForm').onclick = searchPlayer;
 }
 
 /* -------- End of init()s -------- */
@@ -34,7 +35,7 @@ function commonInitOfPage() {
 
 /** This function assigns **ALL** the *'onclick'* attributes in the page. */
 function addBtnFunctions() {
-    document.getElementById('submitPlayerForm').onclick = searchPlayer;
+
     document.getElementById('chatIconBtn').onclick = clickChatBtn;
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
