@@ -55,3 +55,14 @@ function getClubById(id) {
     // @todo maybe insert a spinning element
     console.log('Club called with id: ', id);
 }
+
+function extractFormData(formId) {
+    let formElements = document.getElementById(formId).children;
+    let formData={};
+    for (let ix = 0; ix < formElements.length; ix++) {
+        if (formElements[ix].name) {
+            formData[formElements[ix].name] = formElements[ix].value;
+        }
+    }
+    return formData;
+}

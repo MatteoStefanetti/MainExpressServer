@@ -137,16 +137,7 @@ function connectToRoom(event) {//connect button function
     event.preventDefault();
 }
 
-function extractFormData(formId) {
-    let formElements = document.getElementById(formId).children;
-    let formData={};
-    for (let ix = 0; ix < formElements.length; ix++) {
-        if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].value;
-        }
-    }
-    return formData;
-}
+
 
 /** It appends the given html text to the chat div
  * @param userId who sent the message

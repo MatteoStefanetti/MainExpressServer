@@ -11,6 +11,7 @@ async function initClubs() {
     flags.forEach((value, key) => {
         createAccordion('clubAccordion', key);
     })
+    document.getElementById('submitClubForm').onclick = searchClubs;
 }
 
 /** This function creates an HTML element with the following structure:
@@ -168,4 +169,22 @@ function loadRemainingElements(id) {
     loader.remove();
     for(let i = Math.floor(clubsUnList.children.length / 2) + 1; i < clubsUnList.children.length; i++)
         clubsUnList.children.item(i).classList.remove('d-none');
+}
+
+function searchClubs(event){
+    document.getElementById('submitClubForm').disabled=true;
+    let formData = extractFormData('searchClub');
+    let club = formData.searchBar ? formData.searchBar : false;
+    if (club){
+        axios.get(`/get_clubs_by_string/${club}`, {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(data => {
+                console.log(data);
+                let dataResponse = Array(data.data)[0];
+                console.log(JSON.stringify(dataResponse));
+                document.getElementById('clubAccordion').classList.add('d-none');
+            })
+    }
 }
