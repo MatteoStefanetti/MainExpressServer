@@ -35,7 +35,6 @@ function commonInitOfPage() {
 
 /** This function assigns **ALL** the *'onclick'* attributes in the page. */
 function addBtnFunctions() {
-
     document.getElementById('chatIconBtn').onclick = clickChatBtn;
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
