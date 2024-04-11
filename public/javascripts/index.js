@@ -6,22 +6,9 @@ function initHome() {
     commonInitOfPage();
 }
 
-/** Called by the clubs.html page. */
-async function initClubs() {
-    commonInitOfPage();
-    await getAllFlags()
-        .then(res => {
-            flags = res;
-        })
-        .catch(err => console.log(err))
-    flags.forEach((value, key) => {
-        createAccordion('clubAccordion', key);
-    })
-}
-
 function initPlayers(){
-    commonInitOfPage();
     localStorage.setItem('isChatOpened', 'false')
+    commonInitOfPage();
 }
 
 /* -------- End of init()s -------- */

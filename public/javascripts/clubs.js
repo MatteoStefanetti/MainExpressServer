@@ -1,5 +1,18 @@
 let flags;
 
+/** Called by the clubs.html page. */
+async function initClubs() {
+    commonInitOfPage();
+    await getAllFlags()
+        .then(res => {
+            flags = res;
+        })
+        .catch(err => console.log(err))
+    flags.forEach((value, key) => {
+        createAccordion('clubAccordion', key);
+    })
+}
+
 /** This function creates an HTML element with the following structure:
  * ```
  * <div class="accordion-item rounded-1 mb-1">
