@@ -24,7 +24,16 @@
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
-input:focus , button:not(.custom-accordion):focus , a:focus {
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover , a:hover span , a:hover p {
+  text-decoration: underline;
+}
+
+input:focus , button:not(.custom-accordion):focus {
   border-color: var(--lightgreen) !important;
   outline: 0 !important;
   box-shadow: 0 0 0 0.25rem rgba(var(--darkgreen-disabled-rgb), 0.25) !important;
@@ -58,7 +67,6 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
 .border-lightgreen {
   border-color: var(--lightgreen) !important;
 }
-
 
 .btn-lightgreen {
   --bs-btn-color: #fff;
@@ -136,7 +144,6 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
    min-height: calc(100vh - var(--header-height) - var(--footer-height)); ;
  }
 
-
 #chatIconBtn {
   right: 5rem;
 }
@@ -168,6 +175,41 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
   position: fixed;
   right: 0;
 }
+
+/* -------------------------------- */
+
+.accordion-item {
+  border: 0;
+}
+
+.custom-accordion {
+  border: 1px solid var(--darkgrey);
+  background-color: var(--custom-accordion-lightgrey);
+}
+
+.custom-accordion.collapsed {
+  border-radius: .25rem;
+}
+
+.custom-accordion:not(.collapsed) {
+  background-color: var(--darkgreen-disabled);
+  box-shadow: inset 0 -1 0 var(--darkgreen-disabled);
+  border-color: var(--darkgreen);
+  border-radius: 0.25rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.custom-accordion:focus {
+  border-color: var(--darkgreen-disabled);
+  box-shadow: 0 0 0 2px var(--darkgreen);
+}
+
+.custom-rounded-0_5 {
+  border-radius: 2px;
+}
+
+/* ----------------------------------- */
 
 .tuple-btn:hover {
   background-color: var(--darkgreen) !important;

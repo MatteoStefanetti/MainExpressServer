@@ -20,8 +20,9 @@ async function initClubs() {
 }
 
 function initPlayers(){
+    localStorage.setItem('isChatOpened', 'false');
     commonInitOfPage();
-    localStorage.setItem('isChatOpened', 'false')
+    document.getElementById('submitPlayerForm').onclick = searchPlayer;
 }
 
 /* -------- End of init()s -------- */
