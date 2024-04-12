@@ -28,12 +28,12 @@ function initPlayers(){
 
 /** Function called by the **main** *"init"* functions to set common attributes and features. */
 function commonInitOfPage() {
-    // todo: check if can still be useful
+    // @todo: check if can still be useful
 }
 
 /** This function assigns **ALL** the *'onclick'* attributes in the page. */
 function addBtnFunctions() {
-    //todo: fill with index buttons
+    // @todo: fill with index buttons
 }
 
 /** This is an EXPRESS GET function:
