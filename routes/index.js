@@ -1,6 +1,7 @@
 let express = require('express');
 var router = express.Router();
 const fetch = require('node-fetch');
+const {json} = require("express");
 
 router.get('/', function (req, res, next) {
     res.send('respond with a resource');
@@ -42,6 +43,21 @@ router.get('/get_clubs_by_string/:name', function (req, res) {
     } else {
         console.log('Error! params of \'/get_clubs_by_string\' are wrong!\n')
     }
+});
+
+router.get('/clubs/get_club_by_id/:id', function (req, res) {
+   if (req.params.id){
+       fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id),{
+           headers:{'Content-Type': 'application/json'},
+           method: 'get'
+       })
+           .then(res=>res.json())
+           .then(json=>res.status(200).json(json))
+           .catch(err=>console.log(err));
+   }
+   else {
+       console.log('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
+   }
 });
 
 module.exports = router;
