@@ -3,7 +3,6 @@
  * triggered when the **searchBar** is used in the _player.html_ page. */
 function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = true;
-    document.getElementById('chatPage').classList.add('d-md-flex');
     let formData = extractFormData("searchPlayer");
     let player = formData.player ? formData.player : false;
     if (player) {
@@ -15,6 +14,7 @@ function searchPlayer(event) {
                 let dataResponse = Array(data.data)[0];
                 document.getElementsByClassName('body-bg').item(0).style.background = 'none';
                 document.getElementById('form-div').classList.add('d-none');
+                document.getElementById('chatPage').classList.add('d-md-flex');
                 let contentDiv = document.getElementById('playerContentFlex');
                 contentDiv.classList.add('col-lg-9');
                 contentDiv.classList.remove('align-items-center');
