@@ -8,6 +8,11 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
+    document.getElementById('chatIconBtn').onclick = clickChatBtn;
+    document.getElementById('closeChat').onclick = closeChat;
+    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+    document.getElementById('declineTermsBtn').onclick = closeChat;
+    document.getElementById("submitForm").onclick =  connectToRoom;
     toggleChatElements();
     initChatSocket();
 }

@@ -10,7 +10,7 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
     <link href="stylesheets/players.css" rel="stylesheet" type="text/css">
@@ -19,7 +19,7 @@
     <script src="javascripts/index.js"></script>
 </head>
 <body onload="initPlayers()" class="body-bg">
-<div class="container-fluid p-0 position-relative">
+<div class="container-fluid p-0 position-relative ">
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
         <nav class="navbar navbar-dark navbar-expand-sm mx-auto mh-100">
@@ -35,111 +35,33 @@
                     <li class="nav-item ms-5"><a href="competitions.html" class="nav-link text-light fw-bold">Competitions</a>
                     </li>
                     <li class="nav-item ms-5"><a href="clubs.html" class="nav-link text-light fw-bold">Clubs</a></li>
-                    <li class="nav-item ms-5 current"><a href="players.html" class="nav-link text-light fw-bold">Players</a>
+                    <li class="nav-item ms-5 current"><a href="#" class="nav-link text-light fw-bold">Players</a>
                     </li>
                 </ul>
             </div>
         </nav>
     </div>
     <!-- Content -->
-    <div class="row m-0 align-content-stretch" id="contentHeight">
+    <div class="row m-0 align-content-stretch content-height" id="playerContent">
         <!-- Things -->
-        <div class="col-*-12 p-0 d-flex justify-content-center align-items-center" id="playerContentFlex">
-            <div class="container mx-4 d-none">
-                <div class="results-expanded-bar border border-secondary rounded-2 w-100 mt-4 mb-3 py-1">
-                    <span class="h5 px-3 align-items-center">Results</span>
+        <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
+            <div class="row m-0 align-content-stretch">
+                <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
+                    <p class="h1 text-center text-lightgreen rubik-glitch-regular">Search a Player</p>
                 </div>
-                <div class="row w-100 px-3 justify-content-center-below-sm" id="playersList">
-                </div>
-            </div>
-
-            <div class="row m-0 align-content-stretch" id="form-div">
-                <div class="col-12 p-0 d-flex justify-content-center align-items-center">
-                    <p class="h1 text-center text-lightgreen rubik-glitch-font">Search a Player</p>
-                </div>
-                <div class="col-12 p-0 d-flex justify-content-center align-items-center">
-                    <form class="form w-100 d-flex justify-content-center align-items-center" name="searchPlayer" id="searchPlayer">
+                <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
+                    <form class="form w-100 d-flex justify-content-center align-items-center">
                         <label for="player" class="d-none" aria-hidden="true">Player</label>
                         <input class="form-control rounded-5 w-75 py-1 px-2 ps-sm-3 pe-sm-5 fs-5 fst-italic" type="text" id="player" placeholder="Search a player..." name="player">
-                        <button class="btn btn-small ms-2 ms-md-3 rounded-circle btn-search-to-white" type="submit" name="submitPlayerForm" id="submitPlayerForm">
+                        <button class="btn btn-small ms-2 ms-md-3 rounded-circle btn-search-to-white" type="submit">
                             <span class="bi bi-search text-lightgreen fs-5"></span>
                         </button>
                     </form>
                 </div>
             </div>
         </div>
-        <!-- Chat and Ads Space -->
-        <div class="col-0 col-lg-3 pt-4 px-5 h-100 d-none d-lg-flex chat-position player-search-hide d-player-none" id="hideForChat"
-             style="max-height: 65vh">
-            <div id="adsDiv" class="container bg-dark d-flex justify-content-center align-items-center p-0 player-search-hide d-player-none">
-                <a class="text-light">
-                    <img class="img-fluid adjust-content-center" src="" alt="No ads available">
-                </a>
-            </div>
-            <!-- Chat Button -->
-            <button class="mb-5 bg-transparent border-0 chat-position bottom-0 player-search-hide d-player-none" id="chatIconBtn" role="button">
-                <img src="images/chat_icon.svg" alt="Chat_Icon" class="img-fluid">
-            </button>
-        </div>
-        <!-- Chat div (default set on d-none) -->
-        <div class="col-lg-3 d-none p-0 d-lg-flex border-start bg-light align-self-stretch chat-position end-0 bottom-0" id="chatDiv">
-            <div class="d-block w-100">
-                <div class="d-block w-100" id="chatLandingElems">
-                    <div class="p-3 bg-dark">
-                        <p class="h5 text-light text-center fw-bold">This space can be yours!<br>Call +44 391 3004242
-                        </p>
-                    </div>
-                    <div class="row my-2 align-items-center" id="chatHeader">
-                        <button type="button" class="btn-close fs-5 col-2 ms-1 p-2" aria-label="Close" id="closeChat"></button>
-                        <p class="text text-lightgreen col-10 flex-grow-1"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
-                    </div>
-                    <!-- Chat LogIn Form -->
-                    <div class="mx-auto d-block w-75" id="loginForm">
-                        <form class="form" id="chatLoginForm">
-                            <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary text-italic">(or create one)</i></label>
-                            <input class="form-control mb-3 w-75" type="text" pattern="[a-zA-z]+[a-zA-Z]+\u002D?\u005F?([a-zA-z]*[0-9]*)+.{4,}" name="customRoom" id="customRoom" placeholder="Still WIP">
-                            <button class="btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
-                        </form>
-                    </div>
-                </div>
-                <!-- Chat -->
-                <div id="chat d-none">
-
-                </div>
-                <!-- Chat Terms Div-->
-                <div class="w-100 mt-1 position-absolute end-0 bottom-0" id="chatTerms">
-                    <div class="position-relative">
-                        <div class="w-100 position-fixed"
-                             style="height: 0.5rem; background-color: #c4c4c4; z-index: 10"></div>
-                    </div>
-                    <div class="container p-3">
-                        <p class="h5 fw-bold mb-2">Warning!</p>
-                        <p class="text">
-                            This is a chat system based on moral rules and principles.<br>
-                            By accepting to use this tool, you must follow our rules and
-                            <a href="http://not-exists.en">terms of use</a> in order to maintain a
-                            proper behaviour.<br>
-                            <br>
-                            Any violation to our terms of use will be legally pursued.<br>
-                            <br>
-                            To report a violation of the terms, please make sure you have evidence of it
-                            and contact our support at
-                            <a href="http://not-exists.en">chat-support@football-lens.uk</a>.<br>
-                            <br>
-                            Click the “Accept” button below to declare you are accepting the terms of use.<br>
-                        </p>
-                        <div class="d-none justify-content-evenly mb-2">
-                            <button type="button" class="btn px-4 py-0 rounded-5 btn-lightgreen" id="acceptTermsBtn">
-                                Accept
-                            </button>
-                            <button type="button" class="btn px-4 py-0 rounded-5 btn-danger" id="declineTermsBtn">
-                                Decline
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Chat div (default set on d-none) @todo: removed 'd-md-block' to hide the chat, check if it's the correct way to do it-->
+        <iframe src="/chat.html" class="p-0 col-3 d-none h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
     </div>
 </div>
 <!-- Footer -->

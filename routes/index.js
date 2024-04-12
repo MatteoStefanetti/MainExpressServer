@@ -1,15 +1,18 @@
 let express = require('express');
 var router = express.Router();
 const fetch = require('node-fetch');
-const {json} = require("express");
 
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
-router.get('/get_flags', function (req, res, next) {
+router.get('/favicon.ico', function(req, res, next) {
+   res.status(204).end();
+});
+
+router.get('/get_flags', function(req,res,next) {
     fetch('http://localhost:3002/flags/get_all', {
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         method: 'get'
     })
         .then(res => res.json())

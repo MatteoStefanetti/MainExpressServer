@@ -40,7 +40,7 @@ module.exports = function(io) {
                 });
 
                 socket.on('disconnect', () => {
-                    console.log('A user disconnected.');// todo: this could fill of trash the console
+                    console.log('A user disconnected.');// @todo: this could fill of trash the console
                 });
 
             } catch (err) {
