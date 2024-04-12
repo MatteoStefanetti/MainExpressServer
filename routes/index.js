@@ -60,4 +60,20 @@ router.get('/clubs/get_club_by_id/:id', function (req, res) {
    }
 });
 
+router.get('/get_players_by_name/:searchName', function (req, res) {
+        if (req.params.searchName) {
+            fetch('http://localhost:8081/players/get_players_by_name/' + String(req.params.searchName), {
+                headers: {'Content-Type': 'application/json'},
+                method: 'get'
+            })
+                .then(res => res.json())
+                .then(json => res.status(200).json(json))
+                .catch(err => console.log(err));
+        }
+        else{
+            console.log('Please insert a name to search')
+        }
+    }
+)
+
 module.exports = router;

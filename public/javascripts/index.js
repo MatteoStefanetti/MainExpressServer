@@ -7,8 +7,9 @@ function initHome() {
 }
 
 function initPlayers(){
-    localStorage.setItem('isChatOpened', 'false')
+    localStorage.setItem('isChatOpened', 'false');
     commonInitOfPage();
+    document.getElementById('submitPlayerForm').onclick = searchPlayer;
 }
 
 /* -------- End of init()s -------- */
