@@ -19,7 +19,7 @@
     <script src="javascripts/index.js"></script>
 </head>
 <body onload="initPlayers()" class="body-bg">
-<div class="container-fluid p-0 position-relative ">
+<div class="container-fluid p-0 position-relative">
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
         <nav class="navbar navbar-dark navbar-expand-sm mx-auto mh-100">
@@ -35,25 +35,33 @@
                     <li class="nav-item ms-5"><a href="competitions.html" class="nav-link text-light fw-bold">Competitions</a>
                     </li>
                     <li class="nav-item ms-5"><a href="clubs.html" class="nav-link text-light fw-bold">Clubs</a></li>
-                    <li class="nav-item ms-5 current"><a href="#" class="nav-link text-light fw-bold">Players</a>
+                    <li class="nav-item ms-5 current"><a href="players.html" class="nav-link text-light fw-bold">Players</a>
                     </li>
                 </ul>
             </div>
         </nav>
     </div>
     <!-- Content -->
-    <div class="row m-0 align-content-stretch content-height" id="playerContent">
+    <div class="row m-0 align-content-stretch" id="contentHeight">
         <!-- Things -->
-        <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
-            <div class="row m-0 align-content-stretch">
-                <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
-                    <p class="h1 text-center text-lightgreen rubik-glitch-regular">Search a Player</p>
+        <div class="col-*-12 p-0 d-flex justify-content-center align-items-center" id="playerContentFlex">
+            <div class="container mx-4 d-none">
+                <div class="results-expanded-bar border border-secondary rounded-2 w-100 mt-4 mb-3 py-1">
+                    <span class="h5 px-3 align-items-center">Results</span>
                 </div>
-                <div class="col-*-12 col-lg-12 p-0 d-flex justify-content-center align-items-center ">
-                    <form class="form w-100 d-flex justify-content-center align-items-center">
+                <div class="row w-100 px-3 justify-content-center-below-sm" id="playersList">
+                </div>
+            </div>
+
+            <div class="row m-0 align-content-stretch" id="form-div">
+                <div class="col-12 p-0 d-flex justify-content-center align-items-center">
+                    <p class="h1 text-center text-lightgreen rubik-glitch-font">Search a Player</p>
+                </div>
+                <div class="col-12 p-0 d-flex justify-content-center align-items-center">
+                    <form class="form w-100 d-flex justify-content-center align-items-center" name="searchPlayer" id="searchPlayer">
                         <label for="player" class="d-none" aria-hidden="true">Player</label>
                         <input class="form-control rounded-5 w-75 py-1 px-2 ps-sm-3 pe-sm-5 fs-5 fst-italic" type="text" id="player" placeholder="Search a player..." name="player">
-                        <button class="btn btn-small ms-2 ms-md-3 rounded-circle btn-search-to-white" type="submit">
+                        <button class="btn btn-small ms-2 ms-md-3 rounded-circle btn-search-to-white" type="submit" name="submitPlayerForm" id="submitPlayerForm">
                             <span class="bi bi-search text-lightgreen fs-5"></span>
                         </button>
                     </form>

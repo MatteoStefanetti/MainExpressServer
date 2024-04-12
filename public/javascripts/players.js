@@ -3,6 +3,7 @@
  * triggered when the **searchBar** is used in the _player.html_ page. */
 function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = true;
+    document.getElementById('chatPage').classList.add('d-md-flex');
     let formData = extractFormData("searchPlayer");
     let player = formData.player ? formData.player : false;
     if (player) {
@@ -14,9 +15,6 @@ function searchPlayer(event) {
                 let dataResponse = Array(data.data)[0];
                 document.getElementsByClassName('body-bg').item(0).style.background = 'none';
                 document.getElementById('form-div').classList.add('d-none');
-                let elements = document.getElementsByClassName('player-search-hide');
-                for (let el of elements)
-                    el.classList.remove('d-player-none');
                 let contentDiv = document.getElementById('playerContentFlex');
                 contentDiv.classList.add('col-lg-9');
                 contentDiv.classList.remove('align-items-center');
@@ -35,7 +33,7 @@ function searchPlayer(event) {
                         '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
                         '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
                         '</div>';
-                    playerContainer.appendChild(clickableContent)
+                    playerContainer.appendChild(clickableContent);
                     playerList.appendChild(playerContainer);
                 })
             })
@@ -43,15 +41,4 @@ function searchPlayer(event) {
     }
     event.preventDefault();
     document.getElementById('submitPlayerForm').disabled = false;
-}
-
-function extractFormData(formId) {
-    let formElements = document.getElementById(formId).children;
-    let formData = {};
-    for (let ix = 0; ix < formElements.length; ix++) {
-        if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].value;
-        }
-    }
-    return formData;
 }
