@@ -181,10 +181,17 @@ function searchClubs(event){
             method: 'get'
         })
             .then(data => {
-                console.log(data);
                 let dataResponse = Array(data.data)[0];
-                console.log(JSON.stringify(dataResponse));
                 document.getElementById('clubAccordion').classList.add('d-none');
+                document.getElementById('clubResults').classList.remove('d-none');
+                dataResponse.forEach(club => {
+                    let listItem = document.createElement('a');
+                    listItem.classList.add('list-group-item', 'list-group-item-action');
+                    listItem.href = '#';
+                    listItem.innerText = club.clubName;
+                    document.getElementById('clubResults').appendChild(listItem);
+
+                })
             })
     }
 }
