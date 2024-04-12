@@ -43,8 +43,8 @@ function createAccordion(fatherId, localCompetitionCode) {
     accordionButton.type = "button";
     accordionButton.setAttribute('data-bs-toggle', 'collapse')
     accordionButton.setAttribute('aria-expanded', 'false');
-    accordionButton.setAttribute('aria-controls', '#'+String(localCompetitionCode));
-    accordionButton.setAttribute('data-bs-target', '#'+String(localCompetitionCode));
+    accordionButton.setAttribute('aria-controls', '#' + String(localCompetitionCode));
+    accordionButton.setAttribute('data-bs-target', '#' + String(localCompetitionCode));
     accordionButton.addEventListener('click', openAccordionClubs.bind(null, localCompetitionCode));
     header.appendChild(accordionButton);
     let flagImg = document.createElement('img');
@@ -57,7 +57,7 @@ function createAccordion(fatherId, localCompetitionCode) {
     accordionButton.appendChild(spanTitle);
     let collapseDiv = document.createElement('div');
     collapseDiv.classList.add('accordion-collapse', 'collapse');
-    collapseDiv.setAttribute('data-bs-parent', '#'+String(fatherId));
+    collapseDiv.setAttribute('data-bs-parent', '#' + String(fatherId));
     collapseDiv.id = String(localCompetitionCode);
     wrapperDiv.appendChild(collapseDiv);
     let accBody = document.createElement('div');
@@ -86,7 +86,9 @@ function openAccordionClubs(id) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
-                dataResponse.sort((st, nd) => { return String(st.clubName).localeCompare(String(nd.clubName)) });
+                dataResponse.sort((st, nd) => {
+                    return String(st.clubName).localeCompare(String(nd.clubName))
+                });
                 let dataList = new Map();
                 for (let i in dataResponse) {
                     dataList.set(dataResponse[i].clubId, String(dataResponse[i].clubName));
@@ -125,30 +127,33 @@ function loadRemainingElements(id) {
     const loader = document.getElementById(id);
     const clubsUnList = loader.parentElement;
     loader.remove();
-    for(let i = Math.floor(clubsUnList.children.length / 2) + 1; i < clubsUnList.children.length; i++)
+    for (let i = Math.floor(clubsUnList.children.length / 2) + 1; i < clubsUnList.children.length; i++)
         clubsUnList.children.item(i).classList.remove('d-none');
 }
 
-function searchClubs(event){
-    document.getElementById('submitClubForm').disabled=true;
+function searchClubs(event) {
+    document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
     let club = formData.searchBar ? formData.searchBar : false;
-    if (club){
+    if (club) {
         axios.get(`/get_clubs_by_string/${club}`, {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
+                let dataList = new Map();
+                for (let i in dataResponse) {
+                    dataList.set(dataResponse[i].clubId, {
+                        'clubName': String(dataResponse[i].clubName),
+                        'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
+                }
+                let unList = document.getElementById('clubResults');
+                unList.classList.add('nav', 'px-2', );
                 document.getElementById('clubAccordion').classList.add('d-none');
                 document.getElementById('clubResults').classList.remove('d-none');
                 dataResponse.forEach(club => {
-                    let listItem = document.createElement('a');
-                    listItem.classList.add('list-group-item', 'list-group-item-action');
-                    listItem.href = '#';
-                    listItem.innerText = club.clubName;
-                    document.getElementById('clubResults').appendChild(listItem);
-
+                    createListItem(dataResponse.size, 'ul', club.index, 'listItem', club.clubName );
                 })
             })
     }
@@ -165,7 +170,7 @@ function searchClubs(event){
  * @param text {string} The text to show.
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
 function createListItem(size, unorderedList, elementCounter, id, text) {
-    if(!size || !unorderedList || elementCounter < 0 || !id || !text){
+    if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
         console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text)
         throw TypeError('Invalid argument(s) passed to \'createListItem\'!')
     }
@@ -179,9 +184,9 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
             'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
     }
     listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
-    if(elementCounter !== (size - 1) )
+    if (elementCounter !== (size - 1))
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
-    if(elementCounter > Math.floor(size / 2))
+    if (elementCounter > Math.floor(size / 2))
         listItem.classList.add('d-none');
     listItem.id = String(id);
     let imgContainer = document.createElement('div')
