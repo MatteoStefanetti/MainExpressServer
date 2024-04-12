@@ -28,17 +28,12 @@ function initPlayers(){
 
 /** Function called by the **main** *"init"* functions to set common attributes and features. */
 function commonInitOfPage() {
-    addBtnFunctions();
-    initChat();
+    // todo: check if can still be useful
 }
 
 /** This function assigns **ALL** the *'onclick'* attributes in the page. */
 function addBtnFunctions() {
-    document.getElementById('chatIconBtn').onclick = clickChatBtn;
-    document.getElementById('closeChat').onclick = closeChat;
-    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
-    document.getElementById('declineTermsBtn').onclick = closeChat;
-    document.getElementById("submitForm").onclick =  connectToRoom;
+    //todo: fill with index buttons
 }
 
 /** This is an EXPRESS GET function:
