@@ -6,19 +6,6 @@ function initHome() {
     commonInitOfPage();
 }
 
-/** Called by the clubs.html page. */
-async function initClubs() {
-    commonInitOfPage();
-    await getAllFlags()
-        .then(res => {
-            flags = res;
-        })
-        .catch(err => console.log(err))
-    flags.forEach((value, key) => {
-        createAccordion('clubAccordion', key);
-    })
-}
-
 function initPlayers(){
     commonInitOfPage();
     document.getElementById('submitPlayerForm').onclick = searchPlayer;
@@ -57,4 +44,20 @@ async function getAllFlags() {
             console.log(err);
             throw new TypeError('Error occurred during \'flags\' GET');
         })
+}
+
+function getClubById(id) {
+    // @todo maybe insert a spinning element
+    console.log('Club called with id: ', id);
+}
+
+function extractFormData(formId) {
+    let formElements = document.getElementById(formId).children;
+    let formData={};
+    for (let ix = 0; ix < formElements.length; ix++) {
+        if (formElements[ix].name) {
+            formData[formElements[ix].name] = formElements[ix].value;
+        }
+    }
+    return formData;
 }
