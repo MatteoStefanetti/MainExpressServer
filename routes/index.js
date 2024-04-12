@@ -6,6 +6,10 @@ router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
+router.get('/favicon.ico', function(req, res, next) {
+   res.status(204).end();
+});
+
 router.get('/get_flags', function(req,res,next) {
     fetch('http://localhost:3002/flags/get_all', {
         headers: { 'Content-Type': 'application/json' },
