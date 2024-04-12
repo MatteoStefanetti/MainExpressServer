@@ -95,52 +95,10 @@ function openAccordionClubs(id) {
                 unList.classList.add('nav', 'px-2', 'flex-column');
                 let alternatorCounter = 0;
                 dataList.forEach((value, key) => {
-                    let listItem = document.createElement('li');
-                    if (alternatorCounter % 2 !== 0) {
-                        listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
-                        listItem.style.backgroundImage =
-                            'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
-                            ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
-                            'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
-                    }
-                    listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
-                    if(alternatorCounter !== (dataList.size - 1) )
-                        listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
-                    if(alternatorCounter > Math.floor(dataList.size / 2))
-                        listItem.classList.add('d-none');
+                    let listItem = createListItem(dataList.size, unList,
+                        alternatorCounter, key, value);
                     alternatorCounter++;
-                    listItem.id = String(key);
-                    let imgContainer = document.createElement('div')
-                    imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center',
-                        'align-items-center', 'ms-1');
-                    imgContainer.style.width = '2.75rem';
-                    imgContainer.style.minWidth = '2.75rem';
-                    imgContainer.style.height = '2.75rem';
-                    imgContainer.style.minHeight = '2.75rem';
-                    imgContainer.style.backgroundColor = 'grey';
-                    imgContainer.style.backgroundImage = 'linear-gradient(45deg, grey 2%, lightgrey 55%, white)';
-                    let clubLogoImg = document.createElement('img');
-                    clubLogoImg.alt = " ";
-                    imgContainer.appendChild(clubLogoImg);
-                    listItem.appendChild(imgContainer);
-                    let nameSpan = document.createElement('span');
-                    nameSpan.classList.add('ms-3', 'flex-grow-1');
-                    nameSpan.innerText = String(value);
-                    listItem.appendChild(nameSpan);
-                    let desktopBtn = document.createElement('div');
-                    desktopBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
-                        'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn');
-                    desktopBtn.style.width = '2.5rem';
-                    desktopBtn.style.minWidth = '2.5rem';
-                    desktopBtn.style.height = '2.5rem';
-                    desktopBtn.style.minHeight = '2.5rem';
-                    let statsImg = document.createElement('img');
-                    statsImg.classList.add('img-fluid');
-                    statsImg.src = '../images/stats_btn_img.svg';
-                    desktopBtn.appendChild(statsImg);
-                    listItem.appendChild(desktopBtn);
                     listItem.addEventListener('click', getClubById.bind(null, key));
-                    unList.appendChild(listItem);
                 });
                 // Adding the 'load more...' element
                 let loadMoreElem = document.createElement('li');
@@ -195,3 +153,67 @@ function searchClubs(event){
             })
     }
 }
+
+/** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
+ * @param size {number} The **size** of the set to show.
+ *  This attribute is required to initially show only the first half of the data retrieved.
+ * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
+ *  to which add item created.
+ * @param elementCounter {number} The counter that provides various features,
+ *  as like the alternated color of the list items
+ * @param id {string} The **id** set to the `<li>` element.
+ * @param text {string} The text to show.
+ * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
+function createListItem(size, unorderedList, elementCounter, id, text) {
+    if(!size || !unorderedList || elementCounter < 0 || !id || !text){
+        console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text)
+        throw TypeError('Invalid argument(s) passed to \'createListItem\'!')
+    }
+
+    let listItem = document.createElement('li');
+    if (elementCounter % 2 !== 0) {
+        listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+        listItem.style.backgroundImage =
+            'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+            ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+            'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
+    }
+    listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
+    if(elementCounter !== (size - 1) )
+        listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+    if(elementCounter > Math.floor(size / 2))
+        listItem.classList.add('d-none');
+    listItem.id = String(id);
+    let imgContainer = document.createElement('div')
+    imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center',
+        'align-items-center', 'ms-1');
+    imgContainer.style.width = '2.75rem';
+    imgContainer.style.minWidth = '2.75rem';
+    imgContainer.style.height = '2.75rem';
+    imgContainer.style.minHeight = '2.75rem';
+    imgContainer.style.backgroundColor = 'grey';
+    imgContainer.style.backgroundImage = 'linear-gradient(45deg, grey 2%, lightgrey 55%, white)';
+    let clubLogoImg = document.createElement('img');
+    clubLogoImg.alt = " ";
+    imgContainer.appendChild(clubLogoImg);
+    listItem.appendChild(imgContainer);
+    let nameSpan = document.createElement('span');
+    nameSpan.classList.add('ms-3', 'flex-grow-1');
+    nameSpan.innerText = text;
+    listItem.appendChild(nameSpan);
+    let desktopBtn = document.createElement('div');
+    desktopBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
+        'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn');
+    desktopBtn.style.width = '2.5rem';
+    desktopBtn.style.minWidth = '2.5rem';
+    desktopBtn.style.height = '2.5rem';
+    desktopBtn.style.minHeight = '2.5rem';
+    let statsImg = document.createElement('img');
+    statsImg.classList.add('img-fluid');
+    statsImg.src = '../images/stats_btn_img.svg';
+    desktopBtn.appendChild(statsImg);
+    listItem.appendChild(desktopBtn);
+    unorderedList.appendChild(listItem);
+    return listItem;
+}
+
