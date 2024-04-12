@@ -142,14 +142,21 @@ function searchClubs(event) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
+                console.log(JSON.stringify(dataResponse));
                 let dataList = new Map();
                 for (let i in dataResponse) {
                     dataList.set(dataResponse[i].clubId, {
                         'clubName': String(dataResponse[i].clubName),
                         'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
                 }
-                let unList = document.getElementById('clubResults');
-                unList.classList.add('nav', 'px-2', 'flex-column');
+                let unlistToRemove = document.getElementById('clubResults');
+                if (unlistToRemove) {
+                    unlistToRemove.remove();
+                }
+                let unList = document.createElement('div');
+                unList.classList.add('ul', 'list-group-flush', 'mb-4', 'px-2', 'nav', 'px-2', 'flex-column');
+                unList.id = 'clubResults';
+                document.getElementById('things').appendChild(unList);
                 let alternatorCounter = 0;
                 dataList.forEach((value, key) => {
                     let listItem = createListItem(dataList.size, unList, alternatorCounter, key, value.clubName);
