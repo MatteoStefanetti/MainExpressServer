@@ -8,6 +8,7 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
+    document.getElementById('chatIconBtn').onclick = clickChatBtn;
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
@@ -22,6 +23,7 @@ function toggleChatElements() {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
     const chatIconBtn = document.getElementById('chatIconBtn');
+    localStorage.setItem('isChatOpened', 'false')// todo: remove this line
     if(localStorage.getItem('isChatOpened') !== 'true'){
         document.getElementById('chatIconBtn').style.display = 'block';
         hideForChat.classList.add('d-lg-flex');

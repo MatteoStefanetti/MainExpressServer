@@ -129,7 +129,7 @@ input:focus , button:not(.custom-accordion):focus , a:focus {
   right: 5rem;
 }
 
-#chatDiv {
+#chatPage {
   height: calc(100vh - var(--header-height));
   z-index: 10;
 }

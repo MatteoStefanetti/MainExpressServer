@@ -33,7 +33,7 @@ function commonInitOfPage() {
 
 /** This function assigns **ALL** the *'onclick'* attributes in the page. */
 function addBtnFunctions() {
-    document.getElementById('chatIconBtn').onclick = clickChatBtn;
+    //todo: remove this function
 }
 
 /** This is an EXPRESS GET function:
