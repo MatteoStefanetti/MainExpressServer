@@ -103,15 +103,7 @@ function openAccordionClubs(id) {
                     listItem.addEventListener('click', getClubById.bind(null, key));
                 });
                 // Adding the 'load more...' element
-                let loadMoreElem = document.createElement('li');
-                loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
-                loadMoreElem.id = String(id + 'Loader');
-                let loaderSpan = document.createElement('span');
-                loaderSpan.classList.add('text-center', 'px-5');
-                loaderSpan.innerText = 'Load more...';
-                loadMoreElem.appendChild(loaderSpan);
-                loadMoreElem.addEventListener('click', loadRemainingElements.bind(null, String(id + 'Loader')));
-                unList.appendChild(loadMoreElem);
+                createLoadMoreElement(unList, id, loadRemainingElements.bind(null, String(id + 'Loader')));
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
@@ -163,6 +155,10 @@ function searchClubs(event) {
                     alternatorCounter++;
                     listItem.addEventListener('click', getClubById.bind(null, key));
                 });
+                if(dataList.size > 20) {
+                    createLoadMoreElement(unList, unList.id, loadRemainingElements.bind(null,
+                        String(unList.id + 'Loader')));
+                }
                 document.getElementById('clubAccordion').classList.add('d-none');
                 document.getElementById('clubResults').classList.remove('d-none');
                 document.getElementById('submitClubForm').disabled = false;
@@ -182,8 +178,8 @@ function searchClubs(event) {
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
 function createListItem(size, unorderedList, elementCounter, id, text) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
-        console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text)
-        throw TypeError('Invalid argument(s) passed to \'createListItem\'!')
+        console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
+        throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
     }
 
     let listItem = document.createElement('li');
@@ -197,7 +193,7 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
     if (elementCounter !== (size - 1))
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
-    if (elementCounter > Math.floor(size / 2))
+    if (size > 20 && elementCounter > Math.floor(size / 2))
         listItem.classList.add('d-none');
     listItem.id = String(id);
     let imgContainer = document.createElement('div')
@@ -233,3 +229,25 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     return listItem;
 }
 
+/**
+ *
+ * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
+ *  to which add item created.
+ * @param loaderId {string} The id, concatenated to the _"Loader"_ string, to set the id of the element,
+ *  useful to identify the list of which elements will be shown.
+ * @param actionFunction {() => {}} A function *pointer* to set the listener of the _"load more"_. */
+function createLoadMoreElement(unorderedList, loaderId, actionFunction) {
+    if(!unorderedList || !loaderId || !actionFunction) {
+        console.log('', unorderedList, '\n', loaderId, '\n', actionFunction);
+        throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
+    }
+    let loadMoreElem = document.createElement('li');
+    loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
+    loadMoreElem.id = String(loaderId + 'Loader');
+    let loaderSpan = document.createElement('span');
+    loaderSpan.classList.add('text-center', 'px-5');
+    loaderSpan.innerText = 'Load more...';
+    loadMoreElem.appendChild(loaderSpan);
+    loadMoreElem.addEventListener('click', actionFunction);
+    unorderedList.appendChild(loadMoreElem);
+}
