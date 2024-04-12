@@ -149,12 +149,16 @@ function searchClubs(event) {
                         'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
                 }
                 let unList = document.getElementById('clubResults');
-                unList.classList.add('nav', 'px-2', );
+                unList.classList.add('nav', 'px-2', 'flex-column');
+                let alternatorCounter = 0;
+                dataList.forEach((value, key) => {
+                    let listItem = createListItem(dataList.size, unList, alternatorCounter, key, value.clubName);
+                    alternatorCounter++;
+                    listItem.addEventListener('click', getClubById.bind(null, key));
+                });
                 document.getElementById('clubAccordion').classList.add('d-none');
                 document.getElementById('clubResults').classList.remove('d-none');
-                dataResponse.forEach(club => {
-                    createListItem(dataResponse.size, 'ul', club.index, 'listItem', club.clubName );
-                })
+                document.getElementById('submitClubForm').disabled = false;
             })
     }
 }
