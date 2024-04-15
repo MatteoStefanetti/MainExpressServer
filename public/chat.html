@@ -16,9 +16,9 @@
     <script src="javascripts/chat.js"></script>
     <script src="javascripts/index.js"></script>
 </head>
-<body onload="initChat()" class="d-flex flex-column justify-content-between bg-transparent" id="chatPage">
+<body onload="initChat()" class="d-flex d-lg-block flex-column justify-content-between bg-transparent" id="chatPage">
     <!-- Big Ads Space -->
-    <div class="pt-4 px-5 h-100 w-100 d-lg-flex" id="hideForChat" style="max-height: 65vh">
+    <div class="pt-4 px-5 h-100 w-100" id="hideForChat" style="max-height: 65vh">
         <div class="container bg-dark h-100 d-flex justify-content-center align-items-center p-0" id="adsDiv">
             <a class="text-light">
                 <img class="img-fluid adjust-content-center" src="" alt="No ads available">
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Chat Button -->
-    <div class="container-fluid mt-auto mb-5">
+    <div class="container-fluid mt-auto mb-5" id="btnDiv">
         <div class="row">
             <div class="col"></div>
             <div class="col-auto">

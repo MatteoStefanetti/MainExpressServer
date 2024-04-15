@@ -8,12 +8,14 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
+    localStorage.setItem('isChatOpened', 'false'); //@todo: remove this line
     document.getElementById('chatIconBtn').onclick = clickChatBtn;
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
     document.getElementById("submitForm").onclick =  connectToRoom;
-    toggleChatElements();
+    if(localStorage.getItem('acceptedChatTerms'))
+        closeChatTerms();
     initChatSocket();
 }
 
@@ -22,24 +24,38 @@ function initChat() {
 function toggleChatElements() {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
-    const chatIconBtn = document.getElementById('chatIconBtn');
+    const btnDiv = document.getElementById('btnDiv');
     if(localStorage.getItem('isChatOpened') !== 'true'){
-        document.getElementById('chatIconBtn').style.display = 'block';
-        hideForChat.classList.add('d-lg-flex');
-        if(chatDiv.classList.contains('d-lg-flex'))
-            chatDiv.classList.remove('d-lg-flex');
+        // chat opener
+        localStorage.setItem('isChatOpened', 'true');
+        hideNode(hideForChat)
+        hideNode(btnDiv)
+        showNode(chatDiv)
     } else {
-        chatIconBtn.style.display = 'none';
-        hideForChat.classList.remove('d-lg-flex');
-        chatDiv.classList.add('d-lg-flex');
-        if(localStorage.getItem('acceptedChatTerms'))
-            closeChatTerms();
+        // chat closer
+        localStorage.setItem('isChatOpened', 'false');
+        showNode(hideForChat)
+        showNode(btnDiv)
+        hideNode(chatDiv)
     }
+}
+
+function hideNode( node ) {
+    if(node instanceof HTMLElement)
+        node.classList.add('d-none');
+    else
+        console.log("wrong element:", node, "is not a HTMLElement")
+}
+
+function showNode( node ) {
+    if(node instanceof HTMLElement)
+        node.classList.remove('d-none');
+    else
+        console.log("wrong element:", node, "is not a HTMLElement")
 }
 
 /** Function called whenever the chat button is clicked. */
 function clickChatBtn () {
-    localStorage.setItem('isChatOpened', 'true');
     toggleChatElements();
     if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
         showChatTerms();
@@ -72,12 +88,13 @@ function acceptedTerms(){
 
 /** This function only assures to close the chat terms. */
 function closeChatTerms() {
-    document.getElementById('chatTerms').classList.add('d-none');
+    let chatTerms = document.getElementById('chatTerms');
+    if(!chatTerms.classList.contains('d-none'))
+        document.getElementById('chatTerms').classList.add('d-none');
 }
 
 /** This function closes the chat and updates the localStorage variable. */
 function closeChat() {
-    localStorage.setItem('isChatOpened', 'false');
     toggleChatElements();
 }
 
