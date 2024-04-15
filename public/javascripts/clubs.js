@@ -134,7 +134,7 @@ function loadRemainingElements(id) {
 function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
-    let club = formData.searchBar ? formData.searchBar : false;
+    let club = formData.searchBar;
     if (club) {
         axios.get(`/get_clubs_by_string/${club}`, {
             headers: {'Content-Type': 'application/json'},
@@ -149,14 +149,34 @@ function searchClubs(event) {
                         'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
                 }
                 let unList = document.getElementById('clubResults');
-                unList.classList.add('nav', 'px-2', );
+                unList.classList.add('nav', 'px-2', 'flex-column');
                 document.getElementById('clubAccordion').classList.add('d-none');
                 document.getElementById('clubResults').classList.remove('d-none');
-                dataResponse.forEach(club => {
-                    createListItem(dataResponse.size, 'ul', club.index, 'listItem', club.clubName );
+                let elementCounter = 0;
+                dataList.forEach((value, key) => {
+                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName);
                 })
+                // Adding the 'load more...' element
+                if(dataList.size > 30) {
+                    let loadMoreElem = document.createElement('li');
+                    loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
+                    loadMoreElem.id = String('searcherLoader');
+                    let loaderSpan = document.createElement('span');
+                    loaderSpan.classList.add('text-center', 'px-5');
+                    loaderSpan.innerText = 'Load more...';
+                    loadMoreElem.appendChild(loaderSpan);
+                    loadMoreElem.addEventListener('click', loadRemainingElements.bind(null, String('searcherLoader')));
+                    unList.appendChild(loadMoreElem);
+                }
             })
+            .catch(err => {
+                console.error(err);
+                showUnfoundedMessage();
+            })
+    } else {
+        showUnfoundedMessage();
     }
+    document.getElementById('submitClubForm').disabled = false;
 }
 
 /** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}

@@ -219,6 +219,19 @@ input:focus , button:not(.custom-accordion):focus {
   background-color: var(--lightgreen) !important;
 }
 
+/* ----------- Forms ----------- */
+
+.top-form-container {
+  align-items: center !important;
+  width: 100% !important;
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-white-rgb), var(--bs-bg-opacity)) !important;
+  padding: 1.5rem 0.5rem 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  z-index: 10;
+  top: var(--header-height)
+}
+
 /* ------------ Footer ------------ */
 
 #customFooter {

@@ -46,9 +46,6 @@
         <!-- Things -->
         <div class="col-*-12 p-0 d-flex justify-content-center align-items-center" id="playerContentFlex">
             <div class="container mx-4 d-none">
-                <div class="results-expanded-bar border border-secondary rounded-2 w-100 mt-4 mb-3 py-1">
-                    <span class="h5 px-3 align-items-center">Results</span>
-                </div>
                 <div class="row w-100 px-3 justify-content-center-below-sm" id="playersList">
                 </div>
             </div>
@@ -69,7 +66,7 @@
             </div>
         </div>
         <!-- Chat div (default set on d-none) @todo: removed 'd-md-block' to hide the chat, check if it's the correct way to do it-->
-        <iframe src="/chat.html" class="p-0 col-3 d-none h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
+        <iframe src="/chat.html" class="p-0 col-3 d-none d-md-block h-100 z-3 bg-transparent chat-position d-player-none" id="chatPage"></iframe>
     </div>
 </div>
 <!-- Footer -->
@@ -88,5 +85,26 @@
         </ul>
     </div>
 </div>
+
+<!-- Modals: 1. unfoundedModal (hidden by default) -->
+<button type="button" class="btn d-none" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#unfoundedModal"
+    id="unfoundedModalTrigger">
+    Trigger "unfounded" Modal
+</button>
+<!-- Modal -->
+<div class="modal fade" id="unfoundedModal" tabindex="-1" aria-labelledby="unfoundedModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title text-darkgreen fs-5" id="unfoundedModalLabel">No Player Found</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                The search has found 0 players. Please, check the syntax and retry.
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

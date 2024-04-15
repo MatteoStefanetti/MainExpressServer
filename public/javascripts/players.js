@@ -4,7 +4,7 @@
 function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = true;
     let formData = extractFormData("searchPlayer");
-    let player = formData.player ? formData.player : false;
+    let player = formData.player;
     if (player) {
         axios.get(`/get_players_by_name/${player}`, {
             headers: {'Content-Type': 'application/json'},
@@ -14,12 +14,10 @@ function searchPlayer(event) {
                 let dataResponse = Array(data.data)[0];
                 document.getElementsByClassName('body-bg').item(0).style.background = 'none';
                 document.getElementById('form-div').classList.add('d-none');
-                document.getElementById('chatPage').classList.add('d-md-flex');
-                let contentDiv = document.getElementById('playerContentFlex');
-                contentDiv.classList.add('col-lg-9');
-                contentDiv.classList.remove('align-items-center');
+                document.getElementById('chatPage').classList.remove('d-player-none');
                 let playerList = document.getElementById('playersList')
                 playerList.parentElement.classList.remove('d-none');
+                changePlayersFormPosition();
                 dataResponse.forEach((player) => {
                     const playerContainer = document.createElement('div');
                     playerContainer.classList.add('col-8', 'col-6', 'col-sm-3', 'col-md-2', 'justify-content-center',
@@ -37,8 +35,19 @@ function searchPlayer(event) {
                     playerList.appendChild(playerContainer);
                 })
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                console.error(err);
+                showUnfoundedMessage();
+            });
+    } else {
+        showUnfoundedMessage();
     }
     event.preventDefault();
     document.getElementById('submitPlayerForm').disabled = false;
+}
+
+function changePlayersFormPosition() {
+    let contentDiv = document.getElementById('playerContentFlex');
+    contentDiv.classList.add('col-lg-9');
+    contentDiv.classList.remove('align-items-center');
 }
