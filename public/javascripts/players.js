@@ -52,9 +52,8 @@ function searchPlayer(event) {
 function changePlayersFormPosition() {
     document.getElementById('formDiv').remove();
     let contentDiv = document.getElementById('playerContentFlex');
-    contentDiv.classList.add('col-lg-9');
     contentDiv.classList.remove('align-items-center', 'd-flex');
-    contentDiv.classList.add('position-relative');
+    contentDiv.classList.add('col-lg-9');
     createPlayersForm();
 }
 
@@ -99,6 +98,6 @@ function createPlayersForm() {
     formOnTopContainer.appendChild(form);
     let container = document.getElementById('playerContentFlex');
     container.insertBefore(formOnTopContainer, container.firstChild);
-    container.classList.add('mx-3', 'mx-md-4', 'px-3', 'px-md-4');
+    container.classList.add('mx-md-4', 'px-md-4');
     document.getElementById('submitPlayerForm').addEventListener('click', searchPlayer);
 }
