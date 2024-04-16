@@ -12,18 +12,18 @@ function searchPlayer(event) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
-                document.getElementsByClassName('body-bg').item(0).style.background = 'none';
-                document.getElementById('chatPage').classList.remove('d-player-none');
                 let playerList = document.getElementById('playersList')
                 if(playerList.parentElement.classList.contains('d-none')) {
+                    document.body.classList.remove('body-bg');
                     playerList.parentElement.classList.remove('d-none');
                     changePlayersFormPosition();
+                    document.getElementById('chatPage').classList.add('d-lg-flex');
                 }
                 playerList.replaceChildren();
                 dataResponse.forEach((player) => {
                     const playerContainer = document.createElement('div');
-                    playerContainer.classList.add('col-8', 'col-6', 'col-sm-3', 'col-md-2', 'justify-content-center',
-                        'align-items-center', 'mb-4');
+                    playerContainer.classList.add('col-10', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
+                        'align-items-center', 'mb-4', 'px-0');
                     let clickableContent = document.createElement('a');
                     clickableContent.href = 'single_page/player/' + String(player.playerId);
                     clickableContent.classList.add('text-dark');

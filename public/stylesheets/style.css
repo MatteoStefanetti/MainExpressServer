@@ -219,6 +219,13 @@ input:focus , button:not(.custom-accordion):focus {
   background-color: var(--lightgreen) !important;
 }
 
+@media (min-width: 456px) and (max-width: 576px) {
+  .col-xs-6 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+}
+
 /* ----------- Forms ----------- */
 
 .vertical-separator {
