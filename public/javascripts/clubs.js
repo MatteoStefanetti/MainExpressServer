@@ -11,7 +11,7 @@ async function initClubs() {
     flags.forEach((value, key) => {
         createAccordion('clubAccordion', key);
     })
-    document.getElementById('submitClubForm').onclick = searchClubs;
+    document.getElementById('submitClubForm').addEventListener('click', searchClubs);
 }
 
 /** This function creates an HTML element with the following structure:
@@ -148,16 +148,17 @@ function searchClubs(event) {
                         'clubName': String(dataResponse[i].clubName),
                         'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
                 }
-                let unList = document.getElementById('clubResults');
-                unList.classList.add('nav', 'px-2', 'flex-column');
                 document.getElementById('clubAccordion').classList.add('d-none');
-                document.getElementById('clubResults').classList.remove('d-none');
+                let unList = document.getElementById('clubResults');
+                unList.replaceChildren();
+                unList.classList.add('nav', 'px-2', 'flex-column');
+                unList.classList.remove('d-none');
                 let elementCounter = 0;
                 dataList.forEach((value, key) => {
                     createListItem(dataList.size, unList, elementCounter++, key, value.clubName);
                 })
                 // Adding the 'load more...' element
-                if(dataList.size > 30) {
+                if(dataList.size > 20) {
                     let loadMoreElem = document.createElement('li');
                     loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
                     loadMoreElem.id = String('searcherLoader');
@@ -170,12 +171,12 @@ function searchClubs(event) {
                 }
             })
             .catch(err => {
-                console.error(err);
                 showUnfoundedMessage();
             })
     } else {
         showUnfoundedMessage();
     }
+    event.preventDefault();
     document.getElementById('submitClubForm').disabled = false;
 }
 
@@ -206,7 +207,7 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
     if (elementCounter !== (size - 1))
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
-    if (elementCounter > Math.floor(size / 2))
+    if (size > 20 && elementCounter > Math.floor(size / 2))
         listItem.classList.add('d-none');
     listItem.id = String(id);
     let imgContainer = document.createElement('div')
