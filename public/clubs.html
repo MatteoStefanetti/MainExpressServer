@@ -35,14 +35,14 @@
     </div>
     <!-- Content -->
     <div class="row m-0 align-content-stretch" id="contentHeight">
-        <div class="col-*-12 col-lg-9 p-0 px-3 px-md-0 justify-content-center">
+        <div class="col-12 col-lg-9 p-0 px-3 px-md-0 justify-content-center">
             <!-- Things to add -->
-            <div class="align-items-center mx-*-3 mx-md-4 px-3 px-md-4 position-relative">
+            <div class="align-items-center mx-3 mx-md-4 px-3 px-md-4 position-relative">
                 <div class="d-block d-sm-flex position-sticky top-form-container pt-md-3 mb-md-1">
                     <p class="h4 fw-bold p-0 ps-md-2 mb-2 mb-sm-0 me-3 text-center">Clubs</p>
-                    <hr class="d-none d-sm-flex bg-light opacity-75 me-3" style="rotate: 90deg; width: calc(1.275rem + 0.3vw)">
+                    <hr class="d-none d-sm-flex bg-light opacity-75 me-3 vertical-separator">
                     <form class="form d-flex justify-content-start align-items-center ms-3 ms-sm-0" id="searchClub">
-                        <label for="searchBar" class="visibility-hidden" aria-hidden="true"></label>
+                        <label for="searchBar" class="d-none" aria-hidden="true">search</label>
                         <input type="text" name="searchBar" id="searchBar" class="form-control rounded-4 w-75 py-1 px-2 fst-italic" placeholder="Search a club name..."/>
                         <button type="submit" class="ms-2 btn rounded-circle btn-search" id="submitClubForm">
                             <span class="bi bi-search text-lightgreen fs-5"></span>
@@ -50,7 +50,6 @@
                     </form>
                 </div>
                 <!-- Accordions -->
-
                 <div class="accordion mb-4 px-2" id="clubAccordion">
                 </div>
 
@@ -60,8 +59,32 @@
             </div>
         </div>
         <!-- Chat div (default set on d-none) -->
-        <iframe src="/chat.html" class="p-0 col-3 d-none d-lg-block h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
+        <iframe src="/chat.html" class="p-0 col-lg-3 d-none d-lg-block h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
     </div>
+
+
+    <!-- Modals: 1. unfoundedModal (hidden by default) -->
+    <div class="">
+        <button type="button" class="btn d-none" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#unfoundedModal"
+                id="unfoundedModalTrigger">
+            Trigger "unfounded" Modal
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="unfoundedModal" tabindex="-1" aria-labelledby="unfoundedModalLabel" aria-hidden="true">
+            <div class="modal-dialog mx-auto">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title text-darkgreen fw-bold fs-5" id="unfoundedModalLabel">No Player Found</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        The search has found <b>0 players</b>. Please, check the syntax and retry.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <!-- Footer -->
 <div class="d-sm-flex d-lg-block justify-content-center w-100" id="customFooter">
@@ -73,28 +96,6 @@
             <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Terms of Use</a></li>
             <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Privacy & Cookie Policy</a></li>
         </ul>
-    </div>
-</div>
-
-<!-- Modals: 1. unfoundedModal (hidden by default) -->
-<div class="position-relative">
-    <button type="button" class="btn d-none" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#unfoundedModal"
-            id="unfoundedModalTrigger">
-        Trigger "unfounded" Modal
-    </button>
-    <!-- Modal -->
-    <div class="modal fade" id="unfoundedModal" tabindex="-1" aria-labelledby="unfoundedModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title text-darkgreen fw-bold fs-5" id="unfoundedModalLabel">No Player Found</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    The search has found 0 players. Please, check the syntax and retry.
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
