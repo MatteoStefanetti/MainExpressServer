@@ -1,6 +1,7 @@
 let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
 let roomName = 'global';
 const chatSocket = io();
+let chat_messages = {}
 
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
 if(!localStorage.getItem('isChatOpened'))
@@ -182,7 +183,8 @@ function writeOnChat(userId, text) {
  * @param room the selected room
  * @param userId the userName */
 function hideLoginInterface(room, userId) {
-    // @todo set the GUI properties
+    document.getElementById('loginForm').classList.add('d-none')
+    document.getElementById('chat').classList.remove('d-none')
 }
 
 /** It hides the chat and shows the initial form.
@@ -190,5 +192,7 @@ function hideLoginInterface(room, userId) {
  * @param userId the userName */
 function logOutFromChat(room, userId){
     chatSocket.emit('disconnect', room, userId)
+    document.getElementById('loginForm').classList.remove('d-none')
+    document.getElementById('chat').classList.add('d-none')
     // todo
 }

@@ -40,14 +40,15 @@
     </div>
 
     <!-- Chat Opened  -->
-    <div class=" d-none p-0 d-lg-flex border-start h-100 bg-light align-self-stretch chat-position end-0 bottom-0" id="chatDiv">
-        <div class="d-block w-100">
-            <div class="d-block w-100" id="chatLandingElems">
+    <div class=" d-none p-0 d-lg-flex border-start h-100 bg-light align-self-stretch chat-position w-100 end-0 bottom-0" id="chatDiv">
+        <div class="d-block w-100 h-100">
+            <div class="d-block w-100 h-100" id="chatLandingElems">
                 <div class="p-3 bg-dark">
                     <p class="h5 text-light text-center fw-bold">This space can be yours!<br>Call +44 391 3004242
                     </p>
                 </div>
-                <div class="row my-2 align-items-center" id="chatHeader">
+                <!-- Chat header -->
+                <div class="row my-2 align-items-center border-bottom-1 border-dark" id="chatHeader">
                     <button type="button" class="btn-close fs-5 col-2 ms-1 p-2" aria-label="Close" id="closeChat"></button>
                     <p class="text-lightgreen col-10 flex-grow-1" id="chatHeaderText"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
                 </div>
@@ -55,9 +56,9 @@
                 <div class="mx-auto d-block w-75" id="loginForm">
                     <form class="form" id="chatLoginForm">
                         <label for="customName" class="form-label"><b>Choose your username:</b></label>
-                        <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customName" id="customName" placeholder="Guest">
+                        <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customName" id="customName" maxlength="16" placeholder="Guest">
                         <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary">(or create one)</i></label>
-                        <input class="form-control rounded-4 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" placeholder="global">
+                        <input class="form-control rounded-4 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" maxlength="16" placeholder="global">
                         <datalist id="roomsList"></datalist>
                         <div class="d-flex align-items-center mt-1 mb-4">
                             <input class="form-check-input me-2" type="checkbox" name="makePublic" id="makePublic">
@@ -66,10 +67,15 @@
                         <button class="btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
                     </form>
                 </div>
-            </div>
-            <!-- Chat -->
-            <div id="chat">
-
+                <!-- Chat -->
+                <div class="d-none w-100 h-100 border-top d-flex flex-column" style="background-color: #ffffff" id="chat">
+                    <form class="form bg-light p-2 border-top" id="textField">
+                        <input class="form-control rounded-4 w-100 fst-italic" type="text" name="textInput" id="textInput" placeholder="Write here">
+                    </form>
+                    <div id="messages">
+                        nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura, che la retta via era smarrita
+                    </div>
+                </div>
             </div>
             <!-- Chat Terms Div-->
             <div class="w-100 h-75 mt-1 position-absolute end-0 bottom-0" id="chatTerms">
