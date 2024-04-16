@@ -55,7 +55,7 @@
                     <p class="h1 text-center text-lightgreen rubik-glitch-font">Search a Player</p>
                 </div>
                 <div class="col-12 p-0 d-flex justify-content-center align-items-center">
-                    <form class="form w-100 d-flex justify-content-center align-items-center" name="searchPlayer" id="searchPlayer">
+                    <form class="form w-100 d-flex justify-content-center align-items-center" id="searchPlayer">
                         <label for="searchBar" class="d-none" aria-hidden="true">Player</label>
                         <input class="form-control rounded-5 w-75 py-1 px-2 ps-sm-3 pe-sm-5 fs-5 fst-italic" type="text" id="searchBar" placeholder="Search a player..." name="searchBar">
                         <button class="btn btn-small ms-2 ms-md-3 rounded-circle btn-search-to-white" type="submit" name="submitPlayerForm" id="submitPlayerForm">
@@ -69,22 +69,20 @@
         <iframe src="/chat.html" class="p-0 col-lg-3 d-none h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
     </div>
 
-
     <!-- Modals: 1. unfoundedModal (hidden by default) -->
     <button type="button" class="btn d-none" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#unfoundedModal"
-            id="unfoundedModalTrigger">
-        Trigger "unfounded" Modal
+            id="unfoundedModalTrigger">Trigger "unfounded" Modal
     </button>
     <!-- Modal -->
     <div class="modal fade" id="unfoundedModal" tabindex="-1" aria-labelledby="unfoundedModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog mx-auto">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title text-darkgreen fs-5" id="unfoundedModalLabel">No Player Found</h1>
+                    <h1 class="modal-title text-darkgreen fw-bold fs-5" id="unfoundedModalLabel">No Player Found</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    The search has found 0 players. Please, check the syntax and retry.
+                    The search has found <b>0 players</b>. Please, check the syntax and retry.
                 </div>
             </div>
         </div>

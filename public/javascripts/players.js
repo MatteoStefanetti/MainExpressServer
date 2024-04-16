@@ -38,11 +38,9 @@ function searchPlayer(event) {
                 })
             })
             .catch(err => {
-                console.error(err);
                 showUnfoundedMessage();
             });
     } else {
-        console.log(player)
         showUnfoundedMessage();
     }
     event.preventDefault();

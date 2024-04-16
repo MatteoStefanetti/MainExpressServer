@@ -59,8 +59,32 @@
             </div>
         </div>
         <!-- Chat div (default set on d-none) -->
-        <iframe src="/chat.html" class="p-0 col-3 d-none d-lg-block h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
+        <iframe src="/chat.html" class="p-0 col-lg-3 d-none d-lg-block h-100 z-3 bg-transparent chat-position" id="chatPage"></iframe>
     </div>
+
+
+    <!-- Modals: 1. unfoundedModal (hidden by default) -->
+    <div class="">
+        <button type="button" class="btn d-none" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#unfoundedModal"
+                id="unfoundedModalTrigger">
+            Trigger "unfounded" Modal
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="unfoundedModal" tabindex="-1" aria-labelledby="unfoundedModalLabel" aria-hidden="true">
+            <div class="modal-dialog mx-auto">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title text-darkgreen fw-bold fs-5" id="unfoundedModalLabel">No Player Found</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        The search has found <b>0 players</b>. Please, check the syntax and retry.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <!-- Footer -->
 <div class="d-sm-flex d-lg-block justify-content-center w-100" id="customFooter">
@@ -72,28 +96,6 @@
             <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Terms of Use</a></li>
             <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Privacy & Cookie Policy</a></li>
         </ul>
-    </div>
-</div>
-
-<!-- Modals: 1. unfoundedModal (hidden by default) -->
-<div class="position-relative">
-    <button type="button" class="btn d-none" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#unfoundedModal"
-            id="unfoundedModalTrigger">
-        Trigger "unfounded" Modal
-    </button>
-    <!-- Modal -->
-    <div class="modal fade" id="unfoundedModal" tabindex="-1" aria-labelledby="unfoundedModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title text-darkgreen fw-bold fs-5" id="unfoundedModalLabel">No Player Found</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    The search has found 0 players. Please, check the syntax and retry.
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
