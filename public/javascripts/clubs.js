@@ -11,7 +11,7 @@ async function initClubs() {
     flags.forEach((value, key) => {
         createAccordion('clubAccordion', key);
     })
-    document.getElementById('submitClubForm').onclick = searchClubs;
+    document.getElementById('submitClubForm').addEventListener('click', searchClubs);
 }
 
 /** This function creates an HTML element with the following structure:
@@ -126,7 +126,7 @@ function loadRemainingElements(id) {
 function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
-    let club = formData.searchBar ? formData.searchBar : false;
+    let club = formData.searchBar;
     if (club) {
         axios.get(`/get_clubs_by_string/${club}`, {
             headers: {'Content-Type': 'application/json'},
@@ -141,29 +141,30 @@ function searchClubs(event) {
                         'clubName': String(dataResponse[i].clubName),
                         'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
                 }
-                let unlistToRemove = document.getElementById('clubResults');
-                if (unlistToRemove) {
-                    unlistToRemove.remove();
-                }
-                let unList = document.createElement('div');
-                unList.classList.add('ul', 'list-group-flush', 'mb-4', 'px-2', 'nav', 'px-2', 'flex-column');
-                unList.id = 'clubResults';
-                document.getElementById('things').appendChild(unList);
-                let alternatorCounter = 0;
+                document.getElementById('clubAccordion').classList.add('d-none');
+                let unList = document.getElementById('clubResults');
+                unList.replaceChildren();
+                unList.classList.add('nav', 'px-2', 'flex-column');
+                unList.classList.remove('d-none');
+                let elementCounter = 0;
                 dataList.forEach((value, key) => {
-                    let listItem = createListItem(dataList.size, unList, alternatorCounter, key, value.clubName);
-                    alternatorCounter++;
+                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName);
                     listItem.addEventListener('click', getClubById.bind(null, key));
-                });
+                })
+                // Adding the 'load more...' element
                 if(dataList.size > 20) {
                     createLoadMoreElement(unList, unList.id, loadRemainingElements.bind(null,
                         String(unList.id + 'Loader')));
                 }
-                document.getElementById('clubAccordion').classList.add('d-none');
-                document.getElementById('clubResults').classList.remove('d-none');
-                document.getElementById('submitClubForm').disabled = false;
             })
+            .catch(err => {
+                showUnfoundedMessage();
+            })
+    } else {
+        showUnfoundedMessage();
     }
+    event.preventDefault();
+    document.getElementById('submitClubForm').disabled = false;
 }
 
 /** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
@@ -183,7 +184,7 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     }
 
     let listItem = document.createElement('li');
-    if (elementCounter % 2 !== 0) {
+    if (size === 1 || elementCounter % 2 !== 0) {
         listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
         listItem.style.backgroundImage =
             'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +

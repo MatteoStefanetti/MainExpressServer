@@ -40,7 +40,7 @@ input:focus , button:not(.custom-accordion):focus {
 }
 
 .form-check-input:checked {
-  background-color: var(--darkgreen);
+  background-color: var(--lightgreen);
 }
 
 /* -- Colours -- */
@@ -171,11 +171,6 @@ input:focus , button:not(.custom-accordion):focus {
   }
 }
 
-.chat-position {
-  position: fixed;
-  right: 0;
-}
-
 /* -------------------------------- */
 
 .accordion-item {
@@ -217,6 +212,24 @@ input:focus , button:not(.custom-accordion):focus {
 
 .tuple-btn:active {
   background-color: var(--lightgreen) !important;
+}
+
+/* ----------- Forms ----------- */
+
+.vertical-separator {
+  rotate: 90deg !important;
+  width: calc(1.275rem + 0.3vw);
+}
+
+.top-form-container {
+  align-items: center !important;
+  width: 100% !important;
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-white-rgb), var(--bs-bg-opacity)) !important;
+  padding: 1.5rem 0.5rem 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  z-index: 10;
+  top: var(--header-height)
 }
 
 /* ------------ Footer ------------ */

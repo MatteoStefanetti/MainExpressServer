@@ -61,3 +61,8 @@ function extractFormData(formId) {
     }
     return formData;
 }
+
+/* This function displays a **modal** to give a feedback of an unsuccessful search. */
+function showUnfoundedMessage() {
+    document.getElementById('unfoundedModalTrigger').click();
+}

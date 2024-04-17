@@ -24,3 +24,14 @@
 .btn-search:focus span {
     color: #fff !important;
 }
+
+/* -------- Items of Clubs -------- */
+
+li.nav-item:hover {
+    cursor: pointer;
+}
+
+li.nav-item:hover span {
+    text-decoration: underline;
+    color: var(--lightgreen);
+}
