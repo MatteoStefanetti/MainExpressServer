@@ -94,13 +94,10 @@ function openAccordionClubs(id) {
                     dataList.set(dataResponse[i].clubId, String(dataResponse[i].clubName));
                 }
                 let unList = document.createElement('ul');
-                unList.classList.add('nav', 'px-2', 'flex-column');
+                unList.classList.add('nav', 'flex-column');
                 let alternatorCounter = 0;
                 dataList.forEach((value, key) => {
-                    let listItem = createListItem(dataList.size, unList,
-                        alternatorCounter, key, value);
-                    alternatorCounter++;
-                    listItem.addEventListener('click', getClubById.bind(null, key));
+                    createListItem(dataList.size, unList, alternatorCounter++, key, value, getClubById.bind(null, key));
                 });
                 // Adding the 'load more...' element
                 createLoadMoreElement(unList, id, loadRemainingElements.bind(null, String(id + 'Loader')));
@@ -134,7 +131,9 @@ function searchClubs(event) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
-                console.log(JSON.stringify(dataResponse));
+                dataResponse.sort((st, nd) => {
+                    return String(st.clubName).localeCompare(String(nd.clubName))
+                });
                 let dataList = new Map();
                 for (let i in dataResponse) {
                     dataList.set(dataResponse[i].clubId, {
@@ -148,8 +147,8 @@ function searchClubs(event) {
                 unList.classList.remove('d-none');
                 let elementCounter = 0;
                 dataList.forEach((value, key) => {
-                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName);
-                    listItem.addEventListener('click', getClubById.bind(null, key));
+                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName,
+                        getClubById.bind(null, key));
                 })
                 // Adding the 'load more...' element
                 if(dataList.size > 20) {
@@ -176,8 +175,10 @@ function searchClubs(event) {
  *  as like the alternated color of the list items
  * @param id {string} The **id** set to the `<li>` element.
  * @param text {string} The text to show.
+ * @param clickFunction {() => any} the function **pointer** to bind to the listItem.
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
-function createListItem(size, unorderedList, elementCounter, id, text) {
+function createListItem(size, unorderedList, elementCounter, id, text,
+                        clickFunction) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
         console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
         throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
@@ -226,6 +227,8 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     statsImg.src = '../images/stats_btn_img.svg';
     desktopBtn.appendChild(statsImg);
     listItem.appendChild(desktopBtn);
+    if(clickFunction)
+        listItem.addEventListener('click', clickFunction);
     unorderedList.appendChild(listItem);
     return listItem;
 }
@@ -240,7 +243,7 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
 function createLoadMoreElement(unorderedList, loaderId, actionFunction) {
     if(!unorderedList || !loaderId || !actionFunction) {
         console.log('', unorderedList, '\n', loaderId, '\n', actionFunction);
-        throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
+        throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement\'!');
     }
     let loadMoreElem = document.createElement('li');
     loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
