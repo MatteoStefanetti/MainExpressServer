@@ -15,6 +15,7 @@ function initChat() {
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
     document.getElementById("submitForm").onclick =  connectToRoom;
+    document.getElementById("leaveButton").onclick =  leaveRoom;
     if(localStorage.getItem('acceptedChatTerms'))
         closeChatTerms();
     initChatSocket();
@@ -113,8 +114,10 @@ function initChatSocket() {
         let chatHeader = document.getElementById("chatHeader")
         chatHeader.classList.add('bg-light','border_bottom')
         let chatHeaderText = document.getElementById('chatHeaderText')
-        chatHeaderText.classList.add('h2','h-75')
-        chatHeaderText.innerText = roomName
+        chatHeaderText.classList.add('h2', 'h-75')
+        chatHeaderText.innerHTML =roomName
+        let leaveButton = document.getElementById('leaveButton')
+        leaveButton.classList.remove('d-none')
     })
 
     /** It receives a list of all rooms opened with the server and add them to the list of rooms in the chat form*/
@@ -195,4 +198,8 @@ function logOutFromChat(room, userId){
     document.getElementById('loginForm').classList.remove('d-none')
     document.getElementById('chat').classList.add('d-none')
     // todo
+}
+
+function leaveRoom() {
+    // check if logOutFromChat is useful
 }
