@@ -103,15 +103,7 @@ function openAccordionClubs(id) {
                     listItem.addEventListener('click', getClubById.bind(null, key));
                 });
                 // Adding the 'load more...' element
-                let loadMoreElem = document.createElement('li');
-                loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
-                loadMoreElem.id = String(id + 'Loader');
-                let loaderSpan = document.createElement('span');
-                loaderSpan.classList.add('text-center', 'px-5');
-                loaderSpan.innerText = 'Load more...';
-                loadMoreElem.appendChild(loaderSpan);
-                loadMoreElem.addEventListener('click', loadRemainingElements.bind(null, String(id + 'Loader')));
-                unList.appendChild(loadMoreElem);
+                createLoadMoreElement(unList, id, loadRemainingElements.bind(null, String(id + 'Loader')));
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
@@ -142,6 +134,7 @@ function searchClubs(event) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
+                console.log(JSON.stringify(dataResponse));
                 let dataList = new Map();
                 for (let i in dataResponse) {
                     dataList.set(dataResponse[i].clubId, {
@@ -156,18 +149,12 @@ function searchClubs(event) {
                 let elementCounter = 0;
                 dataList.forEach((value, key) => {
                     createListItem(dataList.size, unList, elementCounter++, key, value.clubName);
+                    listItem.addEventListener('click', getClubById.bind(null, key));
                 })
                 // Adding the 'load more...' element
                 if(dataList.size > 20) {
-                    let loadMoreElem = document.createElement('li');
-                    loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
-                    loadMoreElem.id = String('searcherLoader');
-                    let loaderSpan = document.createElement('span');
-                    loaderSpan.classList.add('text-center', 'px-5');
-                    loaderSpan.innerText = 'Load more...';
-                    loadMoreElem.appendChild(loaderSpan);
-                    loadMoreElem.addEventListener('click', loadRemainingElements.bind(null, String('searcherLoader')));
-                    unList.appendChild(loadMoreElem);
+                    createLoadMoreElement(unList, unList.id, loadRemainingElements.bind(null,
+                        String(unList.id + 'Loader')));
                 }
             })
             .catch(err => {
@@ -192,8 +179,8 @@ function searchClubs(event) {
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
 function createListItem(size, unorderedList, elementCounter, id, text) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
-        console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text)
-        throw TypeError('Invalid argument(s) passed to \'createListItem\'!')
+        console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
+        throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
     }
 
     let listItem = document.createElement('li');
@@ -243,3 +230,25 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     return listItem;
 }
 
+/**
+ *
+ * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
+ *  to which add item created.
+ * @param loaderId {string} The id, concatenated to the _"Loader"_ string, to set the id of the element,
+ *  useful to identify the list of which elements will be shown.
+ * @param actionFunction {() => {}} A function *pointer* to set the listener of the _"load more"_. */
+function createLoadMoreElement(unorderedList, loaderId, actionFunction) {
+    if(!unorderedList || !loaderId || !actionFunction) {
+        console.log('', unorderedList, '\n', loaderId, '\n', actionFunction);
+        throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
+    }
+    let loadMoreElem = document.createElement('li');
+    loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
+    loadMoreElem.id = String(loaderId + 'Loader');
+    let loaderSpan = document.createElement('span');
+    loaderSpan.classList.add('text-center', 'px-5');
+    loaderSpan.innerText = 'Load more...';
+    loadMoreElem.appendChild(loaderSpan);
+    loadMoreElem.addEventListener('click', actionFunction);
+    unorderedList.appendChild(loadMoreElem);
+}
