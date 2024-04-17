@@ -40,7 +40,7 @@ input:focus , button:not(.custom-accordion):focus {
 }
 
 .form-check-input:checked {
-  background-color: var(--darkgreen);
+  background-color: var(--lightgreen);
 }
 
 /* -- Colours -- */
@@ -171,11 +171,6 @@ input:focus , button:not(.custom-accordion):focus {
   }
 }
 
-.chat-position {
-  position: fixed;
-  right: 0;
-}
-
 /* -------------------------------- */
 
 .accordion-item {
@@ -217,13 +212,6 @@ input:focus , button:not(.custom-accordion):focus {
 
 .tuple-btn:active {
   background-color: var(--lightgreen) !important;
-}
-
-@media (min-width: 456px) and (max-width: 576px) {
-  .col-xs-6 {
-    flex: 0 0 auto;
-    width: 50%;
-  }
 }
 
 /* ----------- Forms ----------- */

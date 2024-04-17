@@ -22,8 +22,8 @@ function searchPlayer(event) {
                 playerList.replaceChildren();
                 dataResponse.forEach((player) => {
                     const playerContainer = document.createElement('div');
-                    playerContainer.classList.add('col-10', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
-                        'align-items-center', 'mb-4', 'px-0');
+                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
+                        'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
                     clickableContent.href = 'single_page/player/' + String(player.playerId);
                     clickableContent.classList.add('text-dark');

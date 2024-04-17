@@ -197,7 +197,7 @@ function createListItem(size, unorderedList, elementCounter, id, text) {
     }
 
     let listItem = document.createElement('li');
-    if (elementCounter % 2 !== 0) {
+    if (size === 1 || elementCounter % 2 !== 0) {
         listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
         listItem.style.backgroundImage =
             'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
