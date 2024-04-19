@@ -49,9 +49,12 @@
             </div>
             <!-- Chat header -->
             <div class="row my-2 align-items-center border-bottom-1 border-dark" id="chatHeader">
-                <button type="button" class="btn-close fs-5 col-2 ms-1 p-2" aria-label="Close" id="closeChat"></button>
-                <p class="text-lightgreen text-wrap col flex-grow-1 text-sm-start" id="chatHeaderText"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
-                <button class="col-3 btn btn-lightgreen rounded-5 px-3 py-0 text-light me-2 d-none text-sm-center" name="leaveButton" id="leaveButton">leave</button>
+                <button type="button" class="btn-close fs-5 col-2 ms-1 p-2 " aria-label="Close" id="closeChat"></button>
+                <p class="text-lightgreen text-wrap col-5 flex-grow-1 text-sm-start px-1" id="chatLoginHeader"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
+                <p class="text-lightgreen text-wrap col-5 flex-grow-1 text-sm-start px-1 fs-3 h-75 d-none" id="chatName"></p>
+                <div class="d-flex col-4 me-sm-3 px-2 d-none justify-content-end" id="leaveBtnDiv">
+                    <button class="btn btn-lightgreen rounded-5 px-2 px-lg-3 py-0 text-light text-end" id="leaveButton">Leave</button>
+                </div>
             </div>
             <!-- Chat LogIn Form -->
             <div class="mx-auto d-block w-75" id="loginForm">
@@ -61,11 +64,12 @@
                     <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary">(or create one)</i></label>
                     <input class="form-control rounded-4 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" maxlength="10" placeholder="global">
                     <datalist id="roomsList"></datalist>
-                    <div class="d-flex align-items-center mt-1 mb-4">
-                        <input class="form-check-input border-lightgreen me-2" type="checkbox" name="makePublic" id="makePublic">
-                        <label for="makePublic" class="form-check-label" style="font-size: 0.9rem">Make it visible to everyone</label>
+                    <input class="form-check-input border-lightgreen ms-1 mt-1 mb-4 me-2" type="checkbox" name="makePublic" id="makePublic">
+                    <label for="makePublic" class="form-check-label" style="font-size: 0.9rem">Make it public</label>
+
+                    <div class="col-12">
+                        <button class=" btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
                     </div>
-                    <button class="btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
                 </form>
             </div>
             <!-- Chat -->
@@ -75,15 +79,13 @@
                 </form>
                 <div id="messages">
                     nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura, che la retta via era smarrita
-
                 </div>
             </div>
         </div>
-        <!-- Chat Terms Div-->
+        <!-- Chat Terms Div -->
         <div class="w-100 h-75 mt-1 position-absolute end-0 bottom-0" id="chatTerms">
             <div class="position-relative">
-                <div class="w-100 position-fixed"
-                     style="height: 0.5rem; background-color: #c4c4c4; z-index: 10"></div>
+                <div class="w-100 position-fixed" style="height: 0.5rem; background-color: #c4c4c4; z-index: 10"></div>
             </div>
             <div class="container p-3">
                 <p class="h5 fw-bold mb-2">Warning!</p>

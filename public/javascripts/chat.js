@@ -113,11 +113,16 @@ function initChatSocket() {
         }
         let chatHeader = document.getElementById("chatHeader")
         chatHeader.classList.add('bg-light','border_bottom')
-        let chatHeaderText = document.getElementById('chatHeaderText')
-        chatHeaderText.classList.add('h2', 'h-75')
-        chatHeaderText.innerHTML =roomName
-        let leaveButton = document.getElementById('leaveButton')
-        leaveButton.classList.remove('d-none')
+
+        let chatName = document.getElementById('chatName')
+        chatName.innerHTML =roomName
+        chatName.classList.remove('d-none')
+
+        let chatLoginHeader = document.getElementById("chatLoginHeader")
+        chatLoginHeader.classList.add('d-none')
+
+        let leaveBtnDiv = document.getElementById('leaveBtnDiv')
+        leaveBtnDiv.classList.remove('d-none')
     })
 
     /** It receives a list of all rooms opened with the server and add them to the list of rooms in the chat form*/
@@ -137,6 +142,7 @@ function initChatSocket() {
 
     chatSocket.on('leave conversation', (room, userID) => {
         writeOnChat(room, userID, "leaved the conversation")
+
     })
 
     chatSocket.on('disconnect', function(room, userId){
@@ -154,15 +160,31 @@ function sendChatText() { // @todo
 
 function connectToRoom(event) {//connect button function
     document.getElementById('submitForm').disabled = true
-    // @todo: able log out button
+
     let formData = extractFormData("chatLoginForm");
+    console.log(formData.makePublic.checked)
     chatUserName = !formData.customName ? chatUserName : formData.customName
     roomName = !formData.customRoom ? roomName : formData.customRoom
-    chatSocket.emit('create or join', roomName, chatUserName)
+    chatSocket.emit('create or join', roomName, chatUserName, formData.makePublic)
 
     event.preventDefault();
 }
 
+function leaveRoom(event) {
+    //@todo check if {link @logOutFromChat} is useful
+    chatSocket.emit('remove conversation', roomName, chatUserName)
+    document.getElementById('loginForm').classList.remove('d-none')
+    document.getElementById('chat').classList.add('d-none')
+    document.getElementById('chatName').classList.add('d-none')
+    document.getElementById('chatLoginHeader').classList.remove('d-none')
+    document.getElementById('leaveBtnDiv').classList.add('d-none')
+
+    let chatHeader = document.getElementById("chatHeader")
+    chatHeader.classList.remove('bg-light','border_bottom')
+    document.getElementById('submitForm').disabled = false
+
+    event.preventDefault();
+}
 
 
 /** It appends the given html text to the chat div
@@ -200,6 +222,3 @@ function logOutFromChat(room, userId){
     // todo
 }
 
-function leaveRoom() {
-    // check if logOutFromChat is useful
-}

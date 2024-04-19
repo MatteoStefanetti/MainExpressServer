@@ -16,10 +16,11 @@ module.exports = function(io) {
                 /** It creates or joins a room
                  * @param room The effective chat in which the messages will be sent.
                  * @param userId It will be the user who joined the room */
-                socket.on('create or join', function (room, userId) {
+                socket.on('create or join', function (room, userId, public) {
                     socket.join(room);
                     chat.to(room).emit('joined', room, userId);
-                    addUserToRoom(room)
+                    if(roomsMap.has(room) || public)
+                        addUserToRoom(room)
                 });
 
                 /** It uses the chat function
