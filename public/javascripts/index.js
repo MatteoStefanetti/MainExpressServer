@@ -4,6 +4,7 @@ function initHome() {
     // @todo initialize the GUI
     // Calling homepage routes
     commonInitOfPage();
+    setCarouselPageHeight();
 }
 
 function initPlayers(){
