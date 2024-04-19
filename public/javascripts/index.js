@@ -56,7 +56,7 @@ function extractFormData(formId) {
     let formData={};
     for (let ix = 0; ix < formElements.length; ix++) {
         if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].value;
+            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
         }
     }
     return formData;
