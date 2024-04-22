@@ -1,8 +1,6 @@
 
 /** Called by the index.html page. */
 function initHome() {
-    // @todo initialize the GUI
-    // Calling homepage routes
     commonInitOfPage();
     setCarouselPageHeight();
 }
