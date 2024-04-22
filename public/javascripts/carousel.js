@@ -11,7 +11,7 @@ function initCarousel() {
     let state = 0;
     /* Defining which style to apply to the carousel */
     setHeader();
-    let retrieveStr = '', styleStr = '';
+    let retrieveStr = '', styleStr = '', elementsNumber = 12;
     const sliderWrapper = document.getElementById('slider-wrapper');
     if(window.name) {
         try {
@@ -48,7 +48,7 @@ function initCarousel() {
             // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
             break;
         default: /* Standard creation of elements */
-            createDefaultCarouselElements(12, sliderWrapper);
+            createDefaultCarouselElements(elementsNumber, sliderWrapper);
     }
 
     let carousel_prev = document.getElementById('carousel_prev');
@@ -56,12 +56,13 @@ function initCarousel() {
     carousel_prev.addEventListener('click', slideCarouselPrev.bind(carousel_prev, carousel_next));
     carousel_next.addEventListener('click', slideCarouselNext.bind(carousel_next, carousel_prev));
     toggleButton(carousel_prev, true);
+    if(state >= Math.floor(sliderWrapper.children.length / getShownElementsNumber(sliderWrapper)) - 1)
+        toggleButton(carousel_next, true);
 
     /** **Local** function used to slide the carousel towards **left**. */
     function slideCarouselPrev(otherBtn) {
         let wrapper = document.getElementById('slider-wrapper');
-        const elementWidth = wrapper.firstElementChild.offsetWidth;
-        const elementsNum = Math.round(100 / ((elementWidth / wrapper.offsetWidth) * 100));
+        const elementsNum = getShownElementsNumber(wrapper);
         if(state > 0) {
             if(otherBtn.disabled)
                 toggleButton(otherBtn, false);
@@ -70,16 +71,15 @@ function initCarousel() {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
                 elem.style.transition = "transform 0.9s ease-in-out";
             }
-            if(state <= 0)
-                toggleButton(this, true);
         }
+        if(state <= 0)
+            toggleButton(this, true);
     }
 
     /** **Local** function used to slide the carousel towards **right**. */
     function slideCarouselNext(otherBtn) {
         let wrapper = document.getElementById('slider-wrapper');
-        const elementWidth = wrapper.firstElementChild.offsetWidth;
-        const elementsNum = Math.round(100 / ((elementWidth / wrapper.offsetWidth) * 100));
+        const elementsNum = getShownElementsNumber(wrapper);
         if(state < Math.floor(wrapper.children.length / elementsNum) - 1) {
             if(otherBtn.disabled)
                 toggleButton(otherBtn, false);
@@ -88,9 +88,9 @@ function initCarousel() {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
                 elem.style.transition = "transform 1s ease-in-out";
             }
-            if(state >= Math.floor(wrapper.children.length / elementsNum) - 1)
-                toggleButton(this, true);
         }
+        if(state >= Math.floor(wrapper.children.length / elementsNum) - 1)
+            toggleButton(this, true);
     }
 }
 
@@ -154,4 +154,10 @@ function createDefaultCarouselElements(n, wrapperElement) {
             'text-center carousel-elements-size">' + String((i+1)) + '</div>';
         wrapperElement.appendChild(containerDiv);
     }
+}
+
+/** **Optimized** function to retrieve the current number of elements shown in the viewport.
+ * @param wrapper {HTMLElement} The _slider-wrapper_ of the carousel. */
+function getShownElementsNumber(wrapper) {
+    return Math.round(100 / ((wrapper.firstElementChild.offsetWidth / wrapper.offsetWidth) * 100));
 }
