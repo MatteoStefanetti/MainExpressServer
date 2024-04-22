@@ -1,4 +1,3 @@
-
 /** Function used to generate and display players,
  * triggered when the **searchBar** is used in the _player.html_ page. */
 function searchPlayer(event) {
@@ -12,8 +11,9 @@ function searchPlayer(event) {
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
+                let index = 0;
                 let playerList = document.getElementById('playersList')
-                if(playerList.parentElement.classList.contains('d-none')) {
+                if (playerList.parentElement.classList.contains('d-none')) {
                     document.body.classList.remove('body-bg');
                     playerList.parentElement.classList.remove('d-none');
                     changePlayersFormPosition();
@@ -25,17 +25,22 @@ function searchPlayer(event) {
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
                         'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
+                    index++;
                     clickableContent.href = 'single_page/player/' + String(player.playerId);
                     clickableContent.classList.add('text-dark');
                     clickableContent.innerHTML =
-                        '<img src="'+player.imageUrl+'" class="img-fluid d-block border border-5 ' +
-                            'border-darkgreen rounded-4 player-img-size" alt="image not found"/>' +
+                        '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                        'border-darkgreen rounded-4 player-img-size" alt="image not found"/>' +
                         '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
                         '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
                         '</div>';
                     playerContainer.appendChild(clickableContent);
                     playerList.appendChild(playerContainer);
+                    if (index > 24) {
+                        playerContainer.classList.add('d-none');
+                    }
                 })
+                createLoadMoreElement(playerList, showMore.bind(null, playerList));
             })
             .catch(err => {
                 showUnfoundedMessage();
@@ -47,6 +52,36 @@ function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = false;
 }
 
+function createLoadMoreElement(playerList, loadMoreFunction) {
+    //TODO: make the looking of the button good for the website
+    let loadMoreDiv = document.createElement("div");
+    let loadMoreButton = document.createElement('button');
+    loadMoreDiv.id = 'loadMoreDiv';
+    loadMoreDiv.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-2');
+    loadMoreButton.innerText = 'Load more...';
+    loadMoreDiv.appendChild(loadMoreButton);
+    playerList.appendChild(loadMoreDiv);
+    loadMoreButton.addEventListener('click', loadMoreFunction);
+}
+
+function showMore(listContainer) {
+    let index = 0;
+    let children = listContainer.querySelectorAll('*');
+
+    for (let i = 0; index < 24 && i < children.length; i++) {
+        let card = children[i];
+
+        if (card.classList.contains('d-none')) {
+            card.classList.remove('d-none');
+            index++;
+        }
+    }
+
+    if (areAllVisible(children)) {
+        document.getElementById('loadMoreDiv').classList.add('d-none');
+    }
+}
+
 function changePlayersFormPosition() {
     document.getElementById('formDiv').remove();
     let contentDiv = document.getElementById('playerContentFlex');
@@ -55,7 +90,15 @@ function changePlayersFormPosition() {
     createPlayersForm();
 }
 
-
+function areAllVisible(children){
+    for (let i = 0; i < children.length; i++){
+        let card = children[i];
+        if (card.classList.contains('d-none')){
+            return false;
+        }
+    }
+    return true;
+}
 /** The following code will be generated:
  * ```
  * <div class="d-block d-sm-flex position-sticky top-form-container pt-md-3 mb-md-1">
@@ -80,7 +123,7 @@ function createPlayersForm() {
     playersHeader.classList.add('h4', 'fw-bold', 'p-0', 'ps-md-2', 'mb-2', 'mb-sm-0', 'me-3', 'text-center');
     playersHeader.innerText = 'Players';
     formOnTopContainer.appendChild(playersHeader);
-    let verticalSeparator =document.createElement('hr');
+    let verticalSeparator = document.createElement('hr');
     verticalSeparator.classList.add('d-none', 'd-sm-flex', 'bg-light', 'opacity-75', 'me-3', 'vertical-separator');
     formOnTopContainer.appendChild(verticalSeparator);
     let form = document.createElement('form');
@@ -89,7 +132,7 @@ function createPlayersForm() {
     form.innerHTML =
         '<label for="searchBar" class="d-none" aria-hidden="true">search</label> ' +
         '   <input type="text" name="searchBar" id="searchBar" class="form-control rounded-4 w-75 py-1 ' +
-                'px-2 fst-italic" placeholder="Search a player..."/> ' +
+        'px-2 fst-italic" placeholder="Search a player..."/> ' +
         '<button type="submit" class="ms-2 btn rounded-circle btn-search" id="submitPlayerForm"> ' +
         '   <span class="bi bi-search text-lightgreen fs-5"></span> ' +
         '</button>';
