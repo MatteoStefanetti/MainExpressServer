@@ -14,27 +14,24 @@
     <script src="javascripts/carousel.js"></script>
 </head>
 <body onload="initCarousel()" class="overflow-y-hidden">
-<div class="row justify-content-center justify-content-sm-between">
-    <div class="col-1 col-md-1 d-flex justify-content-center align-items-center">
+<!-- Header -->
+<div class="row justify-content-center">
+    <div class="col-1"><button class="btn d-none" disabled aria-hidden="true"></button></div>
+    <div class="row col-8 col-md-10 m-0 p-0 justify-content-center-below-sm">
+        <p class="h4 fw-bold text-capitalize mb-4" id="headerPar"></p>
+    </div>
+    <div class="col-1"><button class="btn d-none" disabled aria-hidden="true"></button></div>
+</div>
+<!-- End of Header! -->
+<div class="row justify-content-center">
+    <div class="col-1 d-flex justify-content-center align-items-center">
         <button id="carousel_prev" class="btn btn-lightgreen rounded-circle">
             <span class="bi bi-chevron-left fs-5 text-center"></span>
         </button>
     </div>
     <div class="row col-8 col-md-10 m-0 p-0 justify-content-start align-items-stretch flex-nowrap overflow-x-hidden h-100" id="slider-wrapper" style="min-height: 90px">
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">a</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">b</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">c</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">d</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">e</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">f</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">g</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">h</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">i</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">j</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">k</div></div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0 "><div class="mx-auto border rounded-4 text-center carousel-elements-size">l</div></div>
     </div>
-    <div class="col-1 col-md-1 d-flex justify-content-center align-items-center">
+    <div class="col-1 d-flex justify-content-center align-items-center">
         <button id="carousel_next" class="btn btn-lightgreen rounded-circle">
             <span class="bi bi-chevron-right fs-5 text-center"></span>
         </button>
