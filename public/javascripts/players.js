@@ -55,14 +55,24 @@ function searchPlayer(event) {
 function createLoadMoreElement(playerList, loadMoreFunction) {
     //TODO: make the looking of the button good for the website
     let loadMoreDiv = document.createElement("div");
-    let loadMoreButton = document.createElement('button');
+    let loadMoreButton = document.createElement('a');
+    //loadMoreButton.classList.add('button');
     loadMoreDiv.id = 'loadMoreDiv';
     loadMoreDiv.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-2');
     loadMoreButton.innerText = 'Load more...';
+    loadMoreButton.onmouseover = function () {
+        loadMoreButton.style.textDecoration = 'underline';
+        loadMoreButton.classList.add('text-darkgreen');
+    }
+    loadMoreButton.onmouseout = function (){
+        loadMoreButton.style.textDecoration = 'none';
+        loadMoreButton.classList.remove('text-darkgreen');
+    }
     loadMoreDiv.appendChild(loadMoreButton);
     playerList.appendChild(loadMoreDiv);
     loadMoreButton.addEventListener('click', loadMoreFunction);
 }
+
 
 function showMore(listContainer) {
     let index = 0;
