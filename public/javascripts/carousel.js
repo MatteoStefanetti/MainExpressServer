@@ -69,7 +69,6 @@ function initCarousel() {
             state--;
             for(let elem of wrapper.children) {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
-                elem.style.transition = "transform 0.9s ease-in-out";
             }
         }
         if(state <= 0)
@@ -86,7 +85,6 @@ function initCarousel() {
             state++;
             for(let elem of wrapper.children) {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
-                elem.style.transition = "transform 1s ease-in-out";
             }
         }
         if(state >= Math.floor(wrapper.children.length / elementsNum) - 1)

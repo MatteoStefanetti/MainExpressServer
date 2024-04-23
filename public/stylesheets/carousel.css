@@ -2,6 +2,14 @@
 #slider-wrapper > div {
     flex: 0 0 auto;
     scroll-snap-align: start !important;
+    transition: transform .9s ease-in-out;
+}
+
+@media (max-width: 576px) {
+    /* Changes only the transition duration */
+    #slider-wrapper > div {
+        transition-duration: .4s;
+    }
 }
 
 .carousel-elements-size {
