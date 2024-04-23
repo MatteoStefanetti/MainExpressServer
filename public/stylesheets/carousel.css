@@ -6,7 +6,7 @@
 }
 
 @media (max-width: 576px) {
-    /* Changes only the transition duration */
+    /* This changes only the transition duration */
     #slider-wrapper > div {
         transition-duration: .4s;
     }

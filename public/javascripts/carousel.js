@@ -1,4 +1,4 @@
-/* The window.name of the carousels need to be specified with the pattern "A_B", where:
+/* The window.name of the carousels needs to be specified with the pattern "A_B", where:
  - A := is the 'class style' chosen for the carousel.
  - B := is the header of the carousel. It has to be written in camelCase,
     to let the correct transformation of the text.
