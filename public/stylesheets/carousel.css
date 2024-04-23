@@ -1,0 +1,33 @@
+
+#slider-wrapper > div {
+    flex: 0 0 auto;
+    scroll-snap-align: start !important;
+    transition: transform .9s ease-in-out;
+}
+
+@media (max-width: 576px) {
+    /* This changes only the transition duration */
+    #slider-wrapper > div {
+        transition-duration: .4s;
+    }
+}
+
+.carousel-elements-size {
+    width: 85%;
+    aspect-ratio: 30 / 31 !important;
+}
+
+@media (min-width: 400px) and (max-width: 576px) {
+    .col-xs-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .carousel-elements-size {
+        height: 100%;
+    }
+}
+
+.height-class {
+    min-height: 150px;
+}

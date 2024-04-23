@@ -14,6 +14,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <link href="stylesheets/style.css" rel="stylesheet" type="text/css">
+    <link href="stylesheets/carousel.css" rel="stylesheet" type="text/css">
+    <script src="javascripts/carousel.js"></script>
     <script src="javascripts/chat.js"></script>
     <script src="javascripts/index.js"></script>
 </head>
@@ -41,22 +43,14 @@
         </nav>
     </div>
     <!-- Content -->
-    <div class="row m-0 align-content-stretch" id="contentHeight">
+    <div class="row m-0 align-content-stretch mb-5" id="contentHeight">
         <!-- Things -->
-        <div class="col-12 col-lg-9 p-0">
-            <div class="container-sm">
-                <p class="h4 fw-bold mt-4">Last Games</p>
-                <div class="row">
-
-                </div>
-                <p class="h4 fw-bold mt-4">Recent Clubs News</p>
-                <div class="row">
-
-                </div>
-                <p class="h4 fw-bold mt-4">Trend Players</p>
-                <div class="row">
-
-                </div>
+        <div class="col-12 col-lg-9 p-0 pb-3">
+            <div class="container-sm mx-auto px-2">
+                <!--<p class="h4 fw-bold mt-4">Last Games</p>-->
+                <iframe src="carousel.html" name="style-0_lastGames" class="w-100 mt-5"></iframe>
+                <iframe src="carousel.html" name="style-0_recentClubsNews" class="w-100 mt-5"></iframe>
+                <iframe src="carousel.html" name="style-0_trendPlayers" class="w-100 mt-5"></iframe>
             </div>
         </div>
         <!-- Chat div (default set on d-none) -->

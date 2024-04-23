@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/carousel.css">
+    <script src="javascripts/index.js"></script>
+    <script src="javascripts/carousel.js"></script>
+</head>
+<body onload="initCarousel()" class="overflow-y-hidden">
+<!-- Header -->
+<div class="row justify-content-center">
+    <div class="col-1"><button class="btn d-none" disabled aria-hidden="true"></button></div>
+    <div class="row col-8 col-md-10 m-0 p-0 justify-content-center-below-sm">
+        <p class="h4 fw-bold text-capitalize mb-4" id="headerPar"></p>
+    </div>
+    <div class="col-1"><button class="btn d-none" disabled aria-hidden="true"></button></div>
+</div>
+<!-- End of Header! -->
+<div class="row justify-content-center">
+    <div class="col-1 d-flex justify-content-center align-items-center">
+        <button id="carousel_prev" class="btn btn-lightgreen rounded-circle">
+            <span class="bi bi-chevron-left fs-5 text-center"></span>
+        </button>
+    </div>
+    <div class="row col-8 col-md-10 m-0 p-0 justify-content-start align-items-stretch flex-nowrap overflow-x-hidden h-100" id="slider-wrapper" style="min-height: 90px">
+    </div>
+    <div class="col-1 d-flex justify-content-center align-items-center">
+        <button id="carousel_next" class="btn btn-lightgreen rounded-circle">
+            <span class="bi bi-chevron-right fs-5 text-center"></span>
+        </button>
+    </div>
+</div>
+</body>
+</html>
