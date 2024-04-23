@@ -205,9 +205,13 @@ function createListItem(size, unorderedList, elementCounter, id, text,
     imgContainer.style.minWidth = '2.75rem';
     imgContainer.style.height = '2.75rem';
     imgContainer.style.minHeight = '2.75rem';
-    imgContainer.style.backgroundColor = 'grey';
-    imgContainer.style.backgroundImage = 'linear-gradient(45deg, grey 2%, lightgrey 55%, white)';
     let clubLogoImg = document.createElement('img');
+    clubLogoImg.classList.add('img');
+    /* the following string refers to the 'transfer-market' website used by the teacher for the assignment.
+     * It uses the ID of the club to which the image is referred to. */
+    clubLogoImg.src = "https://tmssl.akamaized.net/images/wappen/head/" + String(id) + ".png";
+    clubLogoImg.style.maxWidth = '2.75rem';
+    clubLogoImg.style.maxHeight = '2.75rem';
     clubLogoImg.alt = " ";
     imgContainer.appendChild(clubLogoImg);
     listItem.appendChild(imgContainer);
