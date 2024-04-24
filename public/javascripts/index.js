@@ -62,7 +62,18 @@ function extractFormData(formId) {
     return formData;
 }
 
-/* This function displays a **modal** to give a feedback of an unsuccessful search. */
-function showUnfoundedMessage() {
+/** This function displays a **modal** to give a feedback of an unsuccessful search.
+ * @param unfounded {boolean} If set to `true`, this method will return a message of _**unfounded content**_,
+ * otherwise it will display a message of _**too few letters**_ in the input string. */
+function showModalMessage(unfounded) {
+    if(unfounded) {
+        document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
+        document.getElementById('modal-body').innerHTML =
+            'The search has found <b>0 players</b>. Please, check the syntax and retry.';
+    } else {
+        document.getElementById('unfoundedModalLabel').innerText = 'Invalid Input';
+        document.getElementById('modal-body').innerHTML =
+            'At least <b>3 letters</b> are required for a search.';
+    }
     document.getElementById('unfoundedModalTrigger').click();
 }

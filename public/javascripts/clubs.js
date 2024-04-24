@@ -124,7 +124,7 @@ function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
     let club = formData.searchBar;
-    if (club) {
+    if (club && club.length > 2) {
         axios.get(`/get_clubs_by_string/${club}`, {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
@@ -157,10 +157,13 @@ function searchClubs(event) {
                 }
             })
             .catch(err => {
-                showUnfoundedMessage();
+                showModalMessage(true);
             })
     } else {
-        showUnfoundedMessage();
+        if (!club) {
+            location.reload();
+        } else
+            showModalMessage(false);
     }
     event.preventDefault();
     document.getElementById('submitClubForm').disabled = false;
