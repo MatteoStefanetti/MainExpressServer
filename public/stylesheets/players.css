@@ -57,3 +57,13 @@
     margin: 0 auto !important;
 }
 
+.more-players-link:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--darkgreen);
+}
+
+.more-players-link:active {
+    text-decoration-thickness: 2px;
+    color: var(--lightgreen);
+}
