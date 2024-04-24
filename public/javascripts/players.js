@@ -43,7 +43,7 @@ function searchPlayer(event) {
                     playerList.appendChild(playerContainer);
                 })
                 if(dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
-                    createLoadMoreElement(playerList, showMore.bind(null, playerList));
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList));
             })
             .catch(err => {
                 showModalMessage(true);
@@ -55,19 +55,7 @@ function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = false;
 }
 
-function createLoadMoreElement(playerList, loadMoreFunction) {
-    let loadMoreDiv = document.createElement("div");
-    loadMoreDiv.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4');
-    loadMoreDiv.id = 'loadMoreDiv';
-    let loadMoreLink = document.createElement('a');
-    loadMoreLink.classList.add('py-1', 'px-5', 'more-players-link');
-    loadMoreLink.innerText = 'Load more...';
-    loadMoreDiv.appendChild(loadMoreLink);
-    playerList.appendChild(loadMoreDiv);
-    loadMoreLink.addEventListener('click', loadMoreFunction);
-}
-
-/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements everytime it is called. */
+/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements, every time it is called. */
 function showMore(listContainer) {
     let index = 0, i = MAX_ELEMENTS_DISPLAYABLE;
     let children = listContainer.querySelectorAll('*');
@@ -78,7 +66,7 @@ function showMore(listContainer) {
         children[i++].classList.remove('d-none');
     }
     if (i >= children.length - 1)
-        document.getElementById('loadMoreDiv').remove();
+        document.getElementById('morePlayersLoader').remove();
 }
 
 /** Instead of moving the form, we remove it from the document and recreate it. This is because

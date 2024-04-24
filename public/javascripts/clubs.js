@@ -235,26 +235,3 @@ function createListItem(size, unorderedList, elementCounter, id, text,
     unorderedList.appendChild(listItem);
     return listItem;
 }
-
-/**
- *
- * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
- *  to which add item created.
- * @param loaderId {string} The id, concatenated to the _"Loader"_ string, to set the id of the element,
- *  useful to identify the list of which elements will be shown.
- * @param actionFunction {() => {}} A function *pointer* to set the listener of the _"load more"_. */
-function createLoadMoreElement(unorderedList, loaderId, actionFunction) {
-    if(!unorderedList || !loaderId || !actionFunction) {
-        console.log('', unorderedList, '\n', loaderId, '\n', actionFunction);
-        throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement\'!');
-    }
-    let loadMoreElem = document.createElement('li');
-    loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
-    loadMoreElem.id = String(loaderId + 'Loader');
-    let loaderSpan = document.createElement('span');
-    loaderSpan.classList.add('text-center', 'px-5');
-    loaderSpan.innerText = 'Load more...';
-    loadMoreElem.appendChild(loaderSpan);
-    loadMoreElem.addEventListener('click', actionFunction);
-    unorderedList.appendChild(loadMoreElem);
-}

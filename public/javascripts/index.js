@@ -62,6 +62,37 @@ function extractFormData(formId) {
     return formData;
 }
 
+/** This function creates a HTMLElement to moderate the result deployment.
+ * @param parentList {HTMLElement} The {@link HTMLElement} to which add the item created.
+ * @param partialId {string} The **PARTIAL** id of the element container,
+ * useful to retrieve the element and remove it if necessary.
+ * @param loadMoreFunction {() => any} A function *pointer* to set the listener of the _"load more"_.
+ * @throws Typeerror if one or more arguments are _null_ or _undefined_. */
+function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
+    if(!parentList || !partialId || !loadMoreFunction) {
+        console.error('', parentList, '\n', partialId, '\n', loadMoreFunction);
+        throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement()\'!');
+    }
+    let loadMoreContainer, innerLoadMore;
+    if(parentList.tagName !== 'DIV'){
+        loadMoreContainer = document.createElement('li');
+        loadMoreContainer.classList.add('nav-item', 'mx-auto', 'py-2');
+        innerLoadMore = document.createElement('span');
+        innerLoadMore.classList.add('text-center', 'px-5');
+    } else {
+        /* Assertion: inside these brackets, the parentList is a <div> having the 'row' class. */
+        loadMoreContainer = document.createElement('div');
+        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4');
+        innerLoadMore = document.createElement('a');
+        innerLoadMore.classList.add('py-1', 'px-5', 'more-players-link');
+    }
+    loadMoreContainer.id =  String(partialId) + 'Loader';
+    innerLoadMore.innerText = 'Load more...';
+    innerLoadMore.addEventListener('click', loadMoreFunction);
+    loadMoreContainer.appendChild(innerLoadMore);
+    parentList.appendChild(loadMoreContainer);
+}
+
 /** This function displays a **modal** to give a feedback of an unsuccessful search.
  * @param unfounded {boolean} If set to `true`, this method will return a message of _**unfounded content**_,
  * otherwise it will display a message of _**too few letters**_ in the input string. */
