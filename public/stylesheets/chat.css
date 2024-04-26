@@ -1,5 +1,5 @@
 
-#chatLandingElems {
+#chatDiv {
     max-height: calc(100vh - var(--header-height)) !important;
 }
 

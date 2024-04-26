@@ -41,8 +41,8 @@
 
 <!-- Chat Opened  -->
 <div class=" d-none p-0 d-lg-flex border-start h-100 bg-light align-self-stretch w-100" id="chatDiv">
-    <div class="d-block w-100">
-        <div class="d-block w-100" id="chatLandingElems">
+    <div class="d-block w-100 h-100">
+        <div class="d-flex flex-column w-100 h-100" id="chatLandingElems">
             <div class="p-3 bg-dark">
                 <p class="h5 text-light text-center fw-bold">This space can be yours!<br>Call +44 391 3004242
                 </p>
@@ -73,17 +73,18 @@
                 </form>
             </div>
             <!-- Chat -->
-            <div class="d-none w-100 h-100 bg-white border-top d-flex flex-column-reverse" id="chat">
-                <form class="form bg-light p-2 border-top" id="textField">
-                    <input class="form-control rounded-4 w-100 fst-italic" type="text" name="textInput" id="textInput" placeholder="Write here">
-                </form>
-                <div id="messages">
+            <div class="d-none w-100 bg-white border-top d-flex flex-column flex-grow-1" id="chat">
+                <div class="px-1 flex-grow-1" id="messages">
                     nel mezzo del cammin di nostra vita, mi ritrovai in una selva oscura, che la retta via era smarrita
                 </div>
+                <form class="form bg-light p-2 border-top" id="textField">
+                    <label for="textInput" class="form-label d-none">TextField for the Chat</label>
+                    <input class="form-control rounded-4 w-100 fst-italic" type="text" name="textInput" id="textInput" placeholder="Write here">
+                </form>
             </div>
         </div>
         <!-- Chat Terms Div -->
-        <div class="w-100 h-75 mt-1 position-absolute end-0 bottom-0" id="chatTerms">
+        <div class="w-100 h-75 position-absolute end-0 bottom-0" id="chatTerms">
             <div class="position-relative">
                 <div class="w-100 position-fixed" style="height: 0.5rem; background-color: #c4c4c4; z-index: 10"></div>
             </div>
