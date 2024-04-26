@@ -1,17 +1,20 @@
+
+/** number of the max elements displayable in the playersList */
+const MAX_ELEMENTS_DISPLAYABLE = 24;
+
 /** Function used to generate and display players,
  * triggered when the **searchBar** is used in the _player.html_ page. */
 function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = true;
     let formData = extractFormData("searchPlayer");
     let player = formData.searchBar;
-    if (player) {
+    if (player && player.length > 2) {
         axios.get(`/get_players_by_name/${player}`, {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
         })
             .then(data => {
                 let dataResponse = Array(data.data)[0];
-                let index = 0;
                 let playerList = document.getElementById('playersList')
                 if (playerList.parentElement.classList.contains('d-none')) {
                     document.body.classList.remove('body-bg');
@@ -25,7 +28,6 @@ function searchPlayer(event) {
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
                         'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
-                    index++;
                     clickableContent.href = 'single_page/player/' + String(player.playerId);
                     clickableContent.classList.add('text-dark');
                     clickableContent.innerHTML =
@@ -35,63 +37,40 @@ function searchPlayer(event) {
                         '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
                         '</div>';
                     playerContainer.appendChild(clickableContent);
-                    playerList.appendChild(playerContainer);
-                    if (index > 24) {
+                    if(playerList.children.length >= MAX_ELEMENTS_DISPLAYABLE) {
                         playerContainer.classList.add('d-none');
                     }
+                    playerList.appendChild(playerContainer);
                 })
-                createLoadMoreElement(playerList, showMore.bind(null, playerList));
+                if(dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList));
             })
             .catch(err => {
-                showUnfoundedMessage();
+                showModalMessage(true);
             });
     } else {
-        showUnfoundedMessage();
+        showModalMessage(false);
     }
     event.preventDefault();
     document.getElementById('submitPlayerForm').disabled = false;
 }
 
-function createLoadMoreElement(playerList, loadMoreFunction) {
-    //TODO: make the looking of the button good for the website
-    let loadMoreDiv = document.createElement("div");
-    let loadMoreButton = document.createElement('a');
-    //loadMoreButton.classList.add('button');
-    loadMoreDiv.id = 'loadMoreDiv';
-    loadMoreDiv.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-2');
-    loadMoreButton.innerText = 'Load more...';
-    loadMoreButton.onmouseover = function () {
-        loadMoreButton.style.textDecoration = 'underline';
-        loadMoreButton.classList.add('text-darkgreen');
-    }
-    loadMoreButton.onmouseout = function (){
-        loadMoreButton.style.textDecoration = 'none';
-        loadMoreButton.classList.remove('text-darkgreen');
-    }
-    loadMoreDiv.appendChild(loadMoreButton);
-    playerList.appendChild(loadMoreDiv);
-    loadMoreButton.addEventListener('click', loadMoreFunction);
-}
-
-
+/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements, every time it is called. */
 function showMore(listContainer) {
-    let index = 0;
+    let index = 0, i = MAX_ELEMENTS_DISPLAYABLE;
     let children = listContainer.querySelectorAll('*');
 
-    for (let i = 0; index < 24 && i < children.length; i++) {
-        let card = children[i];
-
-        if (card.classList.contains('d-none')) {
-            card.classList.remove('d-none');
+    while (index < MAX_ELEMENTS_DISPLAYABLE && i < children.length) {
+        if (children[i].classList.contains('d-none'))
             index++;
-        }
+        children[i++].classList.remove('d-none');
     }
-
-    if (areAllVisible(children)) {
-        document.getElementById('loadMoreDiv').classList.add('d-none');
-    }
+    if (i >= children.length - 1)
+        document.getElementById('morePlayersLoader').remove();
 }
 
+/** Instead of moving the form, we remove it from the document and recreate it. This is because
+ * it would be much more difficult to change the classList and the positioning inside the document. */
 function changePlayersFormPosition() {
     document.getElementById('formDiv').remove();
     let contentDiv = document.getElementById('playerContentFlex');
@@ -100,15 +79,6 @@ function changePlayersFormPosition() {
     createPlayersForm();
 }
 
-function areAllVisible(children){
-    for (let i = 0; i < children.length; i++){
-        let card = children[i];
-        if (card.classList.contains('d-none')){
-            return false;
-        }
-    }
-    return true;
-}
 /** The following code will be generated:
  * ```
  * <div class="d-block d-sm-flex position-sticky top-form-container pt-md-3 mb-md-1">

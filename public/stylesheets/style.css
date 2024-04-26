@@ -214,6 +214,17 @@ input:focus , button:not(.custom-accordion):focus {
   background-color: var(--lightgreen) !important;
 }
 
+.more-players-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--lightgreen);
+}
+
+.more-players-link:active {
+  text-decoration-thickness: 2px;
+  color: var(--darkgreen);
+}
+
 /* ----------- Forms ----------- */
 
 .vertical-separator {

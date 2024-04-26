@@ -124,7 +124,7 @@ function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
     let club = formData.searchBar;
-    if (club) {
+    if (club && club.length > 2) {
         axios.get(`/get_clubs_by_string/${club}`, {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
@@ -157,10 +157,13 @@ function searchClubs(event) {
                 }
             })
             .catch(err => {
-                showUnfoundedMessage();
+                showModalMessage(true);
             })
     } else {
-        showUnfoundedMessage();
+        if (!club) {
+            location.reload();
+        } else
+            showModalMessage(false);
     }
     event.preventDefault();
     document.getElementById('submitClubForm').disabled = false;
@@ -231,27 +234,4 @@ function createListItem(size, unorderedList, elementCounter, id, text,
         listItem.addEventListener('click', clickFunction);
     unorderedList.appendChild(listItem);
     return listItem;
-}
-
-/**
- *
- * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
- *  to which add item created.
- * @param loaderId {string} The id, concatenated to the _"Loader"_ string, to set the id of the element,
- *  useful to identify the list of which elements will be shown.
- * @param actionFunction {() => {}} A function *pointer* to set the listener of the _"load more"_. */
-function createLoadMoreElement(unorderedList, loaderId, actionFunction) {
-    if(!unorderedList || !loaderId || !actionFunction) {
-        console.log('', unorderedList, '\n', loaderId, '\n', actionFunction);
-        throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement\'!');
-    }
-    let loadMoreElem = document.createElement('li');
-    loadMoreElem.classList.add('nav-item', 'mx-auto', 'py-2');
-    loadMoreElem.id = String(loaderId + 'Loader');
-    let loaderSpan = document.createElement('span');
-    loaderSpan.classList.add('text-center', 'px-5');
-    loaderSpan.innerText = 'Load more...';
-    loadMoreElem.appendChild(loaderSpan);
-    loadMoreElem.addEventListener('click', actionFunction);
-    unorderedList.appendChild(loadMoreElem);
 }
