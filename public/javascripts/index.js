@@ -88,6 +88,7 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     }
     loadMoreContainer.id =  String(partialId) + 'Loader';
     innerLoadMore.innerText = 'Load more...';
+    innerLoadMore.style.textDecoration = 'underline';
     innerLoadMore.addEventListener('click', loadMoreFunction);
     loadMoreContainer.appendChild(innerLoadMore);
     parentList.appendChild(loadMoreContainer);
