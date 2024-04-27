@@ -1,0 +1,3 @@
+function initSinglePage() {
+    commonInitOfPage();
+}
