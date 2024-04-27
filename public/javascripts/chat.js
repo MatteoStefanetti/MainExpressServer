@@ -77,7 +77,7 @@ function setTermsHeight(chatTerms){
     let loginRect = document.getElementById('submitForm').getBoundingClientRect();
     chatTerms.style.minHeight = '100px';
     chatTerms.style.height = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
-    chatTerms.style.maxHeight = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
+    chatTerms.style.maxHeight = String((visualViewport.height - loginRect.bottom - 10)) + 'px'; //@todo: why this?
 }
 
 /** Function called when the terms are accepted.
