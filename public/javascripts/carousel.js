@@ -5,6 +5,8 @@
  o ---------------- o ---------------- o ---------------- o ----------------o */
 
 const OFFSET = 100;
+let elementList;
+const DEFAULT_ELEMENTS_NUMBER = 12;
 
 /** Init function called by the carousel documents inside the <iframe>s. */
 function initCarousel() {
@@ -31,24 +33,22 @@ function initCarousel() {
             // @todo call the functions and show the data (also the cards creation)
             break;
         case 'trendPlayers':
-            // @todo call the functions to retrieve data
+            axios.get('players/get_trend_players', {
+                headers: {'Content-Type': 'application/json'},
+                method: 'get'
+            })
+                .then(data => {
+                    if(elementList)
+                        console.error('not null: ', elementList)
+                    elementList = Array(data.data)[0];
+                    console.log(elementList)        // DEBUG PRINT
+                    createCarouselElements(elementList, sliderWrapper, styleStr);
+                })
+                .catch(err => console.error(err))
             // @todo call the functions and show the data (also the cards creation)
             break;
         default:
-    }
-
-    switch (styleStr) {
-        case 'style-1':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'style-2':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'style-3':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        default: /* Standard creation of elements */
-            createDefaultCarouselElements(elementsNumber, sliderWrapper);
+            createDefaultCarouselElements(sliderWrapper);
     }
 
     let carousel_prev = document.getElementById('carousel_prev');
@@ -134,7 +134,7 @@ function setHeader() {
     }
 }
 
-/** It creates _n_ elements inside the wrapperElement. The style will be as follows:
+/** It creates _DEFAULT_ELEMENTS_NUMBER_ elements inside the wrapperElement. The style will be as follows:
  * ```
  * <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0">
  *   <div class="mx-auto border rounded-4 text-center carousel-elements-size">
@@ -142,10 +142,9 @@ function setHeader() {
  *   </div>
  * </div>
  * ```
- * @param n {number} How many elements to generate inside the carousel.
  * @param wrapperElement {HTMLElement} The wrapper of the carousel. */
-function createDefaultCarouselElements(n, wrapperElement) {
-    for(let i = 0; i < n; i++) {
+function createDefaultCarouselElements(wrapperElement) {
+    for(let i = 0; i < DEFAULT_ELEMENTS_NUMBER; i++) {
         let containerDiv = document.createElement('div');
         containerDiv.classList.add('col-12', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-lg-2', 'px-1', 'py-0');
         containerDiv.innerHTML = '<div class="mx-auto border rounded-4 ' +
@@ -158,4 +157,32 @@ function createDefaultCarouselElements(n, wrapperElement) {
  * @param wrapper {HTMLElement} The _slider-wrapper_ of the carousel. */
 function getShownElementsNumber(wrapper) {
     return Math.round(100 / ((wrapper.firstElementChild.offsetWidth / wrapper.offsetWidth) * 100));
+}
+
+/**
+ * @param listOfElements {Array} The values of the data to show.
+ * If it is _null_ or _undefined_, it will generate default elements.
+ * @param carouselWrapper {HTMLElement} The container _(wrapper)_ inside which the elements will be put.
+ * @param styleString {string} the style string used to define which style is going to be set for the carousel.
+ * If it is _null_ or _undefined_, it will generate default elements. */
+function createCarouselElements(listOfElements, carouselWrapper, styleString) {
+    if(!carouselWrapper)
+        throw new TypeError('Called creation of elements inside an invalid wrapper.');
+    if(!listOfElements) {
+        createDefaultCarouselElements(carouselWrapper);
+        return;
+    }
+    switch (styleString) {
+        case 'style-1':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
+        case 'style-2':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
+        case 'style-3':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
+        default: /* Standard creation of elements */
+            createDefaultCarouselElements(carouselWrapper);
+    }
 }

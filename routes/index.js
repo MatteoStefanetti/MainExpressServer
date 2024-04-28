@@ -6,6 +6,47 @@ router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
+router.get('/players/get_trend_players', async (req, res) => {
+    try{
+        let filledList = [];
+        const firstResponse = await fetch('http://localhost:3002/' +
+            'player_valuations/get_last_players_by_valuations', {
+            headers: { 'Content-Type': 'application/json' }, method: 'get'
+        });
+        if(!firstResponse.ok)
+            res.status(500).json({error: 'Error fetching player_valuations from MongoDB'})
+        const valueList = await firstResponse.json();
+        let playerValueMap = new Map();
+        for (let elem of valueList)
+            playerValueMap.set(elem.player_id, elem.market_value_eur)
+        const secondResponse = await fetch('http://localhost:8081/players/' +
+            'get_players_by_ids/' + String([...playerValueMap.keys()]), {
+            headers: { 'Content-Type': 'application/json' }, method: 'get'
+        });
+        if(!secondResponse.ok)
+            res.status(500).json({error: 'Error fetching players from JPA'})
+        let playerList = await secondResponse.json();
+        if(playerList.length !== valueList.length)
+            res.status(500).json({error: 'Lists retrieved had different sizes.'})
+        /* We have to use a Map, to make sure that every player is associated with his data. */
+        filledList = new Map();
+        for (let i in playerList) {
+            filledList.set(playerList[i].playerId, {
+                'playerName': playerList[i].playerName,
+                'imageUrl': playerList[i].imageUrl,
+                'marketValue': playerValueMap.get(playerList[i].playerId)
+            })
+        }
+        filledList = Array.from(filledList,
+            ([playerId, playerData]) => {return { playerId, ...playerData }})
+        console.log(filledList.slice(-4))
+        res.status(200).json(filledList);
+    } catch (error) {
+        console.error(error)
+        res.status(500).json(JSON.stringify({error: 'Error in \'/trend_players/\' GET.'}))
+    }
+});
+
 router.get('/get_flags', function(req,res,next) {
     fetch('http://localhost:3002/flags/get_all', {
         headers: { 'Content-Type': 'application/json' },
