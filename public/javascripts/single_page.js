@@ -14,13 +14,23 @@ function initSinglePage() {
                 })
                     .then(data => {
                         console.log(data.data);
-
+                        //TODO: build the rest of the page using the data retrieved
                     })
                     .catch(err => console.log(err));
             }
             break;
         case 'club':
-            //TODO: single_page initialization for club
+            if (idParams) {
+                axios.get(`/clubs/get_club_by_id/${idParams}`, {
+                    headers: {'Content-Type': 'application/json'},
+                    method: 'get'
+                })
+                    .then(data => {
+                        console.log(data.data);
+                        //TODO: build the rest of the page using the data retrieved
+                    })
+                    .catch(err => console.log(err));
+            }
             break;
         case 'game':
             //TODO: single_page initialization for game

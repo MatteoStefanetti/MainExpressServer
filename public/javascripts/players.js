@@ -1,4 +1,3 @@
-
 /** number of the max elements displayable in the playersList */
 const MAX_ELEMENTS_DISPLAYABLE = 24;
 
@@ -38,7 +37,7 @@ function searchPlayer(event) {
                         .join('&');
                     let url = 'single_page.html';
 
-                    if (queryString){
+                    if (queryString) {
                         url += '?' + queryString;
                     }
 
@@ -51,12 +50,12 @@ function searchPlayer(event) {
                         '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
                         '</div>';
                     playerContainer.appendChild(clickableContent);
-                    if(playerList.children.length >= MAX_ELEMENTS_DISPLAYABLE) {
+                    if (playerList.children.length >= MAX_ELEMENTS_DISPLAYABLE) {
                         playerContainer.classList.add('d-none');
                     }
                     playerList.appendChild(playerContainer);
                 })
-                if(dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
+                if (dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList));
             })
             .catch(err => {

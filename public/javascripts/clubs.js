@@ -138,7 +138,8 @@ function searchClubs(event) {
                 for (let i in dataResponse) {
                     dataList.set(dataResponse[i].clubId, {
                         'clubName': String(dataResponse[i].clubName),
-                        'domesticLeagueCode': dataResponse[i].domesticLeagueCode});
+                        'domesticLeagueCode': dataResponse[i].domesticLeagueCode
+                    });
                 }
                 document.getElementById('clubAccordion').classList.add('d-none');
                 let unList = document.getElementById('clubResults');
@@ -147,11 +148,10 @@ function searchClubs(event) {
                 unList.classList.remove('d-none');
                 let elementCounter = 0;
                 dataList.forEach((value, key) => {
-                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName,
-                        getClubById.bind(null, key));
+                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName, getClubById.bind(null, key));
                 })
                 // Adding the 'load more...' element
-                if(dataList.size > 20) {
+                if (dataList.size > 20) {
                     createLoadMoreElement(unList, unList.id, loadRemainingElements.bind(null,
                         String(unList.id + 'Loader')));
                 }
@@ -180,14 +180,29 @@ function searchClubs(event) {
  * @param text {string} The text to show.
  * @param clickFunction {() => any} the function **pointer** to bind to the listItem.
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
-function createListItem(size, unorderedList, elementCounter, id, text,
-                        clickFunction) {
+function createListItem(size, unorderedList, elementCounter, id, text, clickFunction) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
         console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
         throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
     }
-
     let listItem = document.createElement('li');
+    let listItemLink = document.createElement('a');
+    let params = {
+        type: 'club',
+        id: String(id)
+    };
+
+    let queryString = Object.keys(params)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&');
+    let url = 'single_page.html';
+    if (queryString) {
+        url += '?' + queryString;
+    }
+
+    listItemLink.href = url;
+
+    listItem.appendChild(listItemLink);
     if (size === 1 || elementCounter % 2 !== 0) {
         listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
         listItem.style.backgroundImage =
@@ -195,15 +210,15 @@ function createListItem(size, unorderedList, elementCounter, id, text,
             ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
             'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
     }
-    listItem.classList.add('nav-item', 'd-flex', 'align-items-center', 'py-2');
+    listItem.classList.add('nav-item');
+    listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
     if (elementCounter !== (size - 1))
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
     if (size > 20 && elementCounter > Math.floor(size / 2))
         listItem.classList.add('d-none');
     listItem.id = String(id);
     let imgContainer = document.createElement('div')
-    imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center',
-        'align-items-center', 'ms-1');
+    imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center', 'align-items-center', 'ms-1');
     imgContainer.style.width = '2.75rem';
     imgContainer.style.minWidth = '2.75rem';
     imgContainer.style.height = '2.75rem';
@@ -217,11 +232,11 @@ function createListItem(size, unorderedList, elementCounter, id, text,
     clubLogoImg.style.maxHeight = '2.75rem';
     clubLogoImg.alt = " ";
     imgContainer.appendChild(clubLogoImg);
-    listItem.appendChild(imgContainer);
+    listItemLink.appendChild(imgContainer);
     let nameSpan = document.createElement('span');
     nameSpan.classList.add('ms-3', 'flex-grow-1');
     nameSpan.innerText = text;
-    listItem.appendChild(nameSpan);
+    listItemLink.appendChild(nameSpan);
     let desktopBtn = document.createElement('div');
     desktopBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
         'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn');
@@ -233,8 +248,8 @@ function createListItem(size, unorderedList, elementCounter, id, text,
     statsImg.classList.add('img-fluid');
     statsImg.src = '../images/stats_btn_img.svg';
     desktopBtn.appendChild(statsImg);
-    listItem.appendChild(desktopBtn);
-    if(clickFunction)
+    listItemLink.appendChild(desktopBtn);
+    if (clickFunction)
         listItem.addEventListener('click', clickFunction);
     unorderedList.appendChild(listItem);
     return listItem;
