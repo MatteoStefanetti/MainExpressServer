@@ -209,7 +209,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.firstElementChild.appendChild(cardImg)
                 internalDiv.firstElementChild.appendChild(textContainer)
             }
-            setIframesHeight(window.parent)  // reset iframe height (?)
+            setIframesHeight(window.parent)
             break;
         case 'style-2':
             // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
@@ -221,7 +221,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
     }
 }
 
-/**
+/** Returns the _fullName_, but if it is too long (more than 15 characters) it will **shorten** all the first names.
  * @param lastName {string} The string to try to maintain at the end.
  * @param fullName {string} The full name that will be truncated if necessary. */
 function setReducedName(lastName, fullName) {
