@@ -26,13 +26,27 @@ async function initCarousel() {
     switch (retrieveStr) {
         case 'lastGames':
             createDefaultCarouselElements(sliderWrapper);
-            // @todo call the functions to retrieve data
-            // @todo call the functions and show the data (also the cards creation)
+            await makeAxiosGet('/games/get_last_games')
+                .then(data => {
+                    if(elementList)
+                        console.error('not null: ', elementList)
+                    elementList = Array(data.data)[0];
+                    // @todo call the functions and show the data (also the cards creation)
+                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                })
+                .catch(err => console.error(err))
             break;
         case 'recentClubsNews':
             createDefaultCarouselElements(sliderWrapper);
-            // @todo call the functions to retrieve data
-            // @todo call the functions and show the data (also the cards creation)
+            await makeAxiosGet('/clubs/get_recent_clubs_news')
+                .then(data => {
+                    if(elementList)
+                        console.error('not null: ', elementList)
+                    elementList = Array(data.data)[0];
+                    // @todo call the functions and show the data (also the cards creation)
+                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                })
+                .catch(err => console.error(err))
             break;
         case 'trendPlayers':
             createDefaultCarouselElements(sliderWrapper);
@@ -41,7 +55,6 @@ async function initCarousel() {
                     if (elementList)
                         console.error('not null: ', elementList)
                     elementList = Array(data.data)[0];
-                    console.log(elementList)        // DEBUG PRINT
                     // @todo call the functions and show the data (also the cards creation)
                     modifyCarouselElements(elementList, sliderWrapper, styleStr);
                 })
@@ -165,9 +178,11 @@ function getShownElementsNumber(wrapper) {
  * @param styleString {string} the style string used to define which style is going to be set for the carousel.
  * If it is _null_ or _undefined_, it will generate default elements.
  * @throws TypeError if any argument is _null_ or _undefined_.*/
-function createCarouselElements(listOfElements, carouselWrapper, styleString) {
-    if(!listOfElements || !carouselWrapper || styleString)
+function modifyCarouselElements(listOfElements, carouselWrapper, styleString) {
+    if(!listOfElements || !carouselWrapper || !styleString){
+        console.error('elems: ', listOfElements, '\nwrapper: ', carouselWrapper, '\nstyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
+    }
     // @todo adjust the carousel elements length (if necessary)
     switch (styleString) {
         case 'style-1':
@@ -184,7 +199,6 @@ function createCarouselElements(listOfElements, carouselWrapper, styleString) {
         case 'style-3':
             // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
             break;
-        default: /* Standard creation of elements */
-            createDefaultCarouselElements(carouselWrapper);
+        default:
     }
 }
