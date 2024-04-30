@@ -39,7 +39,7 @@ router.get('/players/get_trend_players', async (req, res) => {
         }
         filledList = Array.from(filledList,
             ([playerId, playerData]) => {return { playerId, ...playerData }})
-        console.log(filledList.slice(-4))
+            .sort((st, nd) => {return nd.marketValue - st.marketValue})
         res.status(200).json(filledList);
     } catch (error) {
         console.error(error)
@@ -97,10 +97,10 @@ router.get('/clubs/get_club_by_id/:id', function (req, res) {
         })
             .then(res=> res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
     }
     else {
-        console.log('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
+        console.error('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
     }
 });
 
