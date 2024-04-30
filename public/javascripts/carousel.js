@@ -5,50 +5,63 @@
  o ---------------- o ---------------- o ---------------- o ----------------o */
 
 const OFFSET = 100;
+let elementList;
+const DEFAULT_ELEMENTS_NUMBER = 24;
 
 /** Init function called by the carousel documents inside the <iframe>s. */
-function initCarousel() {
+async function initCarousel() {
     let state = 0;
     /* Defining which style to apply to the carousel */
     setHeader();
     let retrieveStr = '', styleStr = '', elementsNumber = 12;
     const sliderWrapper = document.getElementById('slider-wrapper');
-    if(window.name) {
+    if (window.name) {
         try {
             styleStr = window.name.substring(0, window.name.indexOf('_'));
-            retrieveStr = window.name.substring((window.name.indexOf('_')+1));
-        } catch(err) {
+            retrieveStr = window.name.substring((window.name.indexOf('_') + 1));
+        } catch (err) {
             console.error(err);
         }
     }
-    switch(retrieveStr) {
+    switch (retrieveStr) {
         case 'lastGames':
-            // @todo call the functions to retrieve data
-            // @todo call the functions and show the data (also the cards creation)
+            createDefaultCarouselElements(sliderWrapper);
+            await makeAxiosGet('/games/get_last_games')
+                .then(data => {
+                    if(elementList)
+                        console.error('not null: ', elementList)
+                    elementList = Array(data.data)[0];
+                    // @todo call the functions and show the data (also the cards creation)
+                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                })
+                .catch(err => console.error(err))
             break;
         case 'recentClubsNews':
-            // @todo call the functions to retrieve data
-            // @todo call the functions and show the data (also the cards creation)
+            createDefaultCarouselElements(sliderWrapper);
+            await makeAxiosGet('/clubs/get_recent_clubs_news')
+                .then(data => {
+                    if(elementList)
+                        console.error('not null: ', elementList)
+                    elementList = Array(data.data)[0];
+                    // @todo call the functions and show the data (also the cards creation)
+                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                })
+                .catch(err => console.error(err))
             break;
         case 'trendPlayers':
-            // @todo call the functions to retrieve data
-            // @todo call the functions and show the data (also the cards creation)
+            createDefaultCarouselElements(sliderWrapper);
+            await makeAxiosGet('/players/get_trend_players')
+                .then(data => {
+                    if (elementList)
+                        console.error('not null: ', elementList)
+                    elementList = Array(data.data)[0];
+                    // @todo call the functions and show the data (also the cards creation)
+                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                })
+                .catch(err => console.error(err))
             break;
         default:
-    }
-
-    switch (styleStr) {
-        case 'style-1':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'style-2':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'style-3':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        default: /* Standard creation of elements */
-            createDefaultCarouselElements(elementsNumber, sliderWrapper);
+            createDefaultCarouselElements(sliderWrapper);
     }
 
     let carousel_prev = document.getElementById('carousel_prev');
@@ -56,22 +69,22 @@ function initCarousel() {
     carousel_prev.addEventListener('click', slideCarouselPrev.bind(carousel_prev, carousel_next));
     carousel_next.addEventListener('click', slideCarouselNext.bind(carousel_next, carousel_prev));
     toggleButton(carousel_prev, true);
-    if(state >= Math.floor(sliderWrapper.children.length / getShownElementsNumber(sliderWrapper)) - 1)
+    if (state >= Math.floor(sliderWrapper.children.length / getShownElementsNumber(sliderWrapper)) - 1)
         toggleButton(carousel_next, true);
 
     /** **Local** function used to slide the carousel towards **left**. */
     function slideCarouselPrev(otherBtn) {
         let wrapper = document.getElementById('slider-wrapper');
         const elementsNum = getShownElementsNumber(wrapper);
-        if(state > 0) {
-            if(otherBtn.disabled)
+        if (state > 0) {
+            if (otherBtn.disabled)
                 toggleButton(otherBtn, false);
             state--;
-            for(let elem of wrapper.children) {
+            for (let elem of wrapper.children) {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
             }
         }
-        if(state <= 0)
+        if (state <= 0)
             toggleButton(this, true);
     }
 
@@ -79,15 +92,15 @@ function initCarousel() {
     function slideCarouselNext(otherBtn) {
         let wrapper = document.getElementById('slider-wrapper');
         const elementsNum = getShownElementsNumber(wrapper);
-        if(state < Math.floor(wrapper.children.length / elementsNum) - 1) {
-            if(otherBtn.disabled)
+        if (state < Math.floor(wrapper.children.length / elementsNum) - 1) {
+            if (otherBtn.disabled)
                 toggleButton(otherBtn, false);
             state++;
-            for(let elem of wrapper.children) {
+            for (let elem of wrapper.children) {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
             }
         }
-        if(state >= Math.floor(wrapper.children.length / elementsNum) - 1)
+        if (state >= Math.floor(wrapper.children.length / elementsNum) - 1)
             toggleButton(this, true);
     }
 }
@@ -134,22 +147,20 @@ function setHeader() {
     }
 }
 
-/** It creates _n_ elements inside the wrapperElement. The style will be as follows:
+/** It creates _DEFAULT_ELEMENTS_NUMBER_ elements inside the wrapperElement. The style will be as follows:
  * ```
  * <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0">
- *   <div class="mx-auto border rounded-4 text-center carousel-elements-size">
- *       a
- *   </div>
+ *   <a href=""><div class="mx-auto border rounded-4 text-center carousel-elements-size">
+ *   </div><a>
  * </div>
  * ```
- * @param n {number} How many elements to generate inside the carousel.
  * @param wrapperElement {HTMLElement} The wrapper of the carousel. */
-function createDefaultCarouselElements(n, wrapperElement) {
-    for(let i = 0; i < n; i++) {
+function createDefaultCarouselElements(wrapperElement) {
+    for(let i = 0; i < DEFAULT_ELEMENTS_NUMBER; i++) {
         let containerDiv = document.createElement('div');
         containerDiv.classList.add('col-12', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-lg-2', 'px-1', 'py-0');
-        containerDiv.innerHTML = '<div class="mx-auto border rounded-4 ' +
-            'text-center carousel-elements-size">' + String((i+1)) + '</div>';
+        containerDiv.innerHTML = '<a href=""><div class="mx-auto border rounded-4 ' +
+            'text-center carousel-elements-size"></div></a>';
         wrapperElement.appendChild(containerDiv);
     }
 }
@@ -158,4 +169,36 @@ function createDefaultCarouselElements(n, wrapperElement) {
  * @param wrapper {HTMLElement} The _slider-wrapper_ of the carousel. */
 function getShownElementsNumber(wrapper) {
     return Math.round(100 / ((wrapper.firstElementChild.offsetWidth / wrapper.offsetWidth) * 100));
+}
+
+/**
+ * @param listOfElements {Array} The values of the data to show.
+ * If it is _null_ or _undefined_, it will generate default elements.
+ * @param carouselWrapper {HTMLElement} The container _(wrapper)_ inside which the elements will be put.
+ * @param styleString {string} the style string used to define which style is going to be set for the carousel.
+ * If it is _null_ or _undefined_, it will generate default elements.
+ * @throws TypeError if any argument is _null_ or _undefined_.*/
+function modifyCarouselElements(listOfElements, carouselWrapper, styleString) {
+    if(!listOfElements || !carouselWrapper || !styleString){
+        console.error('elems: ', listOfElements, '\nwrapper: ', carouselWrapper, '\nstyle: ', styleString)
+        throw new TypeError('Called creation of elements with invalid argument(s).');
+    }
+    // @todo adjust the carousel elements length (if necessary)
+    switch (styleString) {
+        case 'style-1':
+            /* A style for the player-cards of the home page */
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            for(let elem of carouselWrapper.children){
+                // @todo elem.firstElementChild.href = '...'
+            }
+            setIframesHeight()  // reset iframe height (?)
+            break;
+        case 'style-2':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
+        case 'style-3':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
+        default:
+    }
 }
