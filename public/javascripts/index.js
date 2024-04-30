@@ -12,6 +12,11 @@ function initPlayers(){
 
 /* -------- End of init()s -------- */
 
+/** @param url {string} the url of the axios GET route. */
+async function makeAxiosGet(url) {
+    return axios.get(url, {headers: {'Content-Type': 'application/json'}, method: 'get'});
+}
+
 /** Function called by the **main** *"init"* functions to set common attributes and features. */
 function commonInitOfPage() {
     // @todo: check if can still be useful
