@@ -70,6 +70,7 @@ router.get('/players/get_trend_players', async (req, res) => {
         for (let i in playerList) {
             filledList.set(playerList[i].playerId, {
                 'playerName': playerList[i].playerName,
+                'playerLastName': playerList[i].playerLastName,
                 'imageUrl': playerList[i].imageUrl,
                 'marketValue': playerValueMap.get(playerList[i].playerId)
             })

@@ -102,6 +102,10 @@ input:focus , button:not(.custom-accordion):focus {
   --bs-btn-disabled-border-color: var(--darkgreen-disabled);
 }
 
+.fs-7 {
+  font-size: 0.8rem !important;
+}
+
 /* ------------- Header ------------- */
 
 #customHeader {

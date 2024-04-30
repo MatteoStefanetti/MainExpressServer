@@ -32,7 +32,7 @@ async function initCarousel() {
                         console.error('not null: ', elementList)
                     elementList = Array(data.data)[0];
                     // @todo call the functions and show the data (also the cards creation)
-                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                    modifyCarouselElements(sliderWrapper, styleStr);
                 })
                 .catch(err => console.error(err))
             break;
@@ -44,7 +44,7 @@ async function initCarousel() {
                         console.error('not null: ', elementList)
                     elementList = Array(data.data)[0];
                     // @todo call the functions and show the data (also the cards creation)
-                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                    modifyCarouselElements(sliderWrapper, styleStr);
                 })
                 .catch(err => console.error(err))
             break;
@@ -56,7 +56,7 @@ async function initCarousel() {
                         console.error('not null: ', elementList)
                     elementList = Array(data.data)[0];
                     // @todo call the functions and show the data (also the cards creation)
-                    modifyCarouselElements(elementList, sliderWrapper, styleStr);
+                    modifyCarouselElements(sliderWrapper, styleStr);
                 })
                 .catch(err => console.error(err))
             break;
@@ -108,14 +108,16 @@ async function initCarousel() {
 /** Function called by the `init()` of the **pages that are using the _iframe_ tags**.
  * This means that, for example, the initHome will call this function. */
 function setCarouselPageHeight() {
-    setIframesHeight();
-    window.addEventListener('resize', setIframesHeight);
+    setIframesHeight(null);
+    window.addEventListener('resize', setIframesHeight.bind(null, null));
 }
 
 /** Function to set the height of the iframe based on its content. */
-function setIframesHeight() {
+function setIframesHeight(window) {
     // We define the document with the min height, then set the height of every iframe:
-    let iframes = document.getElementsByTagName('iframe');
+    let iframes = (window) ?
+        window.document.getElementsByTagName('iframe') :
+        document.getElementsByTagName('iframe');
     for(let elem of iframes)
         if(elem.id !== 'chatPage'){
             const elemDocument = elem.contentDocument || elem.contentWindow.document;
@@ -147,51 +149,67 @@ function setHeader() {
     }
 }
 
-/** It creates _DEFAULT_ELEMENTS_NUMBER_ elements inside the wrapperElement. The style will be as follows:
- * ```
- * <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0">
- *   <a href=""><div class="mx-auto border rounded-4 text-center carousel-elements-size">
- *   </div><a>
- * </div>
- * ```
- * @param wrapperElement {HTMLElement} The wrapper of the carousel. */
-function createDefaultCarouselElements(wrapperElement) {
-    for(let i = 0; i < DEFAULT_ELEMENTS_NUMBER; i++) {
-        let containerDiv = document.createElement('div');
-        containerDiv.classList.add('col-12', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-lg-2', 'px-1', 'py-0');
-        containerDiv.innerHTML = '<a href=""><div class="mx-auto border rounded-4 ' +
-            'text-center carousel-elements-size"></div></a>';
-        wrapperElement.appendChild(containerDiv);
-    }
-}
-
 /** **Optimized** function to retrieve the current number of elements shown in the viewport.
  * @param wrapper {HTMLElement} The _slider-wrapper_ of the carousel. */
 function getShownElementsNumber(wrapper) {
     return Math.round(100 / ((wrapper.firstElementChild.offsetWidth / wrapper.offsetWidth) * 100));
 }
 
-/**
- * @param listOfElements {Array} The values of the data to show.
- * If it is _null_ or _undefined_, it will generate default elements.
+/** It creates _DEFAULT_ELEMENTS_NUMBER_ elements inside the wrapperElement. The style will be as follows:
+ * ```
+ * <div class="col-12 col-xs-6 col-sm-4 col-md-3 col-lg-2 px-1 py-0">
+ *   <div class="mx-auto border rounded-4 text-center carousel-elements-size">
+ *      <a href=""></a>
+ *   </div>
+ * </div>
+ * ```
+ * @param wrapperElement {HTMLElement} The wrapper of the carousel. */
+function createDefaultCarouselElements(wrapperElement) {
+    for(let i = 0; i < DEFAULT_ELEMENTS_NUMBER; i++) {
+        let containerDiv = document.createElement('div');
+        containerDiv.classList.add('d-flex', 'justify-content-center', 'col-12', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-lg-2', 'px-1', 'py-0');
+        containerDiv.innerHTML = '<div class="mx-auto border rounded-4 ' +
+            'text-center carousel-elements-size"><a href="" data-bs-toggle="tooltip"></a></div>';
+        wrapperElement.appendChild(containerDiv);
+    }
+}
+
+/** The values of the data to show are in the variable **elementList**.
+ * If it is _null_ or _undefined_, it will throw a {@link TypeError}.
  * @param carouselWrapper {HTMLElement} The container _(wrapper)_ inside which the elements will be put.
  * @param styleString {string} the style string used to define which style is going to be set for the carousel.
- * If it is _null_ or _undefined_, it will generate default elements.
  * @throws TypeError if any argument is _null_ or _undefined_.*/
-function modifyCarouselElements(listOfElements, carouselWrapper, styleString) {
-    if(!listOfElements || !carouselWrapper || !styleString){
-        console.error('elems: ', listOfElements, '\nwrapper: ', carouselWrapper, '\nstyle: ', styleString)
+function modifyCarouselElements(carouselWrapper, styleString) {
+    if(!elementList || !carouselWrapper || !styleString){
+        console.error('Elements: ', elementList, '\nWrapper: ', carouselWrapper, '\nStyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
     }
-    // @todo adjust the carousel elements length (if necessary)
+    // @todo !!! adjust the carousel elements length (if necessary)
     switch (styleString) {
-        case 'style-1':
-            /* A style for the player-cards of the home page */
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            for(let elem of carouselWrapper.children){
-                // @todo elem.firstElementChild.href = '...'
+        case 'player-carousel-card':
+            let children = carouselWrapper.children;
+            for (let i = 0; i < children.length; i++) {
+                let internalDiv = children[i].firstElementChild;
+                // @todo internalDiv.firstElementChild.href = '...'
+                internalDiv.firstElementChild.href = '#'
+                const name = setReducedName(elementList[i].playerLastName, elementList[i].playerName);
+                internalDiv.firstElementChild.title = name;
+                internalDiv.firstElementChild.classList.add('h-100')
+                internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
+                internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
+                    'player-carousel-card', 'h-100', );
+                let cardImg = document.createElement('img')
+                cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
+                cardImg.src = String(elementList[i].imageUrl)
+                cardImg.alt = ' '
+                let textContainer = document.createElement('div')
+                textContainer.classList.add('mx-auto', 'text-white', 'text-center', 'px-1', 'fs-7', 'my-1',
+                    'player-text-div')
+                textContainer.innerText = name;
+                internalDiv.firstElementChild.appendChild(cardImg)
+                internalDiv.firstElementChild.appendChild(textContainer)
             }
-            setIframesHeight()  // reset iframe height (?)
+            setIframesHeight(window.parent)  // reset iframe height (?)
             break;
         case 'style-2':
             // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
@@ -201,4 +219,23 @@ function modifyCarouselElements(listOfElements, carouselWrapper, styleString) {
             break;
         default:
     }
+}
+
+/**
+ * @param lastName {string} The string to try to maintain at the end.
+ * @param fullName {string} The full name that will be truncated if necessary. */
+function setReducedName(lastName, fullName) {
+    if(!fullName || fullName.length === lastName.length)
+        return lastName;
+    if(fullName.length < 15)
+        return fullName;
+    let fullNArray = fullName.trim().split(' ')
+    const lastNStart = lastName.trim().split(' ')[0]
+    for(let i = 0; i < fullNArray.length; i++) {
+        if (fullNArray[i] !== lastNStart)
+            fullNArray[i] = String(fullNArray[i].trim().charAt(0) + '.')
+        else
+            i = fullNArray.length;
+    }
+    return fullNArray.join(' ');
 }
