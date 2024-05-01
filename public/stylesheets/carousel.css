@@ -54,7 +54,7 @@
 }
 
 .player-carousel-card:hover {
-    box-shadow: var(--darkgreen-disabled) 3px 5px 5px;
+    box-shadow: var(--darkgreen-disabled) 3px 0.2rem 3px;
     text-decoration: underline;
     color: white;
 }

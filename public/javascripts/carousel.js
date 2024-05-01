@@ -187,13 +187,13 @@ function modifyCarouselElements(carouselWrapper, styleString) {
     // @todo !!! adjust the carousel elements length (if necessary)
     switch (styleString) {
         case 'player-carousel-card':
+            carouselWrapper.classList.add('pb-1')
             let children = carouselWrapper.children;
             for (let i = 0; i < children.length; i++) {
                 let internalDiv = children[i].firstElementChild;
                 // @todo internalDiv.firstElementChild.href = '...'
                 internalDiv.firstElementChild.href = '#'
-                const name = setReducedName(elementList[i].playerLastName, elementList[i].playerName);
-                internalDiv.firstElementChild.title = name;
+                internalDiv.firstElementChild.title = String(elementList[i].playerName)
                 internalDiv.firstElementChild.classList.add('h-100')
                 internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
                 internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
@@ -205,7 +205,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 let textContainer = document.createElement('div')
                 textContainer.classList.add('mx-auto', 'text-white', 'text-center', 'px-1', 'fs-7', 'my-1',
                     'player-text-div')
-                textContainer.innerText = name;
+                textContainer.innerText = setReducedName(elementList[i].playerLastName, elementList[i].playerName);
                 internalDiv.firstElementChild.appendChild(cardImg)
                 internalDiv.firstElementChild.appendChild(textContainer)
             }
@@ -227,7 +227,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
 function setReducedName(lastName, fullName) {
     if(!fullName || fullName.length === lastName.length)
         return lastName;
-    if(fullName.length < 15)
+    if(fullName.length < 14)
         return fullName;
     let fullNArray = fullName.trim().split(' ')
     const lastNStart = lastName.trim().split(' ')[0]
