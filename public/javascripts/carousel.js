@@ -180,30 +180,36 @@ function createDefaultCarouselElements(wrapperElement) {
  * @param styleString {string} the style string used to define which style is going to be set for the carousel.
  * @throws TypeError if any argument is _null_ or _undefined_.*/
 function modifyCarouselElements(carouselWrapper, styleString) {
-    if(!elementList || !carouselWrapper || !styleString){
+    if (!elementList || !carouselWrapper || !styleString) {
         console.error('Elements: ', elementList, '\nWrapper: ', carouselWrapper, '\nStyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
     }
     // @todo !!! adjust the carousel elements length (if necessary)
-    switch (styleString) {
-        case 'games-carousel-card':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'simple-image-carousel-card':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'player-carousel-card':
-            carouselWrapper.classList.add('pb-1')
-            let children = carouselWrapper.children;
-            for (let i = 0; i < children.length; i++) {
-                let internalDiv = children[i].firstElementChild;
+    carouselWrapper.classList.add('pb-1')
+    let children = carouselWrapper.children;
+    for (let i = 0; i < children.length; i++) {
+        let internalDiv = children[i].firstElementChild;
+        switch (styleString) {
+            case 'games-carousel-card':
+                // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+                break;
+            case 'simple-image-carousel-card':
+                internalDiv.classList.add('simple-image-carousel-card');
                 // @todo internalDiv.firstElementChild.href = '...'
                 internalDiv.firstElementChild.href = '#'
-                internalDiv.firstElementChild.title = String(elementList[i].playerName)
-                internalDiv.firstElementChild.classList.add('h-100')
+                if (elementList[0].clubName) {
+                    
+                } else {
+
+                }
+                break;
+            case 'player-carousel-card':
                 internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
                 internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
                     'player-carousel-card', 'h-100')
+                // @todo internalDiv.firstElementChild.href = '...'
+                internalDiv.firstElementChild.href = '#'
+                internalDiv.firstElementChild.title = String(elementList[i].playerName)
                 let cardImg = document.createElement('img')
                 cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
                 cardImg.src = String(elementList[i].imageUrl)
@@ -214,13 +220,15 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 textContainer.innerText = setReducedName(elementList[i].playerLastName, elementList[i].playerName);
                 internalDiv.firstElementChild.appendChild(cardImg)
                 internalDiv.firstElementChild.appendChild(textContainer)
-            }
-            setIframesHeight(window.parent)
-            break;
-        case 'national-carousel-card':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        default:
+                break;
+            case 'national-carousel-card':
+                // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+                break;
+            default:
+                console.error('Style "' + styleString + '" not found for the carousel.');
+                return;
+        }
+        setIframesHeight(window.parent)
     }
 }
 
