@@ -106,6 +106,16 @@ input:focus , button:not(.custom-accordion):focus {
   font-size: 0.8rem !important;
 }
 
+#spinner {
+  --spinner-width: 60px;
+  --spinner-height: 60px;
+  width: var(--spinner-width);
+  height: var(--spinner-height);
+  top: calc(50vh - (var(--spinner-height) / 2));
+  left: calc(50vw - (var(--spinner-width) / 2));
+  /*display: none !important;*/
+}
+
 /* ------------- Header ------------- */
 
 #customHeader {

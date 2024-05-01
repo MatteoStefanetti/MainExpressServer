@@ -78,7 +78,7 @@ function getNationNameOf(localCompetitionCode) {
  * @param id {string} is the localCompetitionCode used as ID of the accordion button.
  * @throws TypeError if catch case of the axios GET occurs. */
 function openAccordionClubs(id) {
-    // @todo maybe insert a spinning element
+    showChargingSpinner(window, true)
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         axios.get(`/get_clubs_by_local_competition_code/${id}`, {
             headers: {'Content-Type': 'application/json'},
@@ -108,6 +108,7 @@ function openAccordionClubs(id) {
                 throw new TypeError('Error occurred during \'clubs_by_local_competition_code\' GET');
             })
     }
+    showChargingSpinner(window, false)
 }
 
 /** Function that loads the remaining elements of the `<ul>` list.

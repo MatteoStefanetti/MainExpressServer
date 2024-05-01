@@ -22,9 +22,14 @@ function commonInitOfPage() {
     // @todo: check if can still be useful
 }
 
-/** This function assigns **ALL** the *'onclick'* attributes in the page. */
-function addBtnFunctions() {
-    // @todo: fill with index buttons
+/** Function used to trigger the spinner while loading / fetching the page content.
+ * @param window {Window} The window reference in which the spinner is contained.
+ * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
+function showChargingSpinner(window, toDisplay) {
+    if (toDisplay)
+        window.document.getElementById('spinner').classList.remove('d-none')
+    else
+        window.document.getElementById('spinner').classList.add('d-none')
 }
 
 /** This is an EXPRESS GET function:
