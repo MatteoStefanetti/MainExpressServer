@@ -186,6 +186,12 @@ function modifyCarouselElements(carouselWrapper, styleString) {
     }
     // @todo !!! adjust the carousel elements length (if necessary)
     switch (styleString) {
+        case 'games-carousel-card':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
+        case 'simple-image-carousel-card':
+            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+            break;
         case 'player-carousel-card':
             carouselWrapper.classList.add('pb-1')
             let children = carouselWrapper.children;
@@ -197,7 +203,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.firstElementChild.classList.add('h-100')
                 internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
                 internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
-                    'player-carousel-card', 'h-100', );
+                    'player-carousel-card', 'h-100')
                 let cardImg = document.createElement('img')
                 cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
                 cardImg.src = String(elementList[i].imageUrl)
@@ -211,10 +217,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
             }
             setIframesHeight(window.parent)
             break;
-        case 'style-2':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'style-3':
+        case 'national-carousel-card':
             // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
             break;
         default:
