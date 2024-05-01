@@ -203,7 +203,32 @@ function modifyCarouselElements(carouselWrapper, styleString) {
         let cardImg = document.createElement('img')
         switch (styleString) {
             case 'games-carousel-card':
-                // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+                internalDiv.classList.remove('mx-auto')
+                internalDiv.classList.add('border-darkgreen', 'border-2', 'p-0', 'games-carousel-card')
+                // @todo internalDiv.firstElementChild.href = '...'
+                internalDiv.firstElementChild.href = '#'
+                internalDiv.firstElementChild.classList.add('pt-1')
+                console.log(elementList[i])
+                internalDiv.firstElementChild.innerHTML =
+                    '<p class="fs-6 fw-bold text-uppercase text-center">' +
+                    new Date(elementList[i].gameDate).toLocaleDateString() + '</p>' +
+                    '<hr class="opacity-100 mx-1"><div class="d-flex flex-column">' +
+                    '   <div>' +
+                    '      <div class="row w-100">' +
+                    '           <span class="text-uppercase fs-5 fw-bold text-center z-1 mb-neg-1">' +
+                    elementList[i].competitionId + '</span>' +
+                    '      </div><div class="d-flex justify-content-around w-100">' +
+                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + 75 + '.png" alt=" " ' +
+                    'class="img-fluid game-img-size zn-1">' +
+                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + 75 + '.png" alt=" " ' +
+                    'class="img-fluid game-img-size zn-1">' +
+                    '      </div><div class="row w-100"><span class="text-uppercase text-darkgreen ' +
+                    'fs-5 fw-bold text-center z-1 mt-neg-1">VS</span></div>' +
+                    '   </div><div class="d-flex justify-content-between mx-2 mx-md-4">' +
+                    '       <p class="fw-bold fs-3 text-center">' + elementList[i].goal1 + '</p>' +
+                    '       <p class="fw-bold fs-3 text-center">-</p>' +
+                    '       <p class="fw-bold fs-3 text-center">' + elementList[i].goal2 + '</p></div></div>'
+
                 break;
             case 'simple-image-carousel-card':
                 internalDiv.classList.remove('justify-content-center')
