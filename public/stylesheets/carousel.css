@@ -34,6 +34,14 @@
 
 /* ------- Element styling ------- */
 
+.simple-image-carousel-card {
+    box-shadow: grey 3px 0.2rem 3px;
+}
+
+.simple-image-carousel-card:hover {
+    box-shadow: var(--darkgreen-disabled) 3px 0.2rem 3px;
+}
+
 .player-carousel-card {
     --card-height: 100%;
     height: var(--card-height) !important;

@@ -184,23 +184,43 @@ function modifyCarouselElements(carouselWrapper, styleString) {
         console.error('Elements: ', elementList, '\nWrapper: ', carouselWrapper, '\nStyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
     }
-    // @todo !!! adjust the carousel elements length (if necessary)
-    carouselWrapper.classList.add('pb-1')
+    console.log('elems before: ', elementList.length)       // @todo remove it DEBUG PRINT
     let children = carouselWrapper.children;
+    if (children.length !== elementList.length) {
+        if (children.length > elementList.length) {
+            // @todo if (elementList < 12) -> problem seeing elements of the carousel
+            if (elementList.length > 12)
+                elementList.splice(12)
+            while (children.length !== elementList.length) {
+                carouselWrapper.removeChild(carouselWrapper.lastChild)
+            }
+        } else
+            elementList.splice(DEFAULT_ELEMENTS_NUMBER)
+    }
+    carouselWrapper.classList.add('pb-1')
     for (let i = 0; i < children.length; i++) {
         let internalDiv = children[i].firstElementChild;
+        let cardImg = document.createElement('img')
         switch (styleString) {
             case 'games-carousel-card':
                 // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
                 break;
             case 'simple-image-carousel-card':
-                internalDiv.classList.add('simple-image-carousel-card');
-                // @todo internalDiv.firstElementChild.href = '...'
-                internalDiv.firstElementChild.href = '#'
+                internalDiv.classList.remove('justify-content-center')
+                internalDiv.classList.add('border-darkgreen', 'border-2', 'align-items-center',
+                    'simple-image-carousel-card')
+                cardImg.classList.add('img-fluid', 'p-2')
+                internalDiv.firstElementChild.href = '#';    // @todo remove it after href is set.
+                internalDiv.firstElementChild.appendChild(cardImg)
                 if (elementList[0].clubName) {
-                    
+                    // @todo internalDiv.firstElementChild.href = '...'
+                    internalDiv.firstElementChild.title = String(elementList[i].clubName)
+                    cardImg.src = "https://tmssl.akamaized.net/images/wappen/head/" +
+                        String(elementList[i].clubId) + ".png";
                 } else {
-
+                    // @todo internalDiv.firstElementChild.href = '...'
+                    internalDiv.firstElementChild.title = String(elementList[i].competitionName)
+                    // @todo ...
                 }
                 break;
             case 'player-carousel-card':
@@ -210,7 +230,6 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 // @todo internalDiv.firstElementChild.href = '...'
                 internalDiv.firstElementChild.href = '#'
                 internalDiv.firstElementChild.title = String(elementList[i].playerName)
-                let cardImg = document.createElement('img')
                 cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
                 cardImg.src = String(elementList[i].imageUrl)
                 cardImg.alt = ' '
