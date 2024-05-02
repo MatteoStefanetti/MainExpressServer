@@ -24,46 +24,15 @@ async function initCarousel() {
             console.error(err);
         }
     }
-    switch (retrieveStr) {
-        case 'lastGames':
-            createDefaultCarouselElements(sliderWrapper);
-            await makeAxiosGet('/games/get_last_games')
-                .then(data => {
-                    if(elementList)
-                        console.error('not null: ', elementList)
-                    elementList = Array(data.data)[0];
-                    // @todo call the functions and show the data (also the cards creation)
-                    modifyCarouselElements(sliderWrapper, styleStr);
-                })
-                .catch(err => console.error(err))
-            break;
-        case 'recentClubsNews':
-            createDefaultCarouselElements(sliderWrapper);
-            await makeAxiosGet('/clubs/get_recent_clubs_news')
-                .then(data => {
-                    if(elementList)
-                        console.error('not null: ', elementList)
-                    elementList = Array(data.data)[0];
-                    // @todo call the functions and show the data (also the cards creation)
-                    modifyCarouselElements(sliderWrapper, styleStr);
-                })
-                .catch(err => console.error(err))
-            break;
-        case 'trendPlayers':
-            createDefaultCarouselElements(sliderWrapper);
-            await makeAxiosGet('/players/get_trend_players')
-                .then(data => {
-                    if (elementList)
-                        console.error('not null: ', elementList)
-                    elementList = Array(data.data)[0];
-                    // @todo call the functions and show the data (also the cards creation)
-                    modifyCarouselElements(sliderWrapper, styleStr);
-                })
-                .catch(err => console.error(err))
-            break;
-        default:
-            createDefaultCarouselElements(sliderWrapper);
-    }
+    createDefaultCarouselElements(sliderWrapper);
+    await retrieveCarouselData(retrieveStr)
+        .then(data => {
+            if(elementList)
+                console.error('not null: ', elementList)
+            elementList = Array(data.data)[0];
+            modifyCarouselElements(sliderWrapper, styleStr);
+        })
+        .catch(err => console.error(err))
 
     let carousel_prev = document.getElementById('carousel_prev');
     let carousel_next = document.getElementById('carousel_next');
@@ -107,6 +76,25 @@ async function initCarousel() {
             toggleButton(this, true);
     }
 }
+
+/** @param retrieveStr {string} The name of the axios GET route to . */
+async function retrieveCarouselData(retrieveStr) {
+    switch (retrieveStr) {
+        case 'lastGames':
+            return makeAxiosGet('/games/get_last_games')
+        case 'recentClubsNews':
+            return makeAxiosGet('/clubs/get_recent_clubs_news')
+        case 'trendPlayers':
+            return makeAxiosGet('/players/get_trend_players')
+        case 'national':
+            return makeAxiosGet('/get_flags')
+        case '_international':
+            return makeAxiosGet('/get_competitions')
+        default:
+            return null;
+    }
+}
+
 
 /** Function called by the `init()` of the **pages that are using the _iframe_ tags**.
  * This means that, for example, the initHome will call this function. */
@@ -208,7 +196,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.classList.remove('mx-auto')
                 internalDiv.classList.add('border-darkgreen', 'border-2', 'p-0', 'games-carousel-card')
                 // @todo internalDiv.firstElementChild.href = '...'
-                internalDiv.firstElementChild.href = '#'
+                internalDiv.firstElementChild.href = '#'    // @todo remove it after href is set.
                 internalDiv.firstElementChild.classList.add('pt-1')
                 internalDiv.firstElementChild.innerHTML =
                     '<p class="fs-6 fw-bold text-uppercase text-center">' +
@@ -256,7 +244,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
                     'player-carousel-card', 'h-100')
                 // @todo internalDiv.firstElementChild.href = '...'
-                internalDiv.firstElementChild.href = '#'
+                internalDiv.firstElementChild.href = '#'    // @todo remove it after href is set.
                 internalDiv.firstElementChild.title = String(elementList[i].playerName)
                 cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
                 cardImg.src = String(elementList[i].imageUrl)

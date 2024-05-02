@@ -85,19 +85,33 @@ router.get('/players/get_trend_players', async (req, res) => {
     }
 });
 
-/* ------ Clubs ------ */
+/* ------ Competitions ------ */
 
 router.get('/get_flags', function(req,res,next) {
     fetch('http://localhost:3002/flags/get_all', {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'get'
+        headers: { 'Content-Type': 'application/json' }, method: 'get'
     })
-        .then(res => res.json())
+        .then(res=> res.json())
         .then(json => res.status(200).json(json))
         .catch(err => res.status(500).json(err));
 });
 
-router.get(`/get_clubs_by_local_competition_code/:localCompetitionCode`, function (req, res, next) {
+router.get('/get_competitions/:domesticLeagueCode', function(req, res) {
+    if(req.params.domesticLeagueCode) {
+        fetch('http://localhost:3002/get_national_competitions/' + String(req.params.domesticLeagueCode), {
+            headers: { 'Content-Type': 'application/json' }, method: 'get'
+        })
+            .then(res=> res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(500).json(err));
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid domesticLeagueCode to search'));
+    }
+});
+
+/* ------ Clubs ------ */
+
+router.get(`/get_clubs_by_local_competition_code/:localCompetitionCode`, function (req, res) {
     if (req.params.localCompetitionCode) {
         fetch('http://localhost:8081/clubs/clubs_by_nation/' + String(req.params.localCompetitionCode), {
             headers: {'Content-Type': 'application/json'},
@@ -106,7 +120,7 @@ router.get(`/get_clubs_by_local_competition_code/:localCompetitionCode`, functio
             .then(res => res.json())
             .then(json => res.status(200).json(json))
             .catch(err => {
-                res.status(404).json(JSON.stringify('Request content was not found.'));
+                res.status(404).json(JSON.stringify('Error occurred: ' + err));
             });
     } else {
         res.status(500).json(JSON.stringify('Please insert a valid localCompetitionCode to search'));
@@ -119,7 +133,7 @@ router.get('/get_clubs_by_string/:name', function (req, res) {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
         })
-            .then(res => res.json())
+            .then(res=> res.json())
             .then(json => res.status(200).json(json))
             .catch(err => {
                 res.status(404).json(JSON.stringify('Request content was not found.'));
