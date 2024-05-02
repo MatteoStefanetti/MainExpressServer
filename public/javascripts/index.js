@@ -12,14 +12,26 @@ function initPlayers(){
 
 /* -------- End of init()s -------- */
 
+/** @param url {string} the url of the axios GET route. */
+async function makeAxiosGet(url) {
+    return axios.get(url, {headers: {'Content-Type': 'application/json'}, method: 'get'});
+}
+
 /** Function called by the **main** *"init"* functions to set common attributes and features. */
 function commonInitOfPage() {
     // @todo: check if can still be useful
 }
 
-/** This function assigns **ALL** the *'onclick'* attributes in the page. */
-function addBtnFunctions() {
-    // @todo: fill with index buttons
+/** Function used to trigger the spinner while loading / fetching the page content.
+ * @param window {Window} The window reference in which the spinner is contained.
+ * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
+function showChargingSpinner(window, toDisplay) {
+    const elem = (!window) ? document.getElementById('spinner').classList :
+        window.document.getElementById('spinner').classList;
+    if (toDisplay)
+        elem.remove('d-none')
+    else
+        elem.add('d-none')
 }
 
 /** This is an EXPRESS GET function:

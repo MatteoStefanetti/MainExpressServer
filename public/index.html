@@ -20,7 +20,11 @@
     <script src="javascripts/index.js"></script>
 </head>
 <body onload="initHome()">
-<div class="container-fluid p-0 position-relative ">
+<div class="container-fluid p-0 position-relative">
+    <div class="d-flex justify-content-center align-items-center bg-white border rounded-3 p-1
+        position-fixed z-3 d-none" id="spinner">
+        <div class="spinner-border text-lightgreen ratio-1x1"></div>
+    </div>
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
         <nav class="navbar navbar-dark navbar-expand-sm mx-auto mh-100">
@@ -48,9 +52,10 @@
         <div class="col-12 col-lg-9 p-0 pb-3">
             <div class="container-sm mx-auto px-2">
                 <!--<p class="h4 fw-bold mt-4">Last Games</p>-->
-                <iframe src="carousel.html" name="style-0_lastGames" class="w-100 mt-5"></iframe>
-                <iframe src="carousel.html" name="style-0_recentClubsNews" class="w-100 mt-5"></iframe>
-                <iframe src="carousel.html" name="style-0_trendPlayers" class="w-100 mt-5"></iframe>
+                <iframe src="carousel.html" name="games-carousel-card_lastGames" class="w-100 mt-5"></iframe>
+                <iframe src="carousel.html" name="simple-image-carousel-card_recentClubsNews" class="w-100 mt-5">
+                </iframe>
+                <iframe src="carousel.html" name="player-carousel-card_trendPlayers" class="w-100 mt-5"></iframe>
             </div>
         </div>
         <!-- Chat div (default set on d-none) -->
@@ -64,11 +69,11 @@
         <ul class="nav d-flex bg-darkgreen w-100 justify-content-around adjust-content-start p-0 m-0" id="footerItems">
             <li class="nav-item"><a href="index.html" class="nav-link text-light p-0 m-0 text-center">2024 Footballens,
                 Inc. All Rights Reserved</a></li>
-            <li class="nav-item"><a href="http://not-exists.en"
+            <li class="nav-item"><a href="https://cat-bounce.com" target="_blank"
                                     class="nav-link text-light p-0 m-0 text-center">Contacts</a></li>
-            <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Terms of
+            <li class="nav-item"><a href="https://cat-bounce.com" target="_blank" class="nav-link text-light p-0 m-0 text-center">Terms of
                 Use</a></li>
-            <li class="nav-item"><a href="http://not-exists.en" class="nav-link text-light p-0 m-0 text-center">Privacy
+            <li class="nav-item"><a href="https://cat-bounce.com" target="_blank" class="nav-link text-light p-0 m-0 text-center">Privacy
                 & Cookie Policy</a></li>
         </ul>
     </div>
