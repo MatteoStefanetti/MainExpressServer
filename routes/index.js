@@ -49,6 +49,21 @@ router.get('/get_clubs_by_string/:name', function (req, res) {
     }
 });
 
+router.get('/clubs/get_club_name_by_id/:id', function (req, res) {
+    if (req.params.id) {
+        fetch('http://localhost:8081/clubs/get_club_name_by_id/' + String(req.params.id), {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(JSON.stringify('Request content was not found.')));
+    }
+    else{
+        res.status(500).json(JSON.stringify('Please insert a valid name to search'));
+    }
+});
+
 router.get('/clubs/get_club_by_id/:id', function (req, res) {
     if (req.params.id) {
         fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id), {
@@ -72,8 +87,7 @@ router.get('/get_players_by_id/:id', function (req, res) {
             .then(res => res.json())
             .then(json => res.status(200).json(json))
             .catch(err => console.log(err))
-    }
-    else {
+    } else {
         console.log('Error! params of \'/players/get_players_by_id/\' are wrong!\n');
     }
 })
