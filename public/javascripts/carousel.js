@@ -218,9 +218,11 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                     '           <span class="text-uppercase fs-5 fw-bold text-center z-1 mb-neg-1">' +
                     elementList[i].competitionId + '</span>' +
                     '      </div><div class="d-flex justify-content-around w-100">' +
-                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + 75 + '.png" alt=" " ' +
+                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + elementList[i].clubId1 +
+                    '.png" alt=" " data-bs-toggle="tooltip" title="' + elementList[i].clubName1 + '" ' +
                     'class="img-fluid game-img-size zn-1">' +
-                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + 75 + '.png" alt=" " ' +
+                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + elementList[i].clubId2 +
+                    '.png" alt=" " data-bs-toggle="tooltip" title="' + elementList[i].clubName2 + '" ' +
                     'class="img-fluid game-img-size zn-1">' +
                     '      </div><div class="row w-100"><span class="text-uppercase text-darkgreen ' +
                     'fs-5 fw-bold text-center z-1 mt-neg-1">VS</span></div>' +
