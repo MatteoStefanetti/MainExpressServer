@@ -184,7 +184,6 @@ function modifyCarouselElements(carouselWrapper, styleString) {
         console.error('Elements: ', elementList, '\nWrapper: ', carouselWrapper, '\nStyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
     }
-    console.log('elems before: ', elementList.length)       // @todo remove it DEBUG PRINT
     let children = carouselWrapper.children;
     if (children.length !== elementList.length) {
         if (children.length > elementList.length) {
@@ -208,7 +207,6 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 // @todo internalDiv.firstElementChild.href = '...'
                 internalDiv.firstElementChild.href = '#'
                 internalDiv.firstElementChild.classList.add('pt-1')
-                console.log(elementList[i])
                 internalDiv.firstElementChild.innerHTML =
                     '<p class="fs-6 fw-bold text-uppercase text-center">' +
                     new Date(elementList[i].gameDate).toLocaleDateString() + '</p>' +
