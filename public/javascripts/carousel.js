@@ -10,6 +10,7 @@ const DEFAULT_ELEMENTS_NUMBER = 24;
 
 /** Init function called by the carousel documents inside the <iframe>s. */
 async function initCarousel() {
+    showChargingSpinner(window.parent, true)
     let state = 0;
     /* Defining which style to apply to the carousel */
     setHeader();
@@ -71,6 +72,8 @@ async function initCarousel() {
     toggleButton(carousel_prev, true);
     if (state >= Math.floor(sliderWrapper.children.length / getShownElementsNumber(sliderWrapper)) - 1)
         toggleButton(carousel_next, true);
+
+    showChargingSpinner(window.parent, false)
 
     /** **Local** function used to slide the carousel towards **left**. */
     function slideCarouselPrev(otherBtn) {
