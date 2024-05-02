@@ -2,6 +2,11 @@ const urlParams = new URLSearchParams(window.location.search);
 const typeParams = urlParams.get('type');
 const idParams = urlParams.get('id');
 
+function openAccordionValuation(id){
+    if (document.getElementById(id).firstChild.children.length === 0){
+
+    }
+}
 
 function initSinglePage() {
     commonInitOfPage();
@@ -122,6 +127,10 @@ function initSinglePage() {
                         }
 
                         info2.appendChild(agentName);
+
+                        let accordions = document.getElementById('accordions');
+                        let valuations = document.createElement('ul');
+
                     })
                     .catch(err => console.log(err));
             }

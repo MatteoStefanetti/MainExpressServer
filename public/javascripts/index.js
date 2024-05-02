@@ -45,6 +45,49 @@ async function getAllFlags() {
         })
 }
 
+function createAccordion(visualize, fatherId, param1){
+    let wrapperDiv = document.createElement('div');
+    wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
+    let header = document.createElement('h2');
+    header.classList.add('accordion-header');
+    wrapperDiv.appendChild(header);
+    let accordionButton = document.createElement('button');
+    accordionButton.classList.add('accordion-button', 'custom-accordion', 'collapsed');
+    accordionButton.type = "button";
+    accordionButton.setAttribute('data-bs-toggle', 'collapse');
+    accordionButton.setAttribute('aria-expanded', 'false');
+    header.appendChild(accordionButton);
+    let spanTitle = document.createElement('span');
+    let collapseDiv = document.createElement('div');
+    collapseDiv.classList.add('accordion-collapse', 'collapse');
+    collapseDiv.setAttribute('data-bs-parent', '#' + String(fatherId));
+    wrapperDiv.appendChild(collapseDiv);
+    let accBody = document.createElement('div');
+    accBody.classList.add('accordion-body');
+    collapseDiv.appendChild(accBody);
+    document.getElementById(fatherId).appendChild(wrapperDiv);
+    switch (visualize){
+        case 'club_nation':
+            accordionButton.setAttribute('aria-controls', '#' + String(param1));
+            accordionButton.setAttribute('data-bs-target', '#' + String(param1));
+            accordionButton.addEventListener('click', openAccordionClubs.bind(null, param1));
+            let flagImg = document.createElement('img');
+            flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
+            flagImg.src = getFlagOf(param1);
+            flagImg.style.height = '1.2rem';
+            accordionButton.appendChild(flagImg);
+            spanTitle.innerText = getNationNameOf(param1);
+            accordionButton.appendChild(spanTitle);
+            collapseDiv.id = String(param1);
+            break;
+        case 'player_valuation':
+
+            break;
+        default:
+            break;
+    }
+}
+
 function getClubById(id) {
     // @todo maybe insert a spinning element
     console.log('Club called with id: ', id);
