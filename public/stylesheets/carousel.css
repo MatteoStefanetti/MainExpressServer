@@ -34,6 +34,40 @@
 
 /* ------- Element styling ------- */
 
+.games-carousel-card {
+    box-shadow: grey 3px 0.2rem 3px;
+    aspect-ratio: 39 / 40 !important;
+}
+
+.games-carousel-card:hover {
+    box-shadow: var(--darkgreen-disabled) 3px 0.2rem 3px;
+}
+
+.games-carousel-card a:hover , .games-carousel-card a:hover span, .games-carousel-card a:hover p {
+    text-decoration: none !important;
+}
+
+.game-img-size {
+    max-height: 35%;
+    max-width: 30%;
+}
+
+.mb-neg-1 {
+    margin-bottom: -0.6rem !important;
+}
+
+.mt-neg-1 {
+    margin-top: -0.6rem !important;
+}
+
+.simple-image-carousel-card {
+    box-shadow: grey 3px 0.2rem 3px;
+}
+
+.simple-image-carousel-card:hover {
+    box-shadow: var(--darkgreen-disabled) 3px 0.2rem 3px;
+}
+
 .player-carousel-card {
     --card-height: 100%;
     height: var(--card-height) !important;

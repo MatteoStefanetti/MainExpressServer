@@ -180,25 +180,81 @@ function createDefaultCarouselElements(wrapperElement) {
  * @param styleString {string} the style string used to define which style is going to be set for the carousel.
  * @throws TypeError if any argument is _null_ or _undefined_.*/
 function modifyCarouselElements(carouselWrapper, styleString) {
-    if(!elementList || !carouselWrapper || !styleString){
+    if (!elementList || !carouselWrapper || !styleString) {
         console.error('Elements: ', elementList, '\nWrapper: ', carouselWrapper, '\nStyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
     }
-    // @todo !!! adjust the carousel elements length (if necessary)
-    switch (styleString) {
-        case 'player-carousel-card':
-            carouselWrapper.classList.add('pb-1')
-            let children = carouselWrapper.children;
-            for (let i = 0; i < children.length; i++) {
-                let internalDiv = children[i].firstElementChild;
+    let children = carouselWrapper.children;
+    if (children.length !== elementList.length) {
+        if (children.length > elementList.length) {
+            // @todo if (elementList < 12) -> problem seeing elements of the carousel
+            if (elementList.length > 12)
+                elementList.splice(12)
+            while (children.length !== elementList.length) {
+                carouselWrapper.removeChild(carouselWrapper.lastChild)
+            }
+        } else
+            elementList.splice(DEFAULT_ELEMENTS_NUMBER)
+    }
+    carouselWrapper.classList.add('pb-1')
+    for (let i = 0; i < children.length; i++) {
+        let internalDiv = children[i].firstElementChild;
+        let cardImg = document.createElement('img')
+        switch (styleString) {
+            case 'games-carousel-card':
+                internalDiv.classList.remove('mx-auto')
+                internalDiv.classList.add('border-darkgreen', 'border-2', 'p-0', 'games-carousel-card')
+                // @todo internalDiv.firstElementChild.href = '...'
+                internalDiv.firstElementChild.href = '#'
+                internalDiv.firstElementChild.classList.add('pt-1')
+                internalDiv.firstElementChild.innerHTML =
+                    '<p class="fs-6 fw-bold text-uppercase text-center">' +
+                    new Date(elementList[i].gameDate).toLocaleDateString() + '</p>' +
+                    '<hr class="opacity-100 mx-1"><div class="d-flex flex-column">' +
+                    '   <div>' +
+                    '      <div class="row w-100">' +
+                    '           <span class="text-uppercase fs-5 fw-bold text-center z-1 mb-neg-1">' +
+                    elementList[i].competitionId + '</span>' +
+                    '      </div><div class="d-flex justify-content-around w-100">' +
+                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + elementList[i].clubId1 +
+                    '.png" alt=" " data-bs-toggle="tooltip" title="' + elementList[i].clubName1 + '" ' +
+                    'class="img-fluid game-img-size zn-1">' +
+                    '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + elementList[i].clubId2 +
+                    '.png" alt=" " data-bs-toggle="tooltip" title="' + elementList[i].clubName2 + '" ' +
+                    'class="img-fluid game-img-size zn-1">' +
+                    '      </div><div class="row w-100"><span class="text-uppercase text-darkgreen ' +
+                    'fs-5 fw-bold text-center z-1 mt-neg-1">VS</span></div>' +
+                    '   </div><div class="d-flex justify-content-between mx-2 mx-md-4">' +
+                    '       <p class="fw-bold fs-3 text-center">' + elementList[i].goal1 + '</p>' +
+                    '       <p class="fw-bold fs-3 text-center">-</p>' +
+                    '       <p class="fw-bold fs-3 text-center">' + elementList[i].goal2 + '</p></div></div>'
+
+                break;
+            case 'simple-image-carousel-card':
+                internalDiv.classList.remove('justify-content-center')
+                internalDiv.classList.add('border-darkgreen', 'border-2', 'align-items-center',
+                    'simple-image-carousel-card')
+                cardImg.classList.add('img-fluid', 'p-2')
+                internalDiv.firstElementChild.href = '#';    // @todo remove it after href is set.
+                internalDiv.firstElementChild.appendChild(cardImg)
+                if (elementList[0].clubName) {
+                    // @todo internalDiv.firstElementChild.href = '...'
+                    internalDiv.firstElementChild.title = String(elementList[i].clubName)
+                    cardImg.src = "https://tmssl.akamaized.net/images/wappen/head/" +
+                        String(elementList[i].clubId) + ".png";
+                } else {
+                    // @todo internalDiv.firstElementChild.href = '...'
+                    internalDiv.firstElementChild.title = String(elementList[i].competitionName)
+                    // @todo ...
+                }
+                break;
+            case 'player-carousel-card':
+                internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
+                internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
+                    'player-carousel-card', 'h-100')
                 // @todo internalDiv.firstElementChild.href = '...'
                 internalDiv.firstElementChild.href = '#'
                 internalDiv.firstElementChild.title = String(elementList[i].playerName)
-                internalDiv.firstElementChild.classList.add('h-100')
-                internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
-                internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
-                    'player-carousel-card', 'h-100', );
-                let cardImg = document.createElement('img')
                 cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
                 cardImg.src = String(elementList[i].imageUrl)
                 cardImg.alt = ' '
@@ -208,16 +264,15 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 textContainer.innerText = setReducedName(elementList[i].playerLastName, elementList[i].playerName);
                 internalDiv.firstElementChild.appendChild(cardImg)
                 internalDiv.firstElementChild.appendChild(textContainer)
-            }
-            setIframesHeight(window.parent)
-            break;
-        case 'style-2':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        case 'style-3':
-            // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
-            break;
-        default:
+                break;
+            case 'national-carousel-card':
+                // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+                break;
+            default:
+                console.error('Style "' + styleString + '" not found for the carousel.');
+                return;
+        }
+        setIframesHeight(window.parent)
     }
 }
 
