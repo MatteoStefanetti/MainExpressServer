@@ -227,7 +227,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                     'class="img-fluid game-img-size zn-1">' +
                     '      </div><div class="row w-100"><span class="text-uppercase text-darkgreen ' +
                     'fs-5 fw-bold text-center z-1 mt-neg-1">VS</span></div>' +
-                    '   </div><div class="d-flex justify-content-between mx-2 mx-md-4">' +
+                    '   </div><div class="d-flex justify-content-between mx-3 mx-sm-4">' +
                     '       <p class="fw-bold fs-3 text-center">' + elementList[i].goal1 + '</p>' +
                     '       <p class="fw-bold fs-3 text-center">-</p>' +
                     '       <p class="fw-bold fs-3 text-center">' + elementList[i].goal2 + '</p></div></div>'
