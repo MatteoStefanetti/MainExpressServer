@@ -26,10 +26,12 @@ function commonInitOfPage() {
  * @param window {Window} The window reference in which the spinner is contained.
  * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
 function showChargingSpinner(window, toDisplay) {
+    const elem = (!window) ? document.getElementById('spinner').classList :
+        window.document.getElementById('spinner').classList;
     if (toDisplay)
-        window.document.getElementById('spinner').classList.remove('d-none')
+        elem.remove('d-none')
     else
-        window.document.getElementById('spinner').classList.add('d-none')
+        elem.add('d-none')
 }
 
 /** This is an EXPRESS GET function:

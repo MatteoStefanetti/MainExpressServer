@@ -35,6 +35,7 @@
 /* ------- Element styling ------- */
 
 .games-carousel-card {
+    width: 60vmin;
     box-shadow: grey 3px 0.2rem 3px;
     aspect-ratio: 39 / 40 !important;
 }

@@ -218,7 +218,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                     '      <div class="row w-100">' +
                     '           <span class="text-uppercase fs-5 fw-bold text-center z-1 mb-neg-1">' +
                     elementList[i].competitionId + '</span>' +
-                    '      </div><div class="d-flex justify-content-around w-100">' +
+                    '      </div><div class="d-flex justify-content-between px-2 w-100">' +
                     '          <img src="https://tmssl.akamaized.net/images/wappen/head/' + elementList[i].clubId1 +
                     '.png" alt=" " data-bs-toggle="tooltip" title="' + elementList[i].clubName1 + '" ' +
                     'class="img-fluid game-img-size zn-1">' +
