@@ -30,7 +30,10 @@ async function initCarousel() {
             if(elementList)
                 console.error('not null: ', elementList)
             elementList = Array(data.data)[0];
-            modifyCarouselElements(sliderWrapper, styleStr);
+            if(!elementList[0])
+                console.error('Error: response of', retrieveStr, 'is:', elementList)
+            else
+                modifyCarouselElements(sliderWrapper, styleStr);
         })
         .catch(err => console.error(err))
 
@@ -38,8 +41,25 @@ async function initCarousel() {
     let carousel_next = document.getElementById('carousel_next');
     carousel_prev.addEventListener('click', slideCarouselPrev.bind(carousel_prev, carousel_next));
     carousel_next.addEventListener('click', slideCarouselNext.bind(carousel_next, carousel_prev));
+    /* @todo drag of the carousels
+    let dragging = 0;
+    sliderWrapper.addEventListener('dragover', (ev) => {
+        console.log('start:', ev.clientX)
+        dragging = ev.clientX
+    })
+    sliderWrapper.addEventListener('dragend', (ev) => {
+        console.log('end:', ev.clientX)
+        if (ev.clientX - dragging > 0) {
+            if(!carousel_prev.disabled)
+                carousel_prev.click();
+        } else if (ev.clientX - dragging < 0) {
+            if(!carousel_next.disabled)
+                carousel_next.click();
+        }
+        dragging = 0;
+    })*/
     toggleButton(carousel_prev, true);
-    if (state >= Math.floor(sliderWrapper.children.length / getShownElementsNumber(sliderWrapper)) - 1)
+    if ((state + 1) * getShownElementsNumber(sliderWrapper) >= sliderWrapper.children.length)
         toggleButton(carousel_next, true);
 
     showChargingSpinner(window.parent, false)
@@ -64,7 +84,7 @@ async function initCarousel() {
     function slideCarouselNext(otherBtn) {
         let wrapper = document.getElementById('slider-wrapper');
         const elementsNum = getShownElementsNumber(wrapper);
-        if (state < Math.floor(wrapper.children.length / elementsNum) - 1) {
+        if ((state + 1) * elementsNum  < wrapper.children.length) {
             if (otherBtn.disabled)
                 toggleButton(otherBtn, false);
             state++;
@@ -72,12 +92,14 @@ async function initCarousel() {
                 elem.style.transform = "translateX(" + String((state * -(elementsNum * OFFSET))) + "%)"
             }
         }
-        if (state >= Math.floor(wrapper.children.length / elementsNum) - 1)
+        if ((state + 1) * elementsNum >= wrapper.children.length)
             toggleButton(this, true);
     }
 }
 
-/** @param retrieveStr {string} The name of the axios GET route to . */
+/** Function that returns the _Axios GET_ {@link Promise}.
+ * @param retrieveStr {string} The name of the axios GET route to send. It returns _null_ if retrieveStr
+ * has not a valid value. */
 async function retrieveCarouselData(retrieveStr) {
     switch (retrieveStr) {
         case 'lastGames':
@@ -88,13 +110,14 @@ async function retrieveCarouselData(retrieveStr) {
             return makeAxiosGet('/players/get_trend_players')
         case 'national':
             return makeAxiosGet('/get_flags')
-        case '_international':
-            return makeAxiosGet('/get_competitions')
+        case 'international':
+            return makeAxiosGet('/get_competitions/null')
+        case 'england':
+            return makeAxiosGet('/get_competitions/GB1')
         default:
             return null;
     }
 }
-
 
 /** Function called by the `init()` of the **pages that are using the _iframe_ tags**.
  * This means that, for example, the initHome will call this function. */
@@ -110,7 +133,7 @@ function setIframesHeight(window) {
         window.document.getElementsByTagName('iframe') :
         document.getElementsByTagName('iframe');
     for(let elem of iframes)
-        if(elem.id !== 'chatPage'){
+        if(elem.src !== './chat.html'){
             const elemDocument = elem.contentDocument || elem.contentWindow.document;
             elem.style.height = (elemDocument.body.scrollHeight + 1) + 'px';
         }
@@ -185,11 +208,12 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 carouselWrapper.removeChild(carouselWrapper.lastChild)
             }
         } else
-            elementList.splice(DEFAULT_ELEMENTS_NUMBER)
+            elementList = Array(elementList).splice(DEFAULT_ELEMENTS_NUMBER)
     }
     carouselWrapper.classList.add('pb-1')
     for (let i = 0; i < children.length; i++) {
         let internalDiv = children[i].firstElementChild;
+        internalDiv.firstElementChild.classList.add('d-block')
         let cardImg = document.createElement('img')
         switch (styleString) {
             case 'games-carousel-card':
@@ -235,8 +259,9 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                         String(elementList[i].clubId) + ".png";
                 } else {
                     // @todo internalDiv.firstElementChild.href = '...'
-                    internalDiv.firstElementChild.title = String(elementList[i].competitionName)
-                    // @todo ...
+                    internalDiv.firstElementChild.title = retrieveCompetitionName(elementList[i].competition_name)
+                    cardImg.src = "https://tmssl.akamaized.net/images/logo/header/" +
+                        String(elementList[i].competition_id).toLowerCase() + ".png";
                 }
                 break;
             case 'player-carousel-card':
@@ -257,7 +282,18 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.firstElementChild.appendChild(textContainer)
                 break;
             case 'national-carousel-card':
-                // @todo DEFINE the classes (and the functions if needed) that will be set to the the carousel
+                internalDiv.classList.remove('justify-content-center')
+                internalDiv.classList.add('border-darkgreen', 'border-2', 'align-items-center',
+                    'national-carousel-card')
+                // @todo internalDiv.firstElementChild.href = '...'
+                internalDiv.firstElementChild.href = '#';    // @todo remove it after href is set.
+                internalDiv.firstElementChild.title = String(elementList[i].country_name)
+                cardImg.classList.add('img-fluid', 'p-2', 'mb-1', 'rounded-4')
+                cardImg.src = elementList[i].flag_url
+                internalDiv.firstElementChild.appendChild(cardImg)
+                let countryText = document.createElement('span')
+                countryText.innerText = String(elementList[i].country_name)
+                internalDiv.firstElementChild.appendChild(countryText)
                 break;
             default:
                 console.error('Style "' + styleString + '" not found for the carousel.');
@@ -284,4 +320,16 @@ function setReducedName(lastName, fullName) {
             i = fullNArray.length;
     }
     return fullNArray.join(' ');
+}
+
+/** Function made to transform names like _"premier-league"_ into _"Premier League"_
+ * @param name {string} the string to transform. */
+function retrieveCompetitionName(name) {
+    let nameArr = name.split('-');
+    for (let i = 0; i < nameArr.length; i++)
+        if(nameArr[i].length <= 3 && nameArr[i] !== 'cup')
+            nameArr[i] = nameArr[i].toUpperCase()
+        else
+            nameArr[i] = nameArr[i].charAt(0).toUpperCase() + nameArr[i].slice(1)
+    return nameArr.join(' ')
 }

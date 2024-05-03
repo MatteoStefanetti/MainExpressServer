@@ -87,26 +87,15 @@ router.get('/players/get_trend_players', async (req, res) => {
 
 /* ------ Competitions ------ */
 
-router.get('/get_flags', function(req,res,next) {
-    fetch('http://localhost:3002/flags/get_all', {
+router.get('/get_competitions/:domesticLeagueCode', function(req, res) {
+    /** @note _domesticLeagueCode_ can be 'null' to query international competitions */
+    const value = (req.params.domesticLeagueCode) ? String(req.params.domesticLeagueCode) : null;
+    fetch('http://localhost:3002/competitions/get_national_competitions/' + value, {
         headers: { 'Content-Type': 'application/json' }, method: 'get'
     })
-        .then(res=> res.json())
+        .then(res => res.json())
         .then(json => res.status(200).json(json))
         .catch(err => res.status(500).json(err));
-});
-
-router.get('/get_competitions/:domesticLeagueCode', function(req, res) {
-    if(req.params.domesticLeagueCode) {
-        fetch('http://localhost:3002/get_national_competitions/' + String(req.params.domesticLeagueCode), {
-            headers: { 'Content-Type': 'application/json' }, method: 'get'
-        })
-            .then(res=> res.json())
-            .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err));
-    } else {
-        res.status(500).json(JSON.stringify('Please insert a valid domesticLeagueCode to search'));
-    }
 });
 
 /* ------ Clubs ------ */
@@ -133,7 +122,7 @@ router.get('/get_clubs_by_string/:name', function (req, res) {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
         })
-            .then(res=> res.json())
+            .then(res => res.json())
             .then(json => res.status(200).json(json))
             .catch(err => {
                 res.status(404).json(JSON.stringify('Request content was not found.'));
@@ -145,13 +134,22 @@ router.get('/get_clubs_by_string/:name', function (req, res) {
 
 /* ------ General ------ */
 
+router.get('/get_flags', function(req,res,next) {
+    fetch('http://localhost:3002/flags/get_all', {
+        headers: { 'Content-Type': 'application/json' }, method: 'get'
+    })
+        .then(res => res.json())
+        .then(json => res.status(200).json(json))
+        .catch(err => res.status(500).json(err));
+});
+
 router.get('/clubs/get_club_by_id/:id', function (req, res) {
     if (req.params.id){
         fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id),{
             headers:{'Content-Type': 'application/json'},
             method: 'get'
         })
-            .then(res=> res.json())
+            .then(res => res.json())
             .then(json => res.status(200).json(json))
             .catch(err => console.error(err));
     }
