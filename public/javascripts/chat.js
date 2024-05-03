@@ -17,6 +17,7 @@ function initChat() {
     document.getElementById("submitForm").onclick =  connectToRoom;
     document.getElementById("leaveButton").onclick =  leaveRoom;
     document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
+    document.getElementById('textField').addEventListener('submit', sendMessage)
     if(localStorage.getItem('acceptedChatTerms'))
         closeChatTerms();
     initChatSocket()
