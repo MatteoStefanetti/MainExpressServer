@@ -16,9 +16,10 @@ function initChat() {
     document.getElementById('declineTermsBtn').onclick = closeChat;
     document.getElementById("submitForm").onclick =  connectToRoom;
     document.getElementById("leaveButton").onclick =  leaveRoom;
+    document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
     if(localStorage.getItem('acceptedChatTerms'))
         closeChatTerms();
-    initChatSocket();
+    initChatSocket()
 }
 
 /** Function used to set the initial chat divs and buttons at every page-load.
@@ -186,6 +187,20 @@ function leaveRoom(event) {
     event.preventDefault();
 }
 
+function sendMessage(event){
+    let text = String(extractFormData('textField').textInput).trim();
+    document.getElementById('textInput').value = '';
+    if(!text || text.length < 1) {
+        console.error("Error on text string");
+        event.preventDefault();
+        return; // @todo end this case (what to do ?)
+    }
+    writeOnChat(chatUserName, text);
+    chatSocket.emit("chat", roomName, chatUserName, text);
+    // @todo send on socket
+    event.preventDefault();
+}
+
 
 /** It appends the given html text to the chat div
  * @param userId who sent the message
@@ -195,6 +210,17 @@ function writeOnChat(userId, text) {
     // handle userId == null case
     if(text && String(text).trim().length !== 0){
         const sender = userId===chatUserName ? "You" : userId
+        let msgNode = document.createElement('div')
+        msgNode.classList.add('border-bottom', 'py-2')
+        if(sender === "You")
+            msgNode.classList.add('ps-3', 'pe-1', 'text-end')
+        else
+            msgNode.classList.add('pe-3', 'ps-1', 'text-start')
+
+        msgNode.innerHTML = '<b>' + sender + '</b>' + '<br>' + text
+
+        let msgContainer = document.getElementById('messages');
+        msgContainer.insertBefore(msgNode, msgContainer.firstChild);
         // @todo:
         // - the chat box, the paragraph where the message will be written,
         // - the default elements of a chat message (joined & disconnected, message from someone)

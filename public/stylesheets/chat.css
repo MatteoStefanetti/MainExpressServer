@@ -1,23 +1,7 @@
-#chatLandingElems {
-    height: 100vh !important;
-}
-#chatPageBody {
-    height: 100vh !important;
+.selfMessage {
+    background-image: radial-gradient(circle at center, var(--lightgreen-disabled), transparent);
 }
 
-.scrolling-text {
-    position: relative;
-    white-space: nowrap;
-    animation: scroll-left 20s linear infinite;
-}
+.otherMessage {
 
-@keyframes scroll-left {
-    from {
-        left: 100%;
-        width: 500%;
-    }
-    to {
-        left: -100%;
-        width: 500%;
-    }
 }
