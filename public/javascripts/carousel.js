@@ -328,7 +328,7 @@ async function loadNationalCompetition(domestic_league_code) {
                 return;
             }
             nationalSection.name = domestic_league_code
-            document.getElementById('gamesAccordion').replaceChildren()
+            window.parent.document.getElementById('gamesAccordion').replaceChildren()
         }
         await makeAxiosGet('/get_competitions/' + String(domestic_league_code))
             .then(data => {
