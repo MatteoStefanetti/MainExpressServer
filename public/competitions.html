@@ -52,12 +52,35 @@
     <!-- Content -->
     <div class="row m-0 align-content-stretch mb-5" id="contentHeight">
         <!-- Things -->
-        <div class="col-12 col-lg-9 p-0 pb-3">
-            <div class="container-sm mx-auto px-2">
+        <div class="col-12 col-lg-9 p-0 pb-3 justify-content-center">
+            <div class="mx-auto px-2 position-relative">
                 <iframe src="carousel.html" name="national-carousel-card_national" class="w-100 mt-5"></iframe>
-                <iframe src="carousel.html" name="simple-image-carousel-card_international" class="w-100 mt-5">
+                <div id="nationalSection" class="position-relative hiddenInfo">
+                    <div class="d-none d-sm-flex position-sticky top-form-container pt-md-3 mb-md-1">
+                        <p class="h4 fw-bold p-0 ps-md-2 mb-2 mb-sm-0 me-3 text-center">Games</p>
+                        <hr class="d-none d-sm-flex bg-light opacity-75 me-3 vertical-separator">
+                        <div class="btn-group btn-group-sm mx-4">
+                            <button type="button" id="SelectionByClubsBtn" class="btn rounded-pill mx-2 py-0 px-3 btn-light">Clubs</button>
+                            <button type="button" id="SelectionByDateBtn" class="btn rounded-pill mx-2 py-0 px-3 btn-darkgreen">Date</button>
+                        </div>
+                        <form class="form d-flex justify-content-end flex-grow-1 align-items-center ms-3 ms-sm-0" id="searchGames">
+                            <label for="club1SearchBar" class="d-none" aria-hidden="true">search</label>
+                            <input type="text" name="club1Search" id="club1SearchBar" class="form-control rounded-4 py-1 px-2 fst-italic d-none" placeholder="Search a club name..."/>
+                            <label for="club2SearchBar" class="text-center fw-bold mx-2 d-none">vs</label>
+                            <input type="text" name="club2Search" id="club2SearchBar" class="form-control rounded-4 py-1 px-2 fst-italic d-none" placeholder="Search a club name..."/>
+                            <label for="dateSearchBar" class="d-none" aria-hidden="true">search</label>
+                            <input type="date" name="dateSearch" id="dateSearchBar" class="form-control rounded-4 py-1 px-2 fst-italic" placeholder="e.g. 30/01/2023"/>
+                            <button type="submit" class="ms-2 btn rounded-circle btn-search" id="submitClubForm">
+                                <span class="bi bi-search text-lightgreen fs-5"></span>
+                            </button>
+                        </form>
+                        <!-- Content of nationalSection -->
+                        <div class="accordion mb-4 px-2" id="gamesAccordion"></div>
+                    </div>
+                </div>
+                <iframe src="carousel.html" name="simple-image-carousel-card_international" class="shown-carousel w-100 mt-5">
                 </iframe>
-                <iframe src="carousel.html" name="simple-image-carousel-card_england" class="w-100 mt-5"></iframe>
+                <iframe src="carousel.html" name="simple-image-carousel-card_england" class="shown-carousel w-100 mt-5"></iframe>
             </div>
         </div>
         <!-- Chat div (default set on d-none) -->

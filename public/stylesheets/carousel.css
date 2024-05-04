@@ -107,3 +107,10 @@
     box-shadow: var(--darkgreen-disabled) 3px 0.2rem 3px;
     background-image: linear-gradient(#fafafa, var(--darkgreen-disabled) 40%, #fafafa, white);
 }
+
+.current-nation {
+    color: var(--lightgreen);
+    text-decoration: underline;
+    box-shadow: 0 0 0.4rem var(--darkgreen-disabled);
+    background-image: linear-gradient(#fafafa, var(--darkgreen-disabled) 40%, #fafafa, white);
+}

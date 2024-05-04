@@ -1,0 +1,24 @@
+
+.closed {
+    height: 0 !important;
+    transition: height 0.2s ease-in-out;
+    overflow: hidden !important;
+}
+
+.hiddenInfo {
+    height: 0 !important;
+    transition: height 1s ease-in-out;
+    overflow: hidden !important;
+}
+
+.expanded { /*var set via javascript */
+    height: var(--expanded-height) !important;
+}
+
+#searchGames input[type = text] {
+    width: 180px
+}
+
+#dateSearchBar {
+    width: 135px;
+}
