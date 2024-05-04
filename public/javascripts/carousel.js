@@ -41,23 +41,7 @@ async function initCarousel() {
     let carousel_next = document.getElementById('carousel_next');
     carousel_prev.addEventListener('click', slideCarouselPrev.bind(carousel_prev, carousel_next));
     carousel_next.addEventListener('click', slideCarouselNext.bind(carousel_next, carousel_prev));
-    /* @todo drag of the carousels
-    let dragging = 0;
-    sliderWrapper.addEventListener('dragover', (ev) => {
-        console.log('start:', ev.clientX)
-        dragging = ev.clientX
-    })
-    sliderWrapper.addEventListener('dragend', (ev) => {
-        console.log('end:', ev.clientX)
-        if (ev.clientX - dragging > 0) {
-            if(!carousel_prev.disabled)
-                carousel_prev.click();
-        } else if (ev.clientX - dragging < 0) {
-            if(!carousel_next.disabled)
-                carousel_next.click();
-        }
-        dragging = 0;
-    })*/
+
     toggleButton(carousel_prev, true);
     if ((state + 1) * getShownElementsNumber(sliderWrapper) >= sliderWrapper.children.length)
         toggleButton(carousel_next, true);
@@ -213,6 +197,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
     carouselWrapper.classList.add('pb-1')
     for (let i = 0; i < children.length; i++) {
         let internalDiv = children[i].firstElementChild;
+        internalDiv.style.userSelect = 'none'   // To prevent from selecting the divs
         internalDiv.firstElementChild.classList.add('d-block')
         let cardImg = document.createElement('img')
         switch (styleString) {
@@ -285,8 +270,10 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.classList.remove('justify-content-center')
                 internalDiv.classList.add('border-darkgreen', 'border-2', 'align-items-center',
                     'national-carousel-card')
-                // @todo internalDiv.firstElementChild.href = '...'
-                internalDiv.firstElementChild.href = '#';    // @todo remove it after href is set.
+                internalDiv.firstElementChild.remove()
+                let btnElem = document.createElement('button')
+                btnElem.classList.add('bg-transparent', 'border-0', 'rounded-4', 'w-100', 'h-100')
+                internalDiv.appendChild(btnElem)
                 internalDiv.firstElementChild.title = String(elementList[i].country_name)
                 cardImg.classList.add('img-fluid', 'p-2', 'mb-1', 'rounded-4')
                 cardImg.src = elementList[i].flag_url
@@ -294,12 +281,67 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 let countryText = document.createElement('span')
                 countryText.innerText = String(elementList[i].country_name)
                 internalDiv.firstElementChild.appendChild(countryText)
+                internalDiv.addEventListener('click',
+                    loadNationalCompetition.bind(internalDiv, elementList[i].domestic_league_code))
                 break;
             default:
                 console.error('Style "' + styleString + '" not found for the carousel.');
                 return;
         }
-        setIframesHeight(window.parent)
+    }
+    setIframesHeight(window.parent)
+}
+
+/** Function used to show and load the data for the national competitions
+ * @param domestic_league_code {string} */
+async function loadNationalCompetition(domestic_league_code) {
+    if (!domestic_league_code) {
+        console.error('Called \'loadNationalCompetition\' with null \'domestic_league_code\'!')
+        return;
+    }
+    let nationalSection = window.parent.document.getElementById('nationalSection')
+    let otherCarousels = window.parent.document.getElementsByClassName('shown-carousel')
+    if(this.classList.contains('current-nation')) {
+        // it collapse the div
+        this.classList.remove('current-nation')
+        nationalSection.classList.remove('expanded')
+        for(let elem of otherCarousels) {
+            elem.classList.remove('closed')
+            elem.style.height = elem.scrollHeight + 'px';
+        }
+    } else {
+        showChargingSpinner(window.parent, true)
+        if (document.getElementsByClassName('current-nation').length !== 0) {
+            // The div is shown, must recreate the content and modify the selected nation
+            for ( let elem of document.getElementsByClassName('current-nation'))
+                elem.classList.remove('current-nation')
+            this.classList.add('current-nation')
+        } else {
+            // it shows the div & create the content
+            for(let elem of otherCarousels)
+                elem.classList.add('closed')
+            this.classList.add('current-nation')
+            nationalSection.style.setProperty('--expanded-height', (nationalSection.scrollHeight + 500) + 'px !important')
+            nationalSection.classList.add('expanded')
+            if (nationalSection.name === domestic_league_code) {
+                showChargingSpinner(window.parent, false)
+                return;
+            }
+            nationalSection.name = domestic_league_code
+            document.getElementById('gamesAccordion').replaceChildren()
+        }
+        await makeAxiosGet('/get_competitions/' + String(domestic_league_code))
+            .then(data => {
+                let competitionList = Array(data.data)[0]
+                if(!competitionList || competitionList.length === 0)
+                    console.error('Error! Invalid competitions list returned:', competitionList)
+                console.log(competitionList)
+                /*competitionList.forEach(val => {
+                    createAccordion('gamesAccordion', val)
+                })*/
+            })
+            .catch(err => console.error('Error! \'/get_competition/:code\' went wrong:', err))
+        showChargingSpinner(window.parent, false)
     }
 }
 
@@ -307,13 +349,13 @@ function modifyCarouselElements(carouselWrapper, styleString) {
  * @param lastName {string} The string to try to maintain at the end.
  * @param fullName {string} The full name that will be truncated if necessary. */
 function setReducedName(lastName, fullName) {
-    if(!fullName || fullName.length === lastName.length)
+    if (!fullName || fullName.length === lastName.length)
         return lastName;
-    if(fullName.length < 14)
+    if (fullName.length < 14)
         return fullName;
     let fullNArray = fullName.trim().split(' ')
     const lastNStart = lastName.trim().split(' ')[0]
-    for(let i = 0; i < fullNArray.length; i++) {
+    for (let i = 0; i < fullNArray.length; i++) {
         if (fullNArray[i] !== lastNStart)
             fullNArray[i] = String(fullNArray[i].trim().charAt(0) + '.')
         else
