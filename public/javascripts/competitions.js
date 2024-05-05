@@ -1,8 +1,8 @@
 
 /** Called by the competitions.html page. */
 function initCompetitions() {
-    setButtonsListener();
-    setCarouselPageHeight();
+    setButtonsListener()
+    setCarouselPageHeight()
 }
 
 /* Adding the listener to the form buttons */

@@ -2,7 +2,6 @@ let flags;
 
 /** Called by the clubs.html page. */
 async function initClubs() {
-    commonInitOfPage();
     await getAllFlags()
         .then(res => {
             flags = res;
