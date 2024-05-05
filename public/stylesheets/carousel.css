@@ -35,7 +35,7 @@
 /* ------- Element styling ------- */
 
 .games-carousel-card {
-    width: 60vmin;
+    width: 90%;
     box-shadow: grey 3px 0.2rem 3px;
     aspect-ratio: 39 / 40 !important;
 }
@@ -49,8 +49,8 @@
 }
 
 .game-img-size {
-    max-height: 35%;
-    max-width: 30%;
+    width: 30%;
+    aspect-ratio: 13/17 !important;
 }
 
 .mb-neg-1 {
@@ -62,6 +62,8 @@
 }
 
 .simple-image-carousel-card {
+    width: 85%;
+    aspect-ratio: 79/100 !important;
     box-shadow: grey 3px 0.2rem 3px;
 }
 
@@ -95,7 +97,7 @@
 }
 
 .national-carousel-card {
-    /*aspect-ratio: 7/8 !important;*/
+    width: 90%;
     aspect-ratio: 8/9 !important;
     box-shadow: grey 3px 0.2rem 3px;
     background-image: linear-gradient(#fafafa, #cecece 40%, #fafafa, white);

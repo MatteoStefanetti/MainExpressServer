@@ -26,14 +26,14 @@ async function initCarousel() {
     }
     createDefaultCarouselElements(sliderWrapper);
     await retrieveCarouselData(retrieveStr)
-        .then(data => {
-            if(elementList)
+        .then(async data => {
+            if (elementList)
                 console.error('not null: ', elementList)
             elementList = Array(data.data)[0];
-            if(!elementList[0])
+            if (!elementList[0])
                 console.error('Error: response of', retrieveStr, 'is:', elementList)
             else
-                modifyCarouselElements(sliderWrapper, styleStr);
+                await modifyCarouselElements(sliderWrapper, styleStr)
         })
         .catch(err => console.error(err))
 
@@ -103,25 +103,38 @@ async function retrieveCarouselData(retrieveStr) {
     }
 }
 
-/** Function called by the `init()` of the **pages that are using the _iframe_ tags**.
- * This means that, for example, the initHome will call this function. */
-function setCarouselPageHeight() {
-    setIframesHeight(null);
-    window.addEventListener('resize', setIframesHeight.bind(null, null));
+/** Function to set the height of the iframe based on its content.
+ * @param externalCall {boolean} If true, the function will perform action on the parent of the iframes.
+ * Otherwise, it will resize the height of just THIS iframe through its parent. */
+function setIframesHeight(externalCall) {
+    let iframes
+    if (externalCall) {
+        iframes = document.getElementsByTagName('iframe');
+        for (let iframe of iframes) {
+            if (iframe.src !== './chat.html') {
+                iframe.addEventListener('load', () => {
+                    setTimeout(adjustIframeHeight.bind(null, externalCall), 100) // 100 ms before setting the height
+                })
+                if (document.readyState === 'complete')
+                    adjustIframeHeight(iframe);
+            }
+        }
+    } else {
+        const contentDocument = window.contentDocument || window.parent.document.getElementsByName(window.name)[0].contentWindow.document
+        window.parent.document.getElementsByName(window.name)[0].style.height = contentDocument.body.scrollHeight + 'px'
+    }
 }
 
-/** Function to set the height of the iframe based on its content. */
-function setIframesHeight(window) {
-    // We define the document with the min height, then set the height of every iframe:
-    let iframes = (window) ?
-        window.document.getElementsByTagName('iframe') :
-        document.getElementsByTagName('iframe');
-    for(let elem of iframes)
-        if(elem.src !== './chat.html'){
-            const elemDocument = elem.contentDocument || elem.contentWindow.document;
-            elem.style.height = (elemDocument.body.scrollHeight + 1) + 'px';
-        }
+function adjustIframeHeight(iframe) {
+    try {
+        const contentDocument = iframe.contentDocument || iframe.contentWindow.document;
+        const contentHeight = contentDocument.body.scrollHeight;
+        iframe.style.height = contentHeight + 'px';
+    } catch (error) {
+        console.error('Unable to adjust height for iframe:', iframe.src, error);
+    }
 }
+
 
 /** Function used to toggle a carousel button, this will set the `visibility` of the button to _'hidden'_ or _'visible'_.
  * @param button {HTMLButtonElement} The button to disable or enable.
@@ -289,7 +302,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 return;
         }
     }
-    setIframesHeight(window.parent)
+    setTimeout(setIframesHeight.bind(null, false), 200)
 }
 
 /** Function used to show and load the data for the national competitions
@@ -335,7 +348,7 @@ async function loadNationalCompetition(domestic_league_code) {
                 let competitionList = Array(data.data)[0]
                 if(!competitionList || competitionList.length === 0)
                     console.error('Error! Invalid competitions list returned:', competitionList)
-                console.log(competitionList)
+                console.log(competitionList)    // @todo remove it! FOR DEBUG ONLY!
                 /*competitionList.forEach(val => {
                     createAccordion('gamesAccordion', val)
                 })*/
