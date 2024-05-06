@@ -207,7 +207,8 @@ function modifyCarouselElements(carouselWrapper, styleString) {
         } else
             elementList = Array(elementList).splice(DEFAULT_ELEMENTS_NUMBER)
     }
-    carouselWrapper.classList.add('pb-1')
+
+    carouselWrapper.classList.add('py-1')
     for (let i = 0; i < children.length; i++) {
         let internalDiv = children[i].firstElementChild;
         internalDiv.style.userSelect = 'none'   // To prevent from selecting the divs
@@ -280,6 +281,9 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.firstElementChild.appendChild(textContainer)
                 break;
             case 'national-carousel-card':
+                elementList.sort((st, nd) => {
+                    return String(st.country_name).localeCompare(String(nd.country_name))
+                });
                 internalDiv.classList.remove('justify-content-center')
                 internalDiv.classList.add('border-darkgreen', 'border-2', 'align-items-center',
                     'national-carousel-card')
