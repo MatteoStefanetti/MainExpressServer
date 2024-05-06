@@ -15,10 +15,28 @@
     height: var(--expanded-height) !important;
 }
 
+#selectionByClubsBtn , #selectionByDateBtn {
+    min-width: 80px;
+}
+
 #searchGames input[type = text] {
-    width: 180px
+    width: 40%
 }
 
 #dateSearchBar {
-    width: 135px;
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    #searchGames input[type = text] {
+        width: 180px
+    }
+
+    #dateSearchBar {
+        width: 135px;
+    }
+
+    #selectionByClubsBtn , #selectionByDateBtn {
+        max-width: 80px;
+    }
 }

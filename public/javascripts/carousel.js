@@ -338,7 +338,7 @@ async function loadNationalCompetition(domestic_league_code) {
             for(let elem of otherCarousels)
                 elem.classList.add('closed')
             this.classList.add('current-nation')
-            nationalSection.style.setProperty('--expanded-height', (nationalSection.scrollHeight + 500) + 'px !important')
+            nationalSection.style.setProperty('--expanded-height', (nationalSection.scrollHeight) + 'px !important')
             nationalSection.classList.add('expanded')
             if (nationalSection.name === domestic_league_code) {
                 showChargingSpinner(window.parent, false)

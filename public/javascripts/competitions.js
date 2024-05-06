@@ -5,10 +5,10 @@ function initCompetitions() {
     setCarouselPageHeight()
 }
 
-/* Adding the listener to the form buttons */
+/** Setting the listeners of the form buttons */
 function setButtonsListener() {
-    let clubsBtn = document.getElementById('SelectionByClubsBtn')
-    let dateBtn = document.getElementById('SelectionByDateBtn')
+    let clubsBtn = document.getElementById('selectionByClubsBtn')
+    let dateBtn = document.getElementById('selectionByDateBtn')
     document.getElementById('searchGames').addEventListener('submit', sendCompetitionQuery.bind(this))
     clubsBtn.addEventListener('click', changeBtnColors.bind(clubsBtn, dateBtn))
     dateBtn.addEventListener('click', changeBtnColors.bind(dateBtn, clubsBtn))
@@ -28,6 +28,14 @@ function changeBtnColors(otherBtn) {
                 else
                     child.classList.add('d-none')
             }
+        const formElem = document.getElementById('searchGames')
+        if (this.id === 'selectionByClubsBtn') {
+            formElem.classList.remove('col-sm-6', 'justify-content-sm-end')
+            formElem.classList.add('px-1', 'px-md-3')
+        } else {
+            formElem.classList.add('col-sm-6', 'justify-content-sm-end')
+            formElem.classList.remove('px-1', 'px-md-3')
+        }
     }
 }
 

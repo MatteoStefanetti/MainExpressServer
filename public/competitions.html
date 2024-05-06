@@ -52,20 +52,20 @@
             <div class="mx-auto px-2 position-relative">
                 <iframe src="carousel.html" name="national-carousel-card_national" class="w-100 mt-5"></iframe>
                 <div id="nationalSection" class="position-relative px-3 hiddenInfo">
-                    <div class="d-none d-sm-flex justify-content-center-below position-sticky top-form-container pt-md-3 mb-md-1">
-                        <p class="h4 fw-bold p-0 ps-md-2 mb-2 mb-sm-0 me-3 text-center">Games</p>
-                        <hr class="d-none d-sm-flex bg-light opacity-75 me-3 vertical-separator">
-                        <div class="btn-group btn-group-sm ms-4 me-2 me-md-4">
-                            <button type="button" id="SelectionByClubsBtn" class="btn rounded-pill mx-2 py-0 px-3 btn-light">Clubs</button>
-                            <button type="button" id="SelectionByDateBtn" class="btn rounded-pill mx-2 py-0 px-3 btn-darkgreen">Date</button>
+                    <div class="d-block d-sm-flex row justify-content-center-below-sm position-sticky top-form-container my-md-1">
+                        <p class="col-12 col-sm-2 h4 fw-bold p-0 mb-2 mb-sm-0 text-center">Games</p>
+                        <hr class="col-1 d-none d-sm-flex opacity-75 justify-content-center m-0 mx-2 vertical-separator">
+                        <div class="col-12 col-sm-3 btn-group btn-group-sm text-center px-1">
+                            <button class="col-6 col-sm-2 btn btn-light rounded-pill mx-1 py-1 py-sm-0 px-3 border" type="button" id="selectionByClubsBtn" >Clubs</button>
+                            <button class="col-6 col-sm-2 btn btn-darkgreen rounded-pill mx-1 py-1 py-sm-0 px-3" type="button" id="selectionByDateBtn" >Date</button>
                         </div>
-                        <form class="form d-flex justify-content-end flex-grow-1 align-items-center ms-3 ms-sm-0" id="searchGames">
+                        <form class="col-12 col-sm-6 form d-flex m-0 px-0 justify-content-sm-end align-items-center" id="searchGames">
                             <label for="club1SearchBar" class="d-none" aria-hidden="true">search</label>
                             <input type="text" name="club1Search" id="club1SearchBar" class="form-control rounded-4 py-1 px-2 fst-italic d-none" placeholder="Search a club name..."/>
                             <label for="club2SearchBar" class="text-center fw-bold mx-2 d-none">vs</label>
                             <input type="text" name="club2Search" id="club2SearchBar" class="form-control rounded-4 py-1 px-2 fst-italic d-none" placeholder="Search a club name..."/>
                             <label for="dateSearchBar" class="d-none" aria-hidden="true">search</label>
-                            <input type="date" name="dateSearch" id="dateSearchBar" class="form-control rounded-4 py-1 px-2 fst-italic" placeholder="e.g. 30/01/2023"/>
+                            <input type="date" name="dateSearch" id="dateSearchBar" class="form-control text-secondary rounded-4 py-1 px-2 fst-italic" placeholder="e.g. 30/01/2023"/>
                             <button type="submit" class="ms-2 btn rounded-circle btn-search" id="submitClubForm">
                                 <span class="bi bi-search text-lightgreen fs-5"></span>
                             </button>
