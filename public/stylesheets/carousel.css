@@ -35,9 +35,13 @@
 /* ------- Element styling ------- */
 
 .games-carousel-card {
-    width: 90%;
+    width: 80%;
     box-shadow: grey 3px 0.2rem 3px;
     aspect-ratio: 39 / 40 !important;
+}
+
+@media (max-width: 900px) {
+    width: 100%
 }
 
 .games-carousel-card:hover {

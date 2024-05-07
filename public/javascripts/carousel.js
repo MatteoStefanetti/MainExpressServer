@@ -216,6 +216,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
         let cardImg = document.createElement('img')
         switch (styleString) {
             case 'games-carousel-card':
+                internalDiv.parentElement.classList.remove('col-lg-2')
                 internalDiv.classList.remove('mx-auto')
                 internalDiv.classList.add('border-darkgreen', 'border-2', 'p-0', 'games-carousel-card')
                 // @todo internalDiv.firstElementChild.href = '...'
