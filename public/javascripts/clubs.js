@@ -9,7 +9,7 @@ async function initClubs() {
         })
         .catch(err => console.log(err))
     flags.forEach((value, key) => {
-        createAccordion('clubAccordion', key);
+        createAccordion('club_nation', 'clubAccordion', key);
     })
     document.getElementById('submitClubForm').addEventListener('click', searchClubs);
 }
@@ -32,7 +32,7 @@ async function initClubs() {
  * ```
  * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
  * @param localCompetitionCode {string} is the code used to bind the button to the country */
-function createAccordion(fatherId, localCompetitionCode) {
+/*function createAccordion(fatherId, localCompetitionCode) {
     let wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
     let header = document.createElement('h2');
@@ -64,7 +64,7 @@ function createAccordion(fatherId, localCompetitionCode) {
     accBody.classList.add('accordion-body');
     collapseDiv.appendChild(accBody);
     document.getElementById(fatherId).appendChild(wrapperDiv);
-}
+}*/
 
 function getFlagOf(localCompetitionCode) {
     return flags.get(localCompetitionCode).flagURL;
