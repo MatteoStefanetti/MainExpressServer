@@ -1,4 +1,3 @@
-
 /** number of the max elements displayable in the playersList */
 const MAX_ELEMENTS_DISPLAYABLE = 24;
 
@@ -33,7 +32,21 @@ function searchPlayer(event) {
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
                         'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
-                    clickableContent.href = 'single_page/player/' + String(player.playerId);
+                    let params = {
+                        type: 'player',
+                        id: String(player.playerId)
+                    };
+
+                    let queryString = Object.keys(params)
+                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+                        .join('&');
+                    let url = 'single_page.html';
+
+                    if (queryString) {
+                        url += '?' + queryString;
+                    }
+
+                    clickableContent.href = url;
                     clickableContent.classList.add('text-dark');
                     clickableContent.innerHTML =
                         '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
@@ -42,12 +55,12 @@ function searchPlayer(event) {
                         '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
                         '</div>';
                     playerContainer.appendChild(clickableContent);
-                    if(playerList.children.length >= MAX_ELEMENTS_DISPLAYABLE) {
+                    if (playerList.children.length >= MAX_ELEMENTS_DISPLAYABLE) {
                         playerContainer.classList.add('d-none');
                     }
                     playerList.appendChild(playerContainer);
                 })
-                if(dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
+                if (dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList));
             })
             .catch(err => {
