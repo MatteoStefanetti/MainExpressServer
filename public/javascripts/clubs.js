@@ -96,7 +96,7 @@ function openAccordionClubs(id) {
                 unList.classList.add('nav', 'flex-column');
                 let alternatorCounter = 0;
                 dataList.forEach((value, key) => {
-                    createListItem(dataList.size, unList, alternatorCounter++, key, value, getClubById.bind(null, key));
+                    createListItem(dataList.size, unList, alternatorCounter++, key, value, {type: 'club', id: String(key)});
                 });
                 // Adding the 'load more...' element
                 createLoadMoreElement(unList, id, loadRemainingElements.bind(null, String(id + 'Loader')));
@@ -148,7 +148,7 @@ function searchClubs(event) {
                 unList.classList.remove('d-none');
                 let elementCounter = 0;
                 dataList.forEach((value, key) => {
-                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName, getClubById.bind(null, key));
+                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName, {type: 'club', id: String(key)});
                 })
                 // Adding the 'load more...' element
                 if (dataList.size > 20) {
@@ -178,9 +178,9 @@ function searchClubs(event) {
  *  as like the alternated color of the list items
  * @param id {string} The **id** set to the `<li>` element.
  * @param text {string} The text to show.
- * @param clickFunction {() => any} the function **pointer** to bind to the listItem.
+ * @param params {object} the params for the single_page.html to link up to the listItem.
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
-function createListItem(size, unorderedList, elementCounter, id, text, clickFunction) {
+function createListItem(size, unorderedList, elementCounter, id, text, params) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
         console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
         throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
@@ -188,7 +188,7 @@ function createListItem(size, unorderedList, elementCounter, id, text, clickFunc
     let listItem = document.createElement('li');
     let listItemLink = document.createElement('a');
 
-    listItemLink.href = getUrlForSinglePage({type: 'club', id: String(id)})
+    listItemLink.href = getUrlForSinglePage(params)
 
     listItem.appendChild(listItemLink);
     if (size === 1 || elementCounter % 2 !== 0) {
@@ -237,8 +237,6 @@ function createListItem(size, unorderedList, elementCounter, id, text, clickFunc
     statsImg.src = '../images/stats_btn_img.svg';
     desktopBtn.appendChild(statsImg);
     listItemLink.appendChild(desktopBtn);
-    if (clickFunction)
-        listItem.addEventListener('click', clickFunction);
     unorderedList.appendChild(listItem);
     return listItem;
 }

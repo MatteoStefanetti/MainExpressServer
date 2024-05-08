@@ -8,6 +8,15 @@ const OFFSET = 100;
 let elementList;
 const DEFAULT_ELEMENTS_NUMBER = 24;
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.addEventListener('click', (event) => {
+        const anchorTarget = event.target.closest('a')
+        if (anchorTarget && anchorTarget.href) {
+            event.preventDefault()
+            window.parent.location.href = anchorTarget.href
+        }});
+});
+
 /** Init function called by the carousel documents inside the <iframe>s. */
 async function initCarousel() {
     showChargingSpinner(window.parent, true)
@@ -30,6 +39,7 @@ async function initCarousel() {
             if (elementList)
                 console.error('not null: ', elementList)
             elementList = Array(data.data)[0];
+            console.log('elem: ', elementList[0])
             if (!elementList[0])
                 console.error('Error: response of', retrieveStr, 'is:', elementList)
             else
@@ -250,6 +260,7 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                     'simple-image-carousel-card')
                 cardImg.classList.add('img-fluid', 'p-2')
                 internalDiv.firstElementChild.appendChild(cardImg)
+                console.log(elementList)
                 if (elementList[0].clubName) {
                     internalDiv.firstElementChild.href =
                         getUrlForSinglePage({type: 'club', id: String(elementList[i].clubId)})
@@ -353,7 +364,7 @@ async function loadNationalCompetition(domestic_league_code) {
                 let competitionList = Array(data.data)[0]
                 if(!competitionList || competitionList.length === 0)
                     console.error('Error! Invalid competitions list returned:', competitionList)
-                console.log(competitionList)    // @todo remove it! FOR DEBUG ONLY!
+                console.log('Queried:', competitionList)    // @todo remove it! FOR DEBUG ONLY!
                 /*competitionList.forEach(val => {
                     createAccordion('gamesAccordion', val)
                 })*/
