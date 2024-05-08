@@ -128,9 +128,18 @@ function createAccordion(visualize, fatherId, params){
     }
 }
 
-function getClubById(id) {  // @todo remove it
-    // @todo maybe insert a spinning element
-    console.log('Club called with id: ', id);
+/** Function to define the url {@link string} of the single_page.
+ * @param params {object} It is a `{type: <string>, key: <value>, ...}` object element,
+ * that defines how the *single_page.html* page shall load.
+ * @throws TypeError if the argument `params` is not defined. */
+function getUrlForSinglePage(params) {
+    if (!params)
+        throw new TypeError('\'single_page.html\' badly called.')
+    const queryString = Object.keys(params)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&');
+    return (!queryString) ? null :
+        'single_page.html?' + queryString;
 }
 
 function extractFormData(formId) {

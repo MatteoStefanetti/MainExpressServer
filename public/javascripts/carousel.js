@@ -218,8 +218,8 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.parentElement.classList.remove('col-lg-2')
                 internalDiv.classList.remove('mx-auto')
                 internalDiv.classList.add('border-darkgreen', 'border-2', 'p-0', 'games-carousel-card')
-                // @todo internalDiv.firstElementChild.href = '...'
-                internalDiv.firstElementChild.href = '#'    // @todo remove it after href is set.
+                internalDiv.firstElementChild.href =
+                    getUrlForSinglePage({type: 'game', id: String(elementList[i].gameId)})
                 internalDiv.firstElementChild.classList.add('pt-1')
                 internalDiv.firstElementChild.innerHTML =
                     '<p class="fs-6 fw-bold text-uppercase text-center">' +
@@ -249,15 +249,16 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.classList.add('border-darkgreen', 'border-2', 'align-items-center',
                     'simple-image-carousel-card')
                 cardImg.classList.add('img-fluid', 'p-2')
-                internalDiv.firstElementChild.href = '#';    // @todo remove it after href is set.
                 internalDiv.firstElementChild.appendChild(cardImg)
                 if (elementList[0].clubName) {
-                    // @todo internalDiv.firstElementChild.href = '...'
+                    internalDiv.firstElementChild.href =
+                        getUrlForSinglePage({type: 'club', id: String(elementList[i].clubId)})
                     internalDiv.firstElementChild.title = String(elementList[i].clubName)
                     cardImg.src = "https://tmssl.akamaized.net/images/wappen/head/" +
                         String(elementList[i].clubId) + ".png";
                 } else {
-                    // @todo internalDiv.firstElementChild.href = '...'
+                    internalDiv.firstElementChild.href =
+                        getUrlForSinglePage({type: 'competition', id: String(elementList[i].competition_id)})
                     internalDiv.firstElementChild.title = retrieveCompetitionName(elementList[i].competition_name)
                     cardImg.src = "https://tmssl.akamaized.net/images/logo/header/" +
                         String(elementList[i].competition_id).toLowerCase() + ".png";
@@ -267,8 +268,8 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
                 internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
                     'player-carousel-card', 'h-100')
-                // @todo internalDiv.firstElementChild.href = '...'
-                internalDiv.firstElementChild.href = '#'    // @todo remove it after href is set.
+                internalDiv.firstElementChild.href =
+                    getUrlForSinglePage({type: 'player', id: String(elementList[i].playerId)})
                 internalDiv.firstElementChild.title = String(elementList[i].playerName)
                 cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
                 cardImg.src = String(elementList[i].imageUrl)

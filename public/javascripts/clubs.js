@@ -187,20 +187,8 @@ function createListItem(size, unorderedList, elementCounter, id, text, clickFunc
     }
     let listItem = document.createElement('li');
     let listItemLink = document.createElement('a');
-    let params = {
-        type: 'club',
-        id: String(id)
-    };
 
-    let queryString = Object.keys(params)
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-        .join('&');
-    let url = 'single_page.html';
-    if (queryString) {
-        url += '?' + queryString;
-    }
-
-    listItemLink.href = url;
+    listItemLink.href = getUrlForSinglePage({type: 'club', id: String(id)})
 
     listItem.appendChild(listItemLink);
     if (size === 1 || elementCounter % 2 !== 0) {
