@@ -20,7 +20,7 @@ function initChat() {
     if(localStorage.getItem('acceptedChatTerms'))
         closeChatTerms();
     initChatSocket()
-}
+    }
 
 /** Function used to set the initial chat divs and buttons at every page-load.
  * Called by the init function. */
@@ -47,14 +47,14 @@ function hideNode( node ) {
     if(node instanceof HTMLElement)
         node.classList.add('d-none');
     else
-        console.log("wrong element:", node, "is not a HTMLElement")
+        console.error("wrong element:", node, "is not a HTMLElement")
 }
 
 function showNode( node ) {
     if(node instanceof HTMLElement)
         node.classList.remove('d-none');
     else
-        console.log("wrong element:", node, "is not a HTMLElement")
+        console.error("wrong element:", node, "is not a HTMLElement")
 }
 
 /** Function called whenever the chat button is clicked. */
@@ -108,21 +108,22 @@ function initChatSocket() {
     chatSocket.on('joined', function (room, userId) {
         if (userId === chatUserName) {
             hideLoginInterface(room, userId)
-        } else {
-            // write on chat that userId has entered
+            writeOnChat('mainServer', 'You entered in room "' + room + '"' )
+            let chatHeader = document.getElementById("chatHeader")
+            chatHeader.classList.add('bg-light','border_bottom')
+
+            let chatName = document.getElementById('chatName')
+            chatName.innerHTML =roomName
+            chatName.classList.remove('d-none')
+
+            let chatLoginHeader = document.getElementById("chatLoginHeader")
+            chatLoginHeader.classList.add('d-none')
+
+            let leaveBtnDiv = document.getElementById('leaveBtnDiv')
+            leaveBtnDiv.classList.remove('d-none')
+
+            document.getElementById('textInput').focus()
         }
-        let chatHeader = document.getElementById("chatHeader")
-        chatHeader.classList.add('bg-light','border_bottom')
-
-        let chatName = document.getElementById('chatName')
-        chatName.innerHTML =roomName
-        chatName.classList.remove('d-none')
-
-        let chatLoginHeader = document.getElementById("chatLoginHeader")
-        chatLoginHeader.classList.add('d-none')
-
-        let leaveBtnDiv = document.getElementById('leaveBtnDiv')
-        leaveBtnDiv.classList.remove('d-none')
     })
 
     /** It receives a list of all rooms opened with the server and add them to the list of rooms in the chat form*/
@@ -141,12 +142,8 @@ function initChatSocket() {
             writeOnChat(userId, chatText)
     })
 
-    chatSocket.on('leave conversation', (userID) => {
-        writeOnChat('mainServer', userID + " leaved the conversation")
-
-    })
-
-    chatSocket.on('disconnect', function(room, userId){
+    chatSocket.on('disconnect', () => {
+        chatSocket.emit('leave conversation', roomName, chatUserName);
         /** Perhaps it could be launched by the {@link leaveRoom} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })

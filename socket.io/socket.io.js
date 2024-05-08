@@ -8,7 +8,6 @@ module.exports = function(io) {
     /** It is a map where keys are rooms names and value are users logged in. */
     const chat = io
         .on('connection', function (socket) {
-
             sendRooms(socket)
 
             try {
@@ -19,8 +18,10 @@ module.exports = function(io) {
                 socket.on('create or join', function (room, userId, isPublic) {
                     socket.join(room);
                     chat.to(room).emit('joined', room, userId);
-                    if(roomsMap.has(room) || isPublic)
+                    if(roomsMap.has(room) || isPublic) {
                         addUserToRoom(room)
+                        socket.roomName = room
+                    }
                 });
 
                 /** It uses the chat function
@@ -37,16 +38,17 @@ module.exports = function(io) {
                 socket.on('leave conversation', (room, userId) => { //check during tests if room exists
                     socket.leave(room, userId);
                     removeUserFromRoom(room)
-                    io.to(room).emit('leave conversation', userId)
                     socket.leave(room)
                 });
 
                 socket.on('disconnect', () => {
                     console.log('A user disconnected.');// @todo: this could fill with trash the console
+                    if(socket.roomName != null)
+                        removeUserFromRoom(socket.roomName)
                 });
 
             } catch (err) {
-                console.log(err)
+                console.error(err)
             }
         });
 };
