@@ -8,7 +8,6 @@ module.exports = function(io) {
     /** It is a map where keys are rooms names and value are users logged in. */
     const chat = io
         .on('connection', function (socket) {
-
             sendRooms(socket)
 
             try {
@@ -19,8 +18,10 @@ module.exports = function(io) {
                 socket.on('create or join', function (room, userId, isPublic) {
                     socket.join(room);
                     chat.to(room).emit('joined', room, userId);
-                    if(roomsMap.has(room) || isPublic)
+                    if(roomsMap.has(room) || isPublic) {
                         addUserToRoom(room)
+                        socket.roomName = room
+                    }
                 });
 
                 /** It uses the chat function
@@ -28,24 +29,27 @@ module.exports = function(io) {
                  * @param userId It will be the username who joined the room.
                  * @param chatText It will be the chat message to send in the room. */
                 socket.on('chat', function (room, userId, chatText) {
-                    chat.to(room).emit('chat', room, userId, chatText);
+                    chat.to(room).emit('chat', userId, chatText);
                 });
 
                 /** It disconnects userId from a room.
                  * @param room The effective chat in which the messages will be sent.
                  * @param userId It will be the username who left the room. */
                 socket.on('leave conversation', (room, userId) => { //check during tests if room exists
-                    io.to(room).emit('leave conversation', userId)
+                    socket.leave(room, userId);
                     removeUserFromRoom(room)
                     socket.leave(room)
+                    socket.roomName = null
                 });
 
                 socket.on('disconnect', () => {
-                    console.log('A user disconnected.');// @todo: this could fill of trash the console
+                    console.log('A user disconnected.');// @todo: this could fill with trash the console
+                    if(socket.roomName != null)
+                        removeUserFromRoom(socket.roomName)
                 });
 
             } catch (err) {
-                console.log(err)
+                console.error(err)
             }
         });
 };
@@ -61,6 +65,7 @@ function addUserToRoom(roomName) {
         usersNum = 0
     }
     roomsMap.set(roomName, ++usersNum)
+    console.log(roomsMap)
 }
 
 /** It finds elems in roomsMap and decrements the user count, removing in case
@@ -75,6 +80,7 @@ function removeUserFromRoom(roomName) {
     } else {
         roomsMap.set(roomName, usersNum-1)
     }
+    console.log(roomsMap)
 }
 
 /** It sends all custom and default rooms keys to a socket */
