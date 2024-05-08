@@ -9,7 +9,6 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
-    localStorage.setItem('isChatOpened', 'false'); //@todo: remove this line
     document.getElementById('chatIconBtn').onclick = clickChatBtn;
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
@@ -103,7 +102,6 @@ function closeChat() {
 }
 
 /* --------------- SOCKET --------------- */
-// @todo: check all functions below
 
 /** Initializing the chat socket. */
 function initChatSocket() {
@@ -138,33 +136,32 @@ function initChatSocket() {
         }
     })
 
-    chatSocket.on('chat', function (room, userId, chatText) {
-        writeOnChat(room, userId, chatText)
+    chatSocket.on('chat', function (userId, chatText) {
+        if(userId !== null && userId !== chatUserName)
+            writeOnChat(userId, chatText)
     })
 
-    chatSocket.on('leave conversation', (room, userID) => {
-        writeOnChat(room, userID, "leaved the conversation")
+    chatSocket.on('leave conversation', (userID) => {
+        writeOnChat('mainServer', userID + " leaved the conversation")
 
     })
 
     chatSocket.on('disconnect', function(room, userId){
-        /** Perhaps it could be launched by the {@link logOutFromChat} function as "socket.disconnect('/chat')" */
+        /** Perhaps it could be launched by the {@link leaveRoom} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
 
 }
 
-/** Called when the "send" btn is pressed. It sends the message via socket */
-function sendChatText() { // @todo
-    let chatText //  = get the text from document
-    chatSocket.emit('chat', roomName, chatUserName, chatText);
-}
-
+/**
+ * Called when 'click' event occurs on login submitForm
+ *  extract and stores form's data
+ *  send it to the socket
+ */
 function connectToRoom(event) {//connect button function
     document.getElementById('submitForm').disabled = true
 
     let formData = extractFormData("chatLoginForm");
-    console.log(formData.makePublic.checked)
     chatUserName = !formData.customName ? chatUserName : formData.customName
     roomName = !formData.customRoom ? roomName : formData.customRoom
     chatSocket.emit('create or join', roomName, chatUserName, formData.makePublic)
@@ -172,9 +169,12 @@ function connectToRoom(event) {//connect button function
     event.preventDefault();
 }
 
+/**
+ * Called when 'click' event occurs on leaveButton
+ *  hide login section, and sets chat section
+ */
 function leaveRoom(event) {
-    //@todo check if {link @logOutFromChat} is useful
-    chatSocket.emit('remove conversation', roomName, chatUserName)
+    chatSocket.emit('leave conversation', roomName, chatUserName)
     document.getElementById('loginForm').classList.remove('d-none')
     document.getElementById('chat').classList.add('d-none')
     document.getElementById('chatName').classList.add('d-none')
@@ -183,11 +183,17 @@ function leaveRoom(event) {
 
     let chatHeader = document.getElementById("chatHeader")
     chatHeader.classList.remove('bg-light','border_bottom')
+    document.getElementById('messages').replaceChildren() //replace children with null
     document.getElementById('submitForm').disabled = false
 
     event.preventDefault();
 }
 
+/** Called when 'click' event occurs on sendMsgBtn
+ * extract and clears form's input
+ * check if it's void
+ * write on chat and emit msg to the socket
+ * */
 function sendMessage(event){
     let text = String(extractFormData('textField').textInput).trim();
     document.getElementById('textInput').value = '';
@@ -198,7 +204,6 @@ function sendMessage(event){
     }
     writeOnChat(chatUserName, text);
     chatSocket.emit("chat", roomName, chatUserName, text);
-    // @todo send on socket
     event.preventDefault();
 }
 
@@ -210,23 +215,25 @@ function sendMessage(event){
 function writeOnChat(userId, text) {
     // handle userId == null case
     if(text && String(text).trim().length !== 0){
-        const sender = userId===chatUserName ? "You" : userId
         let msgNode = document.createElement('div')
         msgNode.classList.add('border-bottom', 'py-2')
-        if(sender === "You")
-            msgNode.classList.add('ps-3', 'pe-1', 'text-end')
-        else
-            msgNode.classList.add('pe-3', 'ps-1', 'text-start')
+        if(userId === 'mainServer') {
+            msgNode.classList.add('ps-3', 'pe-3', 'text-center')
+            msgNode.innerHTML = '<i>'+ text + '</i>'
+        } else {
+            const sender = userId===chatUserName ? "You" : userId
+            if(sender === "You")
+                msgNode.classList.add('ps-3', 'pe-1', 'text-end')
+            else
+                msgNode.classList.add('ps-1', 'pe-3', 'text-start')
 
-        msgNode.innerHTML = '<b>' + sender + '</b>' + '<br>' + text
+            msgNode.innerHTML = '<b>' + sender + '</b>' + '<br>' + text
+        }
 
         let msgContainer = document.getElementById('messages');
+        if(msgContainer.childElementCount === 20)
+            msgContainer.removeChild(msgContainer.lastChild);
         msgContainer.insertBefore(msgNode, msgContainer.firstChild);
-        // @todo:
-        // - the chat box, the paragraph where the message will be written,
-        // - the default elements of a chat message (joined & disconnected, message from someone)
-        // - Will use chatBox.appendChild of the message to display it properly
-        // - Reset the paragraph editable text.
     } else
         console.error('Text to send is null.')
 }
@@ -238,14 +245,3 @@ function hideLoginInterface(room, userId) {
     document.getElementById('loginForm').classList.add('d-none')
     document.getElementById('chat').classList.remove('d-none')
 }
-
-/** It hides the chat and shows the initial form.
- * @param room the current room
- * @param userId the userName */
-function logOutFromChat(room, userId){
-    chatSocket.emit('disconnect', room, userId)
-    document.getElementById('loginForm').classList.remove('d-none')
-    document.getElementById('chat').classList.add('d-none')
-    // todo
-}
-

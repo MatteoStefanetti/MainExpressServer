@@ -28,20 +28,21 @@ module.exports = function(io) {
                  * @param userId It will be the username who joined the room.
                  * @param chatText It will be the chat message to send in the room. */
                 socket.on('chat', function (room, userId, chatText) {
-                    chat.to(room).emit('chat', room, userId, chatText);
+                    chat.to(room).emit('chat', userId, chatText);
                 });
 
                 /** It disconnects userId from a room.
                  * @param room The effective chat in which the messages will be sent.
                  * @param userId It will be the username who left the room. */
                 socket.on('leave conversation', (room, userId) => { //check during tests if room exists
-                    io.to(room).emit('leave conversation', userId)
+                    socket.leave(room, userId);
                     removeUserFromRoom(room)
+                    io.to(room).emit('leave conversation', userId)
                     socket.leave(room)
                 });
 
                 socket.on('disconnect', () => {
-                    console.log('A user disconnected.');// @todo: this could fill of trash the console
+                    console.log('A user disconnected.');// @todo: this could fill with trash the console
                 });
 
             } catch (err) {
