@@ -57,7 +57,31 @@ async function getAllFlags() {
         })
 }
 
-function createAccordion(visualize, fatherId, param1){
+/** This function creates an HTML element with the following structure:
+ * ```
+ * <div class="accordion-item rounded-1 mb-1">
+ *     <h2 class="accordion-header">
+ *         <button class="accordion-button custom-accordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion_1" aria-expanded="false" aria-controls="accordion_1">
+ *             <img src="" class="img me-2 custom-rounded-0_5" style="height: 1.2rem"/>
+ *             <span>Accordion Item</span>
+ *         </button>
+ *     </h2>
+ *     <div id="accordion_1" class="accordion-collapse collapse" data-bs-parent="#clubAccordion">
+ *         <div class="accordion-body">
+ *             # content inside
+ *         </div>
+ *     </div>
+ * </div>
+ * ```
+ * @param visualize {string} is the type of accordion defined by one of the following values:
+ *  - 'competition_nation'
+ *  - 'club_nation'
+ *  - 'player_valuation'
+ * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
+ * @param params {object} is the structure containing the values to use in the accordion.
+ * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
+ * *(e.g. `{parameter_1: 'par1'}` to be referred to as params.parameter_1)* */
+function createAccordion(visualize, fatherId, params){
     let wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
     let header = document.createElement('h2');
@@ -78,29 +102,30 @@ function createAccordion(visualize, fatherId, param1){
     accBody.classList.add('accordion-body');
     collapseDiv.appendChild(accBody);
     document.getElementById(fatherId).appendChild(wrapperDiv);
-    switch (visualize){
+    switch (visualize) {
+        case 'competition_nation':
+            break;
         case 'club_nation':
-            accordionButton.setAttribute('aria-controls', '#' + String(param1));
-            accordionButton.setAttribute('data-bs-target', '#' + String(param1));
-            accordionButton.addEventListener('click', openAccordionClubs.bind(null, param1));
+            accordionButton.setAttribute('aria-controls', '#' + String(params.local_competition_code));
+            accordionButton.setAttribute('data-bs-target', '#' + String(params.local_competition_code));
+            accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
             let flagImg = document.createElement('img');
             flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
-            flagImg.src = getFlagOf(param1);
+            flagImg.src = getFlagOf(params.local_competition_code);
             flagImg.style.height = '1.2rem';
             accordionButton.appendChild(flagImg);
-            spanTitle.innerText = getNationNameOf(param1);
+            spanTitle.innerText = getNationNameOf(params.local_competition_code);
             accordionButton.appendChild(spanTitle);
-            collapseDiv.id = String(param1);
+            collapseDiv.id = String(params.local_competition_code);
             break;
         case 'player_valuation':
-
             break;
         default:
             break;
     }
 }
 
-function getClubById(id) {
+function getClubById(id) {  // @todo remove it
     // @todo maybe insert a spinning element
     console.log('Club called with id: ', id);
 }

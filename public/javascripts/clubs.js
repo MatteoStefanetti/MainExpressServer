@@ -9,7 +9,7 @@ async function initClubs() {
         })
         .catch(err => console.log(err))
     flags.forEach((value, key) => {
-        createAccordion('club_nation', 'clubAccordion', key);
+        createAccordion('club_nation', 'clubAccordion', {local_competition_code: key});
     })
     document.getElementById('submitClubForm').addEventListener('click', searchClubs);
 }
