@@ -9,14 +9,10 @@ function openAccordionValuation(id){
 }
 
 function initSinglePage() {
-    commonInitOfPage();
     switch (typeParams) {
         case 'player':
             if (idParams) {
-                axios.get(`/get_players_by_id/${idParams}`, {
-                    headers: {'Content-Type': 'application/json'},
-                    method: 'get'
-                })
+                makeAxiosGet(`/get_players_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
@@ -33,10 +29,7 @@ function initSinglePage() {
                         playerName.classList.add('h1');
                         infoTitle.appendChild(playerName);
 
-                        await axios.get(`/clubs/get_club_name_by_id/${data.data.current_club_id}`, {
-                            headers: {'Content-Type': 'application/json'},
-                            method: 'get'
-                        })
+                        makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
                                 let playerClub = document.createElement('a');
                                 let playerClubString = document.createElement('p');
@@ -137,10 +130,7 @@ function initSinglePage() {
             break;
         case 'club':
             if (idParams) {
-                axios.get(`/clubs/get_club_by_id/${idParams}`, {
-                    headers: {'Content-Type': 'application/json'},
-                    method: 'get'
-                })
+                makeAxiosGet(`/clubs/get_club_by_id/${idParams}`)
                     .then(data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
