@@ -2,7 +2,7 @@ let express = require('express');
 let router = express.Router();
 const fetch = require('node-fetch');
 
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res) {
     res.send('respond with a resource');
 });
 
@@ -87,7 +87,7 @@ router.get('/players/get_trend_players', async (req, res) => {
 
 /* ------ Competitions ------ */
 
-router.get('/get_competitions/:domesticLeagueCode', function(req, res) {
+router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
     /** @note _domesticLeagueCode_ can be 'null' to query international competitions */
     const value = (req.params.domesticLeagueCode) ? String(req.params.domesticLeagueCode) : null;
     fetch('http://localhost:3002/competitions/get_national_competitions/' + value, {
@@ -134,7 +134,7 @@ router.get('/get_clubs_by_string/:name', function (req, res) {
 
 /* ------ General ------ */
 
-router.get('/get_flags', function(req,res,next) {
+router.get('/get_flags', function (req,res) {
     fetch('http://localhost:3002/flags/get_all', {
         headers: { 'Content-Type': 'application/json' }, method: 'get'
     })

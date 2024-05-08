@@ -198,7 +198,6 @@ function modifyCarouselElements(carouselWrapper, styleString) {
     let children = carouselWrapper.children;
     if (children.length !== elementList.length) {
         if (children.length > elementList.length) {
-            // @todo if (elementList < 12) -> problem seeing elements of the carousel
             if (elementList.length > 12)
                 elementList.splice(12)
             while (children.length !== elementList.length) {
