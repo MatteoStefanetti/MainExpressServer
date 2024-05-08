@@ -39,6 +39,7 @@ module.exports = function(io) {
                     socket.leave(room, userId);
                     removeUserFromRoom(room)
                     socket.leave(room)
+                    socket.roomName = null
                 });
 
                 socket.on('disconnect', () => {
@@ -64,6 +65,7 @@ function addUserToRoom(roomName) {
         usersNum = 0
     }
     roomsMap.set(roomName, ++usersNum)
+    console.log(roomsMap)
 }
 
 /** It finds elems in roomsMap and decrements the user count, removing in case
@@ -78,6 +80,7 @@ function removeUserFromRoom(roomName) {
     } else {
         roomsMap.set(roomName, usersNum-1)
     }
+    console.log(roomsMap)
 }
 
 /** It sends all custom and default rooms keys to a socket */
