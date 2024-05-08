@@ -1,6 +1,11 @@
 /** number of the max elements displayable in the playersList */
 const MAX_ELEMENTS_DISPLAYABLE = 24;
 
+/** Called by the players.html page. */
+function initPlayers(){
+    document.getElementById('submitPlayerForm').onclick = searchPlayer;
+}
+
 /** Function used to generate and display players,
  * triggered when the **searchBar** is used in the _player.html_ page. */
 function searchPlayer(event) {

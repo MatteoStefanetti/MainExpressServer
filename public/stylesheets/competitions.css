@@ -1,0 +1,42 @@
+
+.closed {
+    height: 0 !important;
+    transition: height 0.2s ease-in-out;
+    overflow: hidden !important;
+}
+
+.hiddenInfo {
+    height: 0 !important;
+    transition: height 1s ease-in-out;
+    overflow: hidden !important;
+}
+
+.expanded { /*var set via javascript */
+    height: var(--expanded-height) !important;
+}
+
+#selectionByClubsBtn , #selectionByDateBtn {
+    min-width: 80px;
+}
+
+#searchGames input[type = text] {
+    width: 40%
+}
+
+#dateSearchBar {
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    #searchGames input[type = text] {
+        width: 180px
+    }
+
+    #dateSearchBar {
+        width: 135px;
+    }
+
+    #selectionByClubsBtn , #selectionByDateBtn {
+        max-width: 80px;
+    }
+}

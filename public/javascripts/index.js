@@ -1,13 +1,21 @@
 
 /** Called by the index.html page. */
 function initHome() {
-    commonInitOfPage();
     setCarouselPageHeight();
 }
 
-function initPlayers(){
-    commonInitOfPage();
-    document.getElementById('submitPlayerForm').onclick = searchPlayer;
+/** Function called by the `init()` of the **pages that are using the _iframe_ tags**.
+ * This means that, for example, the initHome will call this function. */
+function setCarouselPageHeight() {
+    window.addEventListener('load', setIframesHeight.bind(null, true))
+    window.addEventListener('resize', setIframesHeight.bind(null, true))
+    for (let iframe of window.document.getElementsByTagName('iframe')) {
+        iframe.addEventListener('load', setIframesHeight.bind(null, false))
+        iframe.addEventListener('resize', setIframesHeight.bind(null, false))
+    }
+    setIframesHeight(true);
+    // setting a timeout to give the time to load every image from the web:
+    setTimeout(setIframesHeight.bind(null, true), 500);
 }
 
 /* -------- End of init()s -------- */
@@ -15,11 +23,6 @@ function initPlayers(){
 /** @param url {string} the url of the axios GET route. */
 async function makeAxiosGet(url) {
     return axios.get(url, {headers: {'Content-Type': 'application/json'}, method: 'get'});
-}
-
-/** Function called by the **main** *"init"* functions to set common attributes and features. */
-function commonInitOfPage() {
-    // @todo: check if can still be useful
 }
 
 /** Function used to trigger the spinner while loading / fetching the page content.
