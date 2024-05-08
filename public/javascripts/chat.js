@@ -231,7 +231,7 @@ function writeOnChat(userId, text) {
         }
 
         let msgContainer = document.getElementById('messages');
-        if(msgContainer.childElementCount === 20)
+        if(msgContainer.childElementCount >= 20)
             msgContainer.removeChild(msgContainer.lastChild);
         msgContainer.insertBefore(msgNode, msgContainer.firstChild);
     } else
