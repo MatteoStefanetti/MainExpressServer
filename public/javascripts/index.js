@@ -55,7 +55,7 @@ async function getAllFlags() {
             return flagList;
         })
         .catch(err => {
-            console.log(err);
+            console.error(err);
             throw new TypeError('Error occurred during \'flags\' GET');
         })
 }
@@ -104,13 +104,15 @@ function createAccordion(visualize, fatherId, params){
     let accBody = document.createElement('div');
     accBody.classList.add('accordion-body');
     collapseDiv.appendChild(accBody);
-    document.getElementById(fatherId).appendChild(wrapperDiv);
+    const accordionElement = document.getElementById(fatherId) ?
+        document.getElementById(fatherId) : window.parent.document.getElementById(fatherId);
+    accordionElement.appendChild(wrapperDiv);
+    let strIdValue =  ''
     switch (visualize) {
         case 'competition_nation':
             break;
         case 'club_nation':
-            accordionButton.setAttribute('aria-controls', '#' + String(params.local_competition_code));
-            accordionButton.setAttribute('data-bs-target', '#' + String(params.local_competition_code));
+            strIdValue = String(params.local_competition_code)
             accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
             let flagImg = document.createElement('img');
             flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
@@ -119,13 +121,15 @@ function createAccordion(visualize, fatherId, params){
             accordionButton.appendChild(flagImg);
             spanTitle.innerText = getNationNameOf(params.local_competition_code);
             accordionButton.appendChild(spanTitle);
-            collapseDiv.id = String(params.local_competition_code);
             break;
         case 'player_valuation':
             break;
         default:
             break;
     }
+    accordionButton.setAttribute('aria-controls', '#' + strIdValue);
+    accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
+    collapseDiv.id = strIdValue;
 }
 
 /** Function to define the url {@link string} of the single_page.
@@ -199,4 +203,35 @@ function showModalMessage(unfounded) {
             'At least <b>3 letters</b> are required for a search.';
     }
     document.getElementById('unfoundedModalTrigger').click();
+}
+
+/** Returns the _fullName_, but if it is too long (more than 15 characters) it will **shorten** all the first names.
+ * @param lastName {string} The string to try to maintain at the end.
+ * @param fullName {string} The full name that will be truncated if necessary. */
+function setReducedName(lastName, fullName) {
+    if (!fullName || fullName.length === lastName.length)
+        return lastName;
+    if (fullName.length < 14)
+        return fullName;
+    let fullNArray = fullName.trim().split(' ')
+    const lastNStart = lastName.trim().split(' ')[0]
+    for (let i = 0; i < fullNArray.length; i++) {
+        if (fullNArray[i] !== lastNStart)
+            fullNArray[i] = String(fullNArray[i].trim().charAt(0) + '.')
+        else
+            i = fullNArray.length;
+    }
+    return fullNArray.join(' ');
+}
+
+/** Function made to transform names like _"premier-league"_ into _"Premier League"_
+ * @param name {string} the string to transform. */
+function retrieveCompetitionName(name) {
+    let nameArr = name.split('-');
+    for (let i = 0; i < nameArr.length; i++)
+        if(nameArr[i].length <= 3 && nameArr[i] !== 'cup')
+            nameArr[i] = nameArr[i].toUpperCase()
+        else
+            nameArr[i] = nameArr[i].charAt(0).toUpperCase() + nameArr[i].slice(1)
+    return nameArr.join(' ')
 }

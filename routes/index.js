@@ -99,6 +99,15 @@ router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
         .catch(err => res.status(500).json(err));
 });
 
+router.get('/get_games_by_competition_id/:id', function (req, res) {
+    fetch('http://localhost:8081/games/get_games_by_competition_id/' + String(req.params.id), {
+        headers: { 'Content-Type': 'application/json' }, method: 'get'
+    })
+        .then(res => res.json())
+        .then(json => res.status(200).json(json))
+        .catch(err => res.status(500).json(err))
+})
+
 /* ------ Clubs ------ */
 
 router.get(`/get_clubs_by_local_competition_code/:localCompetitionCode`, function (req, res) {

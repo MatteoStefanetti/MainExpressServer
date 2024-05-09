@@ -39,7 +39,6 @@ async function initCarousel() {
             if (elementList)
                 console.error('not null: ', elementList)
             elementList = Array(data.data)[0];
-            console.log('elem: ', elementList[0])
             if (!elementList[0])
                 console.error('Error: response of', retrieveStr, 'is:', elementList)
             else
@@ -260,7 +259,6 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                     'simple-image-carousel-card')
                 cardImg.classList.add('img-fluid', 'p-2')
                 internalDiv.firstElementChild.appendChild(cardImg)
-                console.log(elementList)
                 if (elementList[0].clubName) {
                     internalDiv.firstElementChild.href =
                         getUrlForSinglePage({type: 'club', id: String(elementList[i].clubId)})
@@ -365,42 +363,9 @@ async function loadNationalCompetition(domestic_league_code) {
                 if(!competitionList || competitionList.length === 0)
                     console.error('Error! Invalid competitions list returned:', competitionList)
                 console.log('Queried:', competitionList)    // @todo remove it! FOR DEBUG ONLY!
-                /*competitionList.forEach(val => {
-                    createAccordion('gamesAccordion', val)
-                })*/
+
             })
             .catch(err => console.error('Error! \'/get_competition/:code\' went wrong:', err))
         showChargingSpinner(window.parent, false)
     }
-}
-
-/** Returns the _fullName_, but if it is too long (more than 15 characters) it will **shorten** all the first names.
- * @param lastName {string} The string to try to maintain at the end.
- * @param fullName {string} The full name that will be truncated if necessary. */
-function setReducedName(lastName, fullName) {
-    if (!fullName || fullName.length === lastName.length)
-        return lastName;
-    if (fullName.length < 14)
-        return fullName;
-    let fullNArray = fullName.trim().split(' ')
-    const lastNStart = lastName.trim().split(' ')[0]
-    for (let i = 0; i < fullNArray.length; i++) {
-        if (fullNArray[i] !== lastNStart)
-            fullNArray[i] = String(fullNArray[i].trim().charAt(0) + '.')
-        else
-            i = fullNArray.length;
-    }
-    return fullNArray.join(' ');
-}
-
-/** Function made to transform names like _"premier-league"_ into _"Premier League"_
- * @param name {string} the string to transform. */
-function retrieveCompetitionName(name) {
-    let nameArr = name.split('-');
-    for (let i = 0; i < nameArr.length; i++)
-        if(nameArr[i].length <= 3 && nameArr[i] !== 'cup')
-            nameArr[i] = nameArr[i].toUpperCase()
-        else
-            nameArr[i] = nameArr[i].charAt(0).toUpperCase() + nameArr[i].slice(1)
-    return nameArr.join(' ')
 }

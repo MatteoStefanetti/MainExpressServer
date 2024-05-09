@@ -6,7 +6,7 @@ async function initClubs() {
         .then(res => {
             flags = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => console.error(err))
     flags.forEach((value, key) => {
         createAccordion('club_nation', 'clubAccordion', {local_competition_code: key});
     })
@@ -76,13 +76,10 @@ function getNationNameOf(localCompetitionCode) {
 /** Function that sends a SPRINGBOOT GET to retrieve the data about clubs of a localCompetitionCode.
  * @param id {string} is the localCompetitionCode used as ID of the accordion button.
  * @throws TypeError if catch case of the axios GET occurs. */
-function openAccordionClubs(id) {
+async function openAccordionClubs(id) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true)
-        axios.get(`/get_clubs_by_local_competition_code/${id}`, {
-            headers: {'Content-Type': 'application/json'},
-            method: 'get'
-        })
+        await makeAxiosGet(`/get_clubs_by_local_competition_code/${id}`)
             .then(data => {
                 let dataResponse = Array(data.data)[0];
                 dataResponse.sort((st, nd) => {
@@ -103,7 +100,7 @@ function openAccordionClubs(id) {
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
                 throw new TypeError('Error occurred during \'clubs_by_local_competition_code\' GET');
             })
         showChargingSpinner(null, false)
@@ -182,7 +179,7 @@ function searchClubs(event) {
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
 function createListItem(size, unorderedList, elementCounter, id, text, params) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
-        console.log('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
+        console.error('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
         throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
     }
     let listItem = document.createElement('li');

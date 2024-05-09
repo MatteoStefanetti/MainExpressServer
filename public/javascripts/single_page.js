@@ -53,7 +53,7 @@ function initSinglePage() {
                                 infoTitle.appendChild(playerClubString);
                                 playerClubString.appendChild(playerClub);
                             })
-                            .catch(err => console.log(err));
+                            .catch(err => console.error(err));
                         let dobString = document.createElement('p');
                         dobString.classList.add('p');
                         dobString.innerHTML = '<b>Birth:</b> ' + new Date(data.data.date_of_birth).toLocaleDateString() + ' - ' + data.data.city_of_birth + ', ' + data.data.country_of_birth;
@@ -125,7 +125,7 @@ function initSinglePage() {
                         let valuations = document.createElement('ul');
 
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => console.error(err));
             }
             break;
         case 'club':
@@ -135,7 +135,7 @@ function initSinglePage() {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => console.error(err));
             }
             break;
         case 'game':

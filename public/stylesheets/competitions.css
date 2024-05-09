@@ -40,3 +40,8 @@
         max-width: 80px;
     }
 }
+
+.top-form-container {   /* class override */
+    top: 0;
+}
+
