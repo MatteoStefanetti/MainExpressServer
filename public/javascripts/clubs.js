@@ -107,16 +107,6 @@ async function openAccordionClubs(id) {
     }
 }
 
-/** Function that loads the remaining elements of the `<ul>` list.
- * @param id {string} the id attribute of the _'loadMore'_ {@link HTMLElement}*/
-function loadRemainingElements(id) {
-    const loader = document.getElementById(id);
-    const clubsUnList = loader.parentElement;
-    loader.remove();
-    for (let i = Math.floor(clubsUnList.children.length / 2) + 1; i < clubsUnList.children.length; i++)
-        clubsUnList.children.item(i).classList.remove('d-none');
-}
-
 function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
