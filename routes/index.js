@@ -183,6 +183,16 @@ router.get('/clubs/get_club_by_id/:id', function (req, res) {
     }
 });
 
+router.get('/retrieve_last_season', function (req, res) {
+    fetch('http://localhost:8081/games/get_current_season_year',{
+        headers: { 'Content-Type': 'application/json' }, method: 'get'
+    })
+        .then(res => res.json())
+        .then(json => res.status(200).json(json))
+        .catch(err => res.status(501).json(err))
+})
+
+
 router.get('/get_players_by_id/:id', function (req, res) {
     if (req.params.id) {
         fetch('http://localhost:8081/players/get_player_by_id/' + String(req.params.id), {

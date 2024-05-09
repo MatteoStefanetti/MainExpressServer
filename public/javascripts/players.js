@@ -32,21 +32,9 @@ function searchPlayer(event) {
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
                         'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
-                    let params = {
-                        type: 'player',
-                        id: String(player.playerId)
-                    };
 
-                    let queryString = Object.keys(params)
-                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-                        .join('&');
-                    let url = 'single_page.html';
+                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
 
-                    if (queryString) {
-                        url += '?' + queryString;
-                    }
-
-                    clickableContent.href = url;
                     clickableContent.classList.add('text-dark');
                     clickableContent.innerHTML =
                         '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +

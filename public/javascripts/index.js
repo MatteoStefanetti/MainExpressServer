@@ -1,3 +1,6 @@
+let CURRENT_SEASON;
+if(!CURRENT_SEASON)
+    getLastSeasonYear()
 
 /** Called by the index.html page. */
 function initHome() {
@@ -20,21 +23,10 @@ function setCarouselPageHeight() {
 
 /* -------- End of init()s -------- */
 
-/** @param url {string} the url of the axios GET route. */
+/** It returns a {@link Promise} to check with the `.then() / .catch()` block.
+ * @param url {string} the url of the axios GET route. */
 async function makeAxiosGet(url) {
     return axios.get(url, {headers: {'Content-Type': 'application/json'}, method: 'get'});
-}
-
-/** Function used to trigger the spinner while loading / fetching the page content.
- * @param window {Window} The window reference in which the spinner is contained.
- * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
-function showChargingSpinner(window, toDisplay) {
-    const elem = (!window) ? document.getElementById('spinner').classList :
-        window.document.getElementById('spinner').classList;
-    if (toDisplay)
-        elem.remove('d-none')
-    else
-        elem.add('d-none')
 }
 
 /** This is an EXPRESS GET function:
@@ -59,6 +51,8 @@ async function getAllFlags() {
             throw new TypeError('Error occurred during \'flags\' GET');
         })
 }
+
+/* -------------- Accordion functions -------------- */
 
 /** This function creates an HTML element with the following structure:
  * ```
@@ -136,17 +130,18 @@ function createAccordion(visualize, fatherId, params){
     collapseDiv.id = strIdValue;
 }
 
-/**
+/** Triggered when an accordion button is clicked.
  * @param window {Window} the window into which create the elements
- * @param id {string} the id of an useless */
+ * @param id {string} the id of a useless */
 async function openAccordionGames(window, id) {
     if (window.document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(window, true)
-        await makeAxiosGet(`/get_games_by_league/${id}/` + getLastSeasonYear())
+        await makeAxiosGet(`/get_games_by_league/${id}/` + CURRENT_SEASON)
             .then(data => {
                 let dataResponse = Array(data.data)[0];
                 let unList = window.document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
+                window.document.getElementById('gamesAccordion').appendChild(unList)
                 let alternatorCounter = 0;
                 dataResponse.forEach(el => {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.gameId)});
@@ -167,10 +162,12 @@ async function openAccordionGames(window, id) {
 /** Function that loads the remaining elements of the `<ul>` list.
  * @param loader {HTMLElement} the _'loadMore'_ {@link HTMLElement}*/
 function loadRemainingElements(loader) {
-    const unList = loader.parentElement;
-    loader.remove();
-    for (let i = Math.floor(unList.children.length / 2) + 1; i < unList.children.length; i++)
-        clubsUnList.children.item(i).classList.remove('d-none');
+    if (loader) {
+        const unList = loader.parentElement;
+        loader.remove();
+        for (let i = Math.floor(unList.children.length / 2) + 1; i < unList.children.length; i++)
+            unList.children.item(i).classList.remove('d-none');
+    }
 }
 
 /** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
@@ -302,17 +299,6 @@ function createStatsBtn(window, statsBtn, fatherElement) {
     fatherElement.appendChild(statsBtn)
 }
 
-function extractFormData(formId) {
-    let formElements = document.getElementById(formId).children;
-    let formData={};
-    for (let ix = 0; ix < formElements.length; ix++) {
-        if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
-        }
-    }
-    return formData;
-}
-
 /** This function creates a HTMLElement to moderate the result deployment.
  * @param parentList {HTMLElement} The {@link HTMLElement} to which add the item created.
  * @param partialId {string} The **PARTIAL** id of the element container,
@@ -345,7 +331,9 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     parentList.appendChild(loadMoreContainer);
 }
 
-/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements, every time it is called. */
+/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements, every time it is called.
+ * @param listContainer {HTMLElement} The container in which the list-items are.
+ * @param MAX_ELEMENTS_DISPLAYABLE {number} The interval number of elements to display. */
 function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
     let index = 0, i = MAX_ELEMENTS_DISPLAYABLE;
     let children = listContainer.querySelectorAll('*');
@@ -356,7 +344,34 @@ function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
         children[i++].classList.remove('d-none');
     }
     if (i >= children.length - 1)
-        document.getElementById('morePlayersLoader').remove();
+        listContainer.lastChild.remove();
+}
+
+/* --------------------- Support Functions --------------------- */
+
+/** It returns an {@link object} with many fields as *`{name: value}`* as much are the valid `<input>`s in the form.
+ * @param formId {string} The id of the form to check. */
+function extractFormData(formId) {
+    let formElements = document.getElementById(formId).children;
+    let formData={};
+    for (let ix = 0; ix < formElements.length; ix++) {
+        if (formElements[ix].name) {
+            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
+        }
+    }
+    return formData;
+}
+
+/** Function used to trigger the spinner while loading / fetching the page content.
+ * @param window {Window | null} The window reference in which the spinner is contained.
+ * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
+function showChargingSpinner(window, toDisplay) {
+    const elem = (!window) ? document.getElementById('spinner').classList :
+        window.document.getElementById('spinner').classList;
+    if (toDisplay)
+        elem.remove('d-none')
+    else
+        elem.add('d-none')
 }
 
 /** This function displays a **modal** to give a feedback of an unsuccessful search.
@@ -406,9 +421,14 @@ function retrieveCompetitionName(name) {
     return nameArr.join(' ')
 }
 
-/** The following code sets the **current season year**.
- * This is **limited** by our dataset to be the `2023`. Otherwise, we won't have any issue to return the current year.*/
-function getLastSeasonYear() {
-    const year = new Date().getFullYear()
-    return year <= 2023 ? year : 2023   // this implementation is forced by the dataset content
+/** The following code sets `CURRENT_SEASON` to the **current season year**.
+ * @return {number || null} */
+async function getLastSeasonYear() {
+    await makeAxiosGet('/retrieve_last_season')
+        .then(data => {
+            if(!data.data)
+                console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
+            CURRENT_SEASON = Number(data.data)
+        })
+        .catch(err => console.error('Error in \'getLastSeasonYear()\':', err))
 }
