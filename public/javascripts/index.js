@@ -231,10 +231,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'club':
-            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
-            if (size > 20 && item.counter > Math.floor(size / 2))
-                listItem.classList.add('d-none');
             listItem.id = item.data.id
+            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
             let imgContainer = document.createElement('div')
             imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center', 'align-items-center', 'ms-1');
             imgContainer.style.width = '2.75rem';
@@ -257,7 +255,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             listItemLink.appendChild(nameSpan);
             createStatsBtn(window, desktopBtn, listItemLink)
             listItemLink.appendChild(desktopBtn);
-            unorderedList.appendChild(listItem);
+            if(size > 30 && item.counter > 30)
+                listItem.classList.add('d-none')
             break;
         default:
             throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\' type argument!')
@@ -336,8 +335,7 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
  * @param MAX_ELEMENTS_DISPLAYABLE {number} The interval number of elements to display. */
 function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
     let index = 0, i = MAX_ELEMENTS_DISPLAYABLE;
-    let children = listContainer.querySelectorAll('*');
-
+    let children = listContainer.children;
     while (index < MAX_ELEMENTS_DISPLAYABLE && i < children.length) {
         if (children[i].classList.contains('d-none'))
             index++;

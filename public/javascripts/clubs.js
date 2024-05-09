@@ -93,10 +93,13 @@ async function openAccordionClubs(id) {
                 unList.classList.add('nav', 'flex-column');
                 let alternatorCounter = 0;
                 dataList.forEach((value, key) => {
-                    createListItem(dataList.size, unList, alternatorCounter++, key, value, {type: 'club', id: String(key)});
+                    createDynamicListItem(window, 'club', dataList.size, unList,
+                        {counter: alternatorCounter++, data: {id: key, text: value}},
+                        {type: 'club', id: String(key)});
                 });
                 // Adding the 'load more...' element
-                createLoadMoreElement(unList, id, loadRemainingElements.bind(null, String(id + 'Loader')));
+                if(dataList.size > 30)
+                    createLoadMoreElement(unList, id, showMore.bind(null, unList, 30));
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
@@ -135,13 +138,14 @@ function searchClubs(event) {
                 unList.classList.remove('d-none');
                 let elementCounter = 0;
                 dataList.forEach((value, key) => {
-                    createListItem(dataList.size, unList, elementCounter++, key, value.clubName, {type: 'club', id: String(key)});
+                    createDynamicListItem(window, 'club', dataList.size, unList, {
+                            counter: elementCounter++, data: { id: key, text: value.clubName }
+                        },
+                        {type: 'club', id: String(key)});
                 })
                 // Adding the 'load more...' element
-                if (dataList.size > 20) {
-                    createLoadMoreElement(unList, unList.id, loadRemainingElements.bind(null,
-                        String(unList.id + 'Loader')));
-                }
+                if (dataList.size > 30)
+                    createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
             })
             .catch(err => {
                 showModalMessage(true);
