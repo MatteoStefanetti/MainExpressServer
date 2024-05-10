@@ -1,6 +1,3 @@
-let CURRENT_SEASON;
-if(!CURRENT_SEASON)
-    getLastSeasonYear()
 
 /** Called by the index.html page. */
 function initHome() {
@@ -114,11 +111,11 @@ function createAccordion(visualize, fatherId, params){
             break;
         case 'club_nation':
             strIdValue = String(params.local_competition_code)
-            accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
             flagImg.src = getFlagOf(params.local_competition_code);
             spanTitle.innerText = getNationNameOf(params.local_competition_code);
             accordionButton.appendChild(flagImg);
             accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
             break;
         case 'player_valuation':
             break;
@@ -136,7 +133,8 @@ function createAccordion(visualize, fatherId, params){
 async function openAccordionGames(window, id) {
     if (window.document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(window, true)
-        await makeAxiosGet(`/get_games_by_league/${id}/` + CURRENT_SEASON)
+        let currentSeason = await getLastSeasonYear(id)
+        await makeAxiosGet(`/get_games_by_league/${id}/` + currentSeason)
             .then(data => {
                 let dataResponse = Array(data.data)[0];
                 let unList = window.document.createElement('ul');
@@ -419,14 +417,18 @@ function retrieveCompetitionName(name) {
     return nameArr.join(' ')
 }
 
-/** The following code sets `CURRENT_SEASON` to the **current season year**.
+/** The following code returns the **current season year** for the competition given as argument.
+ * @param competitionId {string} the competition id string of which to retrieve
  * @return {number || null} */
-async function getLastSeasonYear() {
-    await makeAxiosGet('/retrieve_last_season')
+async function getLastSeasonYear(competitionId) {
+    await makeAxiosGet('/retrieve_last_season/' + competitionId)
         .then(data => {
             if(!data.data)
                 console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
-            CURRENT_SEASON = Number(data.data)
+            return Number(data.data)
         })
-        .catch(err => console.error('Error in \'getLastSeasonYear()\':', err))
+        .catch(err => {
+            console.error('Error in \'getLastSeasonYear()\':', err)
+            return null;
+        })
 }
