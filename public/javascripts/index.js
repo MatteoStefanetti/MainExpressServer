@@ -209,7 +209,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     switch (type) {
         case 'game':
             listItem.id = item.data.competitionId
-            listItemLink.classList.add('d-flex', 'align-items-center', 'py-1', 'mx-2');
+            listItemLink.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'py-1', 'mx-2');
             let gamesDiv = window.document.createElement('div')
             gamesDiv.classList.add('w-75', 'row', 'align-content-between')
             gamesDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
