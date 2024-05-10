@@ -1,3 +1,6 @@
+let CURRENT_SEASON;
+if(!CURRENT_SEASON)
+    getLastSeasonYear()
 
 /** Called by the index.html page. */
 function initHome() {
@@ -20,21 +23,10 @@ function setCarouselPageHeight() {
 
 /* -------- End of init()s -------- */
 
-/** @param url {string} the url of the axios GET route. */
+/** It returns a {@link Promise} to check with the `.then() / .catch()` block.
+ * @param url {string} the url of the axios GET route. */
 async function makeAxiosGet(url) {
     return axios.get(url, {headers: {'Content-Type': 'application/json'}, method: 'get'});
-}
-
-/** Function used to trigger the spinner while loading / fetching the page content.
- * @param window {Window} The window reference in which the spinner is contained.
- * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
-function showChargingSpinner(window, toDisplay) {
-    const elem = (!window) ? document.getElementById('spinner').classList :
-        window.document.getElementById('spinner').classList;
-    if (toDisplay)
-        elem.remove('d-none')
-    else
-        elem.add('d-none')
 }
 
 /** This is an EXPRESS GET function:
@@ -59,6 +51,8 @@ async function getAllFlags() {
             throw new TypeError('Error occurred during \'flags\' GET');
         })
 }
+
+/* -------------- Accordion functions -------------- */
 
 /** This function creates an HTML element with the following structure:
  * ```
@@ -107,19 +101,23 @@ function createAccordion(visualize, fatherId, params){
     const accordionElement = document.getElementById(fatherId) ?
         document.getElementById(fatherId) : window.parent.document.getElementById(fatherId);
     accordionElement.appendChild(wrapperDiv);
+    let flagImg = document.createElement('img');
+    flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
+    flagImg.style.height = '1.2rem';
     let strIdValue =  ''
     switch (visualize) {
         case 'competition_nation':
+            strIdValue = String(params.competition_id)
+            spanTitle.innerText = params.competition_name;
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionGames.bind(null, window.parent, params.competition_id));
             break;
         case 'club_nation':
             strIdValue = String(params.local_competition_code)
             accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
-            let flagImg = document.createElement('img');
-            flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
             flagImg.src = getFlagOf(params.local_competition_code);
-            flagImg.style.height = '1.2rem';
-            accordionButton.appendChild(flagImg);
             spanTitle.innerText = getNationNameOf(params.local_competition_code);
+            accordionButton.appendChild(flagImg);
             accordionButton.appendChild(spanTitle);
             break;
         case 'player_valuation':
@@ -130,6 +128,140 @@ function createAccordion(visualize, fatherId, params){
     accordionButton.setAttribute('aria-controls', '#' + strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
+}
+
+/** Triggered when an accordion button is clicked.
+ * @param window {Window} the window into which create the elements
+ * @param id {string} the id of a useless */
+async function openAccordionGames(window, id) {
+    if (window.document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(window, true)
+        await makeAxiosGet(`/get_games_by_league/${id}/` + CURRENT_SEASON)
+            .then(data => {
+                let dataResponse = Array(data.data)[0];
+                let unList = window.document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+                window.document.getElementById('gamesAccordion').appendChild(unList)
+                let alternatorCounter = 0;
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.gameId)});
+                });
+                window.document.getElementById(id).firstElementChild.appendChild(unList);
+                if (dataResponse.length > 20) {
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20))
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_games_by_league\' GET');
+            })
+        showChargingSpinner(window, false)
+    }
+}
+
+/** Function that loads the remaining elements of the `<ul>` list.
+ * @param loader {HTMLElement} the _'loadMore'_ {@link HTMLElement}*/
+function loadRemainingElements(loader) {
+    if (loader) {
+        const unList = loader.parentElement;
+        loader.remove();
+        for (let i = Math.floor(unList.children.length / 2) + 1; i < unList.children.length; i++)
+            unList.children.item(i).classList.remove('d-none');
+    }
+}
+
+/** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
+ * @param window {Window} it is the window parameter to avoid iframes problem.
+ * @param type {string} a string representing the type of the listItem:
+ * - *`'game'`* - for games
+ * - *`'club'`* - for clubs
+ * @param size {number} The **size** of the set to show.
+ *  This attribute is required to initially show only a part of the list.
+ * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
+ *  to which add item created.
+ * @param item {object} The object filled with 3 fields:
+ * - `counter`: the element-counter that provides various features, as like the alternated color of the list items
+ * - `data`: The data to show. It is another object which requires an internal *id* field.
+ * 'item' should be set as: `{counter: <(number >= 0)>, id: <string>, text: <string>}`
+ * @param params {object} the params for the single_page.html to link up to the listItem.
+ * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
+function createDynamicListItem(window, type, size, unorderedList, item, params) {
+    if (!window || !type || !size || !unorderedList || !item || item.counter < 0 || !item.data) {
+        console.error(type, '\n', size, '\n', unorderedList, '\n', item.counter, '\n', item.data);
+        throw TypeError('Invalid argument(s) passed to \'createDynamicListItem\'!');
+    }
+    let listItem = window.document.createElement('li');
+    let listItemLink = window.document.createElement('a');
+
+    listItemLink.href = getUrlForSinglePage(params)
+    listItem.appendChild(listItemLink);
+    if (size === 1 || item.counter % 2 !== 0) {
+        listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+        listItem.style.backgroundImage =
+            'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+            ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+            'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
+    }
+    listItem.classList.add('nav-item');
+    if (item.counter !== (size - 1))
+        listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+    let desktopBtn = document.createElement('div');
+    switch (type) {
+        case 'game':
+            listItem.id = item.data.competitionId
+            listItemLink.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'py-1', 'mx-2');
+            let gamesDiv = window.document.createElement('div')
+            gamesDiv.classList.add('w-75', 'row', 'align-content-between')
+            gamesDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
+                '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + item.data.goal1 +
+                '</span><span class="ms-2 fs-6 p-1">' + item.data.clubName1 +
+                '</span></div><div class="col-12 my-2 not-hoverable">' +
+                '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + item.data.goal2 +
+                '</span><span class="ms-2 fs-6 p-1">' + item.data.clubName2 + '</span>'
+            listItemLink.appendChild(gamesDiv)
+            let rightDiv = window.document.createElement('div')
+            rightDiv.classList.add('d-flex', 'align-items-center')
+            let dateDiv = window.document.createElement('div')
+            dateDiv.classList.add('mx-3')
+            dateDiv.innerText = new Date(item.data.gameDate).toLocaleDateString()
+            rightDiv.appendChild(dateDiv)
+            createStatsBtn(window, desktopBtn, rightDiv)
+            listItemLink.appendChild(rightDiv)
+            if(size > 20 && item.counter > 20)
+                listItem.classList.add('d-none')
+            break;
+        case 'club':
+            listItem.id = item.data.id
+            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
+            let imgContainer = document.createElement('div')
+            imgContainer.classList.add('d-flex', 'rounded-3', 'justify-content-center', 'align-items-center', 'ms-1');
+            imgContainer.style.width = '2.75rem';
+            imgContainer.style.minWidth = '2.75rem';
+            imgContainer.style.height = '2.75rem';
+            imgContainer.style.minHeight = '2.75rem';
+            let clubLogoImg = document.createElement('img');
+            clubLogoImg.classList.add('img');
+            /* the following string refers to the 'transfer-market' website used by the teacher for the assignment.
+             * It uses the ID of the club to which the image is referred to. */
+            clubLogoImg.src = "https://tmssl.akamaized.net/images/wappen/head/" + String(item.data.id) + ".png";
+            clubLogoImg.style.maxWidth = '2.75rem';
+            clubLogoImg.style.maxHeight = '2.75rem';
+            clubLogoImg.alt = " ";
+            imgContainer.appendChild(clubLogoImg);
+            listItemLink.appendChild(imgContainer);
+            let nameSpan = document.createElement('span');
+            nameSpan.classList.add('ms-3', 'flex-grow-1');
+            nameSpan.innerText = item.data.text;
+            listItemLink.appendChild(nameSpan);
+            createStatsBtn(window, desktopBtn, listItemLink)
+            listItemLink.appendChild(desktopBtn);
+            if(size > 30 && item.counter > 30)
+                listItem.classList.add('d-none')
+            break;
+        default:
+            throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\' type argument!')
+    }
+    unorderedList.appendChild(listItem)
 }
 
 /** Function to define the url {@link string} of the single_page.
@@ -146,15 +278,24 @@ function getUrlForSinglePage(params) {
         'single_page.html?' + queryString;
 }
 
-function extractFormData(formId) {
-    let formElements = document.getElementById(formId).children;
-    let formData={};
-    for (let ix = 0; ix < formElements.length; ix++) {
-        if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
-        }
-    }
-    return formData;
+/** It will set the "stats Button" style to display a useless button.
+ * @param window {Window} the window of the document in which create the elements.
+ * @param statsBtn {HTMLElement} the `div` element that will be transformed in the statsBtn.
+ * @param fatherElement the {@link HTMLElement} to which append the statsBtn as a child. */
+function createStatsBtn(window, statsBtn, fatherElement) {
+    if (!window || !statsBtn || !fatherElement)
+        throw new TypeError('Invalid argument(s) passed to \'createStatsBtn()\' function.')
+    statsBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
+        'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn')
+    statsBtn.style.width = '2.5rem'
+    statsBtn.style.minWidth = '2.5rem'
+    statsBtn.style.height = '2.5rem'
+    statsBtn.style.minHeight = '2.5rem'
+    let statsImg = window.document.createElement('img')
+    statsImg.classList.add('img-fluid')
+    statsImg.src = '../images/stats_btn_img.svg'
+    statsBtn.appendChild(statsImg)
+    fatherElement.appendChild(statsBtn)
 }
 
 /** This function creates a HTMLElement to moderate the result deployment.
@@ -187,6 +328,48 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     innerLoadMore.addEventListener('click', loadMoreFunction);
     loadMoreContainer.appendChild(innerLoadMore);
     parentList.appendChild(loadMoreContainer);
+}
+
+/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements, every time it is called.
+ * @param listContainer {HTMLElement} The container in which the list-items are.
+ * @param MAX_ELEMENTS_DISPLAYABLE {number} The interval number of elements to display. */
+function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
+    let index = 0, i = MAX_ELEMENTS_DISPLAYABLE;
+    let children = listContainer.children;
+    while (index < MAX_ELEMENTS_DISPLAYABLE && i < children.length) {
+        if (children[i].classList.contains('d-none'))
+            index++;
+        children[i++].classList.remove('d-none');
+    }
+    if (i >= children.length - 1)
+        listContainer.lastChild.remove();
+}
+
+/* --------------------- Support Functions --------------------- */
+
+/** It returns an {@link object} with many fields as *`{name: value}`* as much are the valid `<input>`s in the form.
+ * @param formId {string} The id of the form to check. */
+function extractFormData(formId) {
+    let formElements = document.getElementById(formId).children;
+    let formData={};
+    for (let ix = 0; ix < formElements.length; ix++) {
+        if (formElements[ix].name) {
+            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
+        }
+    }
+    return formData;
+}
+
+/** Function used to trigger the spinner while loading / fetching the page content.
+ * @param window {Window | null} The window reference in which the spinner is contained.
+ * @param toDisplay {boolean} If _true_, it shows the spinner. Otherwise, it will hide its content. */
+function showChargingSpinner(window, toDisplay) {
+    const elem = (!window) ? document.getElementById('spinner').classList :
+        window.document.getElementById('spinner').classList;
+    if (toDisplay)
+        elem.remove('d-none')
+    else
+        elem.add('d-none')
 }
 
 /** This function displays a **modal** to give a feedback of an unsuccessful search.
@@ -234,4 +417,16 @@ function retrieveCompetitionName(name) {
         else
             nameArr[i] = nameArr[i].charAt(0).toUpperCase() + nameArr[i].slice(1)
     return nameArr.join(' ')
+}
+
+/** The following code sets `CURRENT_SEASON` to the **current season year**.
+ * @return {number || null} */
+async function getLastSeasonYear() {
+    await makeAxiosGet('/retrieve_last_season')
+        .then(data => {
+            if(!data.data)
+                console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
+            CURRENT_SEASON = Number(data.data)
+        })
+        .catch(err => console.error('Error in \'getLastSeasonYear()\':', err))
 }

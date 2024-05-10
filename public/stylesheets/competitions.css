@@ -45,3 +45,7 @@
     top: 0;
 }
 
+*:has(.not-hoverable):hover {
+    color: black !important;
+    text-decoration: none !important;
+}
