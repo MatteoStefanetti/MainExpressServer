@@ -36,6 +36,7 @@ module.exports = function(io) {
                  * @param room The effective chat in which the messages will be sent.
                  * @param userId It will be the username who left the room. */
                 socket.on('leave conversation', (room, userId) => { //check during tests if room exists
+                    console.log('leave conversation')
                     socket.leave(room, userId);
                     removeUserFromRoom(room)
                     socket.leave(room)
@@ -65,7 +66,6 @@ function addUserToRoom(roomName) {
         usersNum = 0
     }
     roomsMap.set(roomName, ++usersNum)
-    console.log(roomsMap)
 }
 
 /** It finds elems in roomsMap and decrements the user count, removing in case
@@ -80,7 +80,6 @@ function removeUserFromRoom(roomName) {
     } else {
         roomsMap.set(roomName, usersNum-1)
     }
-    console.log(roomsMap)
 }
 
 /** It sends all custom and default rooms keys to a socket */

@@ -20,27 +20,17 @@ function initChat() {
     if(localStorage.getItem('acceptedChatTerms'))
         closeChatTerms();
     initChatSocket()
-    }
+    if(localStorage.getItem('isChatOpened') === 'true')
+        openChat()
+}
 
 /** Function used to set the initial chat divs and buttons at every page-load.
  * Called by the init function. */
 function toggleChatElements() {
-    const hideForChat = document.getElementById('hideForChat');
-    const chatDiv = document.getElementById('chatDiv');
-    const btnDiv = document.getElementById('btnDiv');
-    if(localStorage.getItem('isChatOpened') !== 'true'){
-        // chat opener
-        localStorage.setItem('isChatOpened', 'true');
-        hideNode(hideForChat)
-        hideNode(btnDiv)
-        showNode(chatDiv)
-    } else {
-        // chat closer
-        localStorage.setItem('isChatOpened', 'false');
-        showNode(hideForChat)
-        showNode(btnDiv)
-        hideNode(chatDiv)
-    }
+    if(localStorage.getItem('isChatOpened') !== 'true')
+        openChat()
+    else
+        closeChat()
 }
 
 function hideNode( node ) {
@@ -55,6 +45,26 @@ function showNode( node ) {
         node.classList.remove('d-none');
     else
         console.error("wrong element:", node, "is not a HTMLElement")
+}
+
+function openChat() {
+    const hideForChat = document.getElementById('hideForChat');
+    const chatDiv = document.getElementById('chatDiv');
+    const btnDiv = document.getElementById('btnDiv');
+    localStorage.setItem('isChatOpened', 'true');
+    hideNode(hideForChat)
+    hideNode(btnDiv)
+    showNode(chatDiv)
+}
+
+function closeChat() {
+    const hideForChat = document.getElementById('hideForChat');
+    const chatDiv = document.getElementById('chatDiv');
+    const btnDiv = document.getElementById('btnDiv');
+    localStorage.setItem('isChatOpened', 'false');
+    showNode(hideForChat)
+    showNode(btnDiv)
+    hideNode(chatDiv)
 }
 
 /** Function called whenever the chat button is clicked. */
@@ -94,11 +104,6 @@ function closeChatTerms() {
     let chatTerms = document.getElementById('chatTerms');
     if(!chatTerms.classList.contains('d-none'))
         document.getElementById('chatTerms').classList.add('d-none');
-}
-
-/** This function closes the chat and updates the localStorage variable. */
-function closeChat() {
-    toggleChatElements();
 }
 
 /* --------------- SOCKET --------------- */
@@ -143,7 +148,7 @@ function initChatSocket() {
     })
 
     chatSocket.on('disconnect', () => {
-        chatSocket.emit('leave conversation', roomName, chatUserName);
+        //chatSocket.emit('leave conversation', roomName, chatUserName);
         /** Perhaps it could be launched by the {@link leaveRoom} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
