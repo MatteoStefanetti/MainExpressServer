@@ -169,22 +169,8 @@ router.get('/clubs/get_club_by_id/:id', function (req, res) {
     }
 });
 
-router.get('/clubs/get_club_by_id/:id', function (req, res) {
-    if (req.params.id) {
-        fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id), {
-            headers: {'Content-Type': 'application/json'},
-            method: 'get'
-        })
-            .then(res => res.json())
-            .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err))
-    } else {
-        console.error('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
-    }
-});
-
 router.get('/retrieve_last_season/:competition_id', function (req, res) {
-    fetch('http://localhost:8081/games/get_current_season_year' + String(req.params.competition_id),{
+    fetch('http://localhost:8081/games/get_current_season_year/' + String(req.params.competition_id),{
         headers: { 'Content-Type': 'application/json' }, method: 'get'
     })
         .then(res => res.json())

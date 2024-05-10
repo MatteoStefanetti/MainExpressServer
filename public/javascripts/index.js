@@ -133,7 +133,17 @@ function createAccordion(visualize, fatherId, params){
 async function openAccordionGames(window, id) {
     if (window.document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(window, true)
-        let currentSeason = await getLastSeasonYear(id)
+        let currentSeason;
+        await getLastSeasonYear(id)
+            .then(data => {
+                if(!data.data)
+                    console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
+                currentSeason = Number(data.data)
+            })
+            .catch(err => {
+                console.error('Error in \'getLastSeasonYear()\':', err)
+                currentSeason = null;
+            })
         await makeAxiosGet(`/get_games_by_league/${id}/` + currentSeason)
             .then(data => {
                 let dataResponse = Array(data.data)[0];
@@ -418,17 +428,7 @@ function retrieveCompetitionName(name) {
 }
 
 /** The following code returns the **current season year** for the competition given as argument.
- * @param competitionId {string} the competition id string of which to retrieve
- * @return {number || null} */
+ * @param competitionId {string} the competition id string of which to retrieve. */
 async function getLastSeasonYear(competitionId) {
-    await makeAxiosGet('/retrieve_last_season/' + competitionId)
-        .then(data => {
-            if(!data.data)
-                console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
-            return Number(data.data)
-        })
-        .catch(err => {
-            console.error('Error in \'getLastSeasonYear()\':', err)
-            return null;
-        })
+    return await makeAxiosGet('/retrieve_last_season/' + competitionId)
 }
