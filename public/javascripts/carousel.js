@@ -343,6 +343,7 @@ async function loadNationalCompetition(domestic_league_code) {
             for ( let elem of document.getElementsByClassName('current-nation'))
                 elem.classList.remove('current-nation')
             this.classList.add('current-nation')
+            window.parent.document.getElementById('gamesAccordion').replaceChildren()
         } else {
             // it shows the div & create the content
             for(let elem of otherCarousels)
@@ -362,8 +363,14 @@ async function loadNationalCompetition(domestic_league_code) {
                 let competitionList = Array(data.data)[0]
                 if(!competitionList || competitionList.length === 0)
                     console.error('Error! Invalid competitions list returned:', competitionList)
-                console.log('Queried:', competitionList)    // @todo remove it! FOR DEBUG ONLY!
-
+                try {
+                    competitionList.forEach(val => {
+                        createAccordion('competition_nation', 'gamesAccordion', {
+                            competition_id: val.competition_id, competition_name: retrieveCompetitionName(val.competition_name)})
+                    })
+                } catch (err) {
+                    console.error(err)
+                }
             })
             .catch(err => console.error('Error! \'/get_competition/:code\' went wrong:', err))
         showChargingSpinner(window.parent, false)

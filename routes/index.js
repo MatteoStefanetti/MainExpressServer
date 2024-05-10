@@ -99,8 +99,9 @@ router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
         .catch(err => res.status(500).json(err));
 });
 
-router.get('/get_games_by_competition_id/:id', function (req, res) {
-    fetch('http://localhost:8081/games/get_games_by_competition_id/' + String(req.params.id), {
+router.get('/get_games_by_league/:id/:season', function (req, res) {
+    fetch('http://localhost:8081/games/get_games_of_league/' + String(req.params.id) +
+        '/' + String(req.params.season), {
         headers: { 'Content-Type': 'application/json' }, method: 'get'
     })
         .then(res => res.json())
@@ -176,11 +177,21 @@ router.get('/clubs/get_club_by_id/:id', function (req, res) {
         })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => console.log(err));
+            .catch(err => res.status(500).json(err))
     } else {
-        console.log('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
+        console.error('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
     }
 });
+
+router.get('/retrieve_last_season', function (req, res) {
+    fetch('http://localhost:8081/games/get_current_season_year',{
+        headers: { 'Content-Type': 'application/json' }, method: 'get'
+    })
+        .then(res => res.json())
+        .then(json => res.status(200).json(json))
+        .catch(err => res.status(501).json(err))
+})
+
 
 router.get('/get_players_by_id/:id', function (req, res) {
     if (req.params.id) {
@@ -190,9 +201,9 @@ router.get('/get_players_by_id/:id', function (req, res) {
         })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => console.log(err))
+            .catch(err => res.status(500).json(err))
     } else {
-        console.log('Error! params of \'/players/get_players_by_id/\' are wrong!\n');
+        console.error('Error! params of \'/players/get_players_by_id/\' are wrong!\n');
     }
 })
 

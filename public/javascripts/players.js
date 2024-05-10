@@ -32,21 +32,9 @@ function searchPlayer(event) {
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
                         'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
-                    let params = {
-                        type: 'player',
-                        id: String(player.playerId)
-                    };
 
-                    let queryString = Object.keys(params)
-                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-                        .join('&');
-                    let url = 'single_page.html';
+                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
 
-                    if (queryString) {
-                        url += '?' + queryString;
-                    }
-
-                    clickableContent.href = url;
                     clickableContent.classList.add('text-dark');
                     clickableContent.innerHTML =
                         '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
@@ -61,7 +49,7 @@ function searchPlayer(event) {
                     playerList.appendChild(playerContainer);
                 })
                 if (dataResponse.length > MAX_ELEMENTS_DISPLAYABLE)
-                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList));
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_DISPLAYABLE));
             })
             .catch(err => {
                 showModalMessage(true);
@@ -71,20 +59,6 @@ function searchPlayer(event) {
     }
     event.preventDefault();
     document.getElementById('submitPlayerForm').disabled = false;
-}
-
-/** It removes the `d-none` from a maximum of MAX_ELEMENTS_DISPLAYABLE elements, every time it is called. */
-function showMore(listContainer) {
-    let index = 0, i = MAX_ELEMENTS_DISPLAYABLE;
-    let children = listContainer.querySelectorAll('*');
-
-    while (index < MAX_ELEMENTS_DISPLAYABLE && i < children.length) {
-        if (children[i].classList.contains('d-none'))
-            index++;
-        children[i++].classList.remove('d-none');
-    }
-    if (i >= children.length - 1)
-        document.getElementById('morePlayersLoader').remove();
 }
 
 /** Instead of moving the form, we remove it from the document and recreate it. This is because

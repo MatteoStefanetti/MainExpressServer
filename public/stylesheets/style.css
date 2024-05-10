@@ -32,7 +32,7 @@ a {
   color: inherit;
 }
 
-a:hover , a:hover span , a:hover p {
+a:not(.not-hoverable):hover , a:hover span:not(.not-hoverable) , a:hover p {
   text-decoration: underline;
 }
 
@@ -247,11 +247,11 @@ input:focus , button:not(.custom-accordion):focus {
 
 /* ----------------------------------- */
 
-.tuple-btn:hover {
+a:hover .tuple-btn , .nav-item:hover .tuple-btn  {
   background-color: var(--darkgreen) !important;
 }
 
-.tuple-btn:active {
+a:active .tuple-btn , .nav-item:active .tuple-btn  {
   background-color: var(--lightgreen) !important;
 }
 
