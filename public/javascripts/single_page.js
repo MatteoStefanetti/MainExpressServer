@@ -8,11 +8,12 @@ function openAccordionValuation(id){
     }
 }
 
-function initSinglePage() {
+async function initSinglePage() {
+    showChargingSpinner(null, true)
     switch (typeParams) {
         case 'player':
             if (idParams) {
-                makeAxiosGet(`/get_players_by_id/${idParams}`)
+                await makeAxiosGet(`/get_players_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
@@ -29,7 +30,7 @@ function initSinglePage() {
                         playerName.classList.add('h1');
                         infoTitle.appendChild(playerName);
 
-                        makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
+                        await makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(async dataClub => {
                                 let playerClub = document.createElement('a');
                                 let playerClubString = document.createElement('p');
@@ -121,18 +122,19 @@ function initSinglePage() {
 
                         info2.appendChild(agentName);
 
-                        //TODO: Insert the graphic of the valuation
-
-                        let accordions = document.getElementById('accordions');
-                        createAccordion('player_appearance', 'accordions', {player_id: idParams});
-
+                        // @todo create accordion (button) about valuation that displays the graph
+                        // The following line creates the valuation button:
+                        await createAccordion('single_page/pl/player_valuations', 'accordions', {id: 'valAccordItem'})
+                        // The following line creates the appearances button:
+                        await createAccordion('single_page/pl/last_appearances', 'accordions',
+                            {id: 'appearAccordItem_' + idParams})
                     })
                     .catch(err => console.error(err));
             }
             break;
         case 'club':
             if (idParams) {
-                makeAxiosGet(`/clubs/get_club_by_id/${idParams}`)
+                await makeAxiosGet(`/clubs/get_club_by_id/${idParams}`)
                     .then(data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
@@ -150,4 +152,5 @@ function initSinglePage() {
             //TODO: error type not supported
             break;
     }
+    showChargingSpinner(null, false)
 }
