@@ -120,7 +120,11 @@ function createAccordion(visualize, fatherId, params){
             accordionButton.appendChild(flagImg);
             accordionButton.appendChild(spanTitle);
             break;
-        case 'player_valuation':
+        case 'player_appearance':
+            strIdValue = String(params.player_id);
+            spanTitle.innerText = 'Last Appearance';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionPlayerAppearance.bind(null, params.player_id));
             break;
         default:
             break;
@@ -128,6 +132,34 @@ function createAccordion(visualize, fatherId, params){
     accordionButton.setAttribute('aria-controls', '#' + strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
+}
+
+async function openAccordionPlayerAppearance(player_id){
+    console.log('hi');
+    if(document.getElementById(player_id).firstElementChild.children.length === 0) {
+        //showChargingSpinner(null, true);
+        await makeAxiosGet(`/players/get_last_appearances/${player_id}`)
+            .then(data => {
+                console.log(data.data);
+                let dataResponse = Array(data.data)[0];
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+                document.getElementById('accordions').appendChild(unList);
+                let alternatorCounter = 0;
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
+                })
+                document.getElementById(player_id).firstElementChild.appendChild(unList);
+                if(dataResponse.length > 20){
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_last_appearance\' GET');
+            });
+        //showChargingSpinner(null, false);
+    }
 }
 
 /** Triggered when an accordion button is clicked.

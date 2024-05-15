@@ -30,7 +30,7 @@ function initSinglePage() {
                         infoTitle.appendChild(playerName);
 
                         makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
-                            .then(dataClub => {
+                            .then(async dataClub => {
                                 let playerClub = document.createElement('a');
                                 let playerClubString = document.createElement('p');
                                 playerClubString.classList.add('p');
@@ -121,8 +121,10 @@ function initSinglePage() {
 
                         info2.appendChild(agentName);
 
+                        //TODO: Insert the graphic of the valuation
+
                         let accordions = document.getElementById('accordions');
-                        let valuations = document.createElement('ul');
+                        createAccordion('player_appearance', 'accordions', {player_id: idParams});
 
                     })
                     .catch(err => console.error(err));
