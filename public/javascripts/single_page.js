@@ -31,26 +31,14 @@ async function initSinglePage() {
                         infoTitle.appendChild(playerName);
 
                         await makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
-                            .then(async dataClub => {
+                            .then(dataClub => {
                                 let playerClub = document.createElement('a');
                                 let playerClubString = document.createElement('p');
                                 playerClubString.classList.add('p');
                                 playerClubString.innerHTML = '<b>Current Club:</b> ';
                                 playerClub.innerText = dataClub.data.clubName;
-                                let url = 'single_page.html';
-                                let params = {
-                                    type: 'club',
-                                    id: data.data.current_club_id
-                                };
-                                let queryString = Object.keys(params)
-                                    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-                                    .join('&');
 
-                                if (queryString) {
-                                    url += '?' + queryString;
-                                }
-
-                                playerClub.href = url;
+                                playerClub.href = getUrlForSinglePage({type: 'club', id: data.data.current_club_id});
                                 infoTitle.appendChild(playerClubString);
                                 playerClubString.appendChild(playerClub);
                             })
@@ -152,5 +140,7 @@ async function initSinglePage() {
             //TODO: error type not supported
             break;
     }
+    let hrElem = (document.getElementById('info').children)[1]
+    hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
     showChargingSpinner(null, false)
 }
