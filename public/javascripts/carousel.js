@@ -146,7 +146,6 @@ function adjustIframeHeight(iframe) {
     }
 }
 
-
 /** Function used to toggle a carousel button, this will set the `visibility` of the button to _'hidden'_ or _'visible'_.
  * @param button {HTMLButtonElement} The button to disable or enable.
  * @param toDisable {boolean} This parameter is _true_ if the button has to be set **disabled**,
