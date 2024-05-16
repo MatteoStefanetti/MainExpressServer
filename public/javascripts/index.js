@@ -73,7 +73,8 @@ async function getAllFlags() {
  * @param visualize {string} is the type of accordion defined by one of the following values:
  *  - 'competition_nation'
  *  - 'club_nation'
- *  - 'player_valuation'
+ *  - 'single_page/pl/player_valuations'
+ *  - 'single_page/pl/last_appearances'
  * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
  * @param params {object} is the structure containing the values to use in the accordion.
  * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
@@ -124,7 +125,7 @@ async function createAccordion(visualize, fatherId, params){
             strIdValue = params.id;
             spanTitle.innerText = 'Player valuations';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPlayer.bind(null, 'graph', strIdValue));
+            accordionButton.addEventListener('click', openAccordionPlayer.bind(null, 'chart', strIdValue));
             break;
         case 'single_page/pl/last_appearances':
             strIdValue = params.id;
@@ -139,61 +140,6 @@ async function createAccordion(visualize, fatherId, params){
     accordionButton.setAttribute('aria-controls', strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
-}
-
-/** Function called to generate the internal info block about the accordion button that triggers it.
- * @param type {string} It defines if the accordion type to generate is a list or something else.
- * Should be specified as `'list'`, `'graph'`, etc.
- * @param id {string} The **id** used as id of the accordion button.
- * @throws TypeError If any of its argument is null or undefined. */
-async function openAccordionPlayer(type, id){
-    if (!type || !id) {
-        console.error(type, '\n', id);
-        throw TypeError('Invalid argument(s) passed to \'openAccordionPlayer\'!');
-    }
-    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
-    if(document.getElementById(id).firstElementChild.children.length === 0) {
-        showChargingSpinner(null, true);
-        let dataResponse
-        switch (type) {
-            case 'list':
-                let player_id = id.slice(id.indexOf('_') + 1)
-                await makeAxiosGet('/players/get_last_appearances/' +  player_id)
-                    .then(data => {
-                        dataResponse = Array(data.data)[0];
-                        let unList = document.createElement('ul');
-                        unList.classList.add('nav', 'flex-column');
-                        let alternatorCounter = 0;
-                        dataResponse.forEach(el => {
-                            createDynamicListItem(window, 'appearance', dataResponse.length, unList,
-                                {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
-                        })
-                        if(dataResponse.length > 20){
-                            createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
-                        }
-                        document.getElementById(id).firstElementChild.appendChild(unList);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        throw new TypeError('Error occurred during \'get_last_appearance\' GET');
-                    });
-                break;
-            case 'graph':
-                let canvasContainer = document.createElement('div')
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100')
-                let canvasElem = document.createElement('canvas')
-                canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2')
-                // @todo make the route and insert data into the graph
-
-                canvasContainer.appendChild(canvasElem)
-                document.getElementById(id).firstElementChild.appendChild(canvasContainer)
-                break;
-            default:
-                console.error('Warning! openAccordionPlayer() called with invalid field \'type\':', type)
-                break;
-        }
-        showChargingSpinner(null, false);
-    }
 }
 
 /** Triggered when an accordion button is clicked.

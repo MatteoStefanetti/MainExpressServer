@@ -234,4 +234,20 @@ router.get('/get_players_by_name/:name', function (req, res) {
     }
 });
 
+/* ------------ Single Page ------------ */
+
+router.get('/valuation/get_valuations_of_player/:player_id', (req, res) => {
+    if(req.params.player_id) {
+        fetch('http://localhost:3002/player_valuations/get_valuations_of_player/' + String(req.params.player_id),
+            {headers: {'Content-Type': 'application/json'}, method: 'get'})
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Request content was not found.'));
+            });
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid player_id to search'));
+    }
+});
+
 module.exports = router;
