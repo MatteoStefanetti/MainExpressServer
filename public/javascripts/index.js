@@ -96,8 +96,7 @@ async function createAccordion(visualize, fatherId, params){
     let accBody = document.createElement('div');
     accBody.classList.add('accordion-body');
     collapseDiv.appendChild(accBody);
-    const accordionElement = document.getElementById(fatherId) ?
-        document.getElementById(fatherId) : window.parent.document.getElementById(fatherId);
+    const accordionElement = document.getElementById(fatherId)
     accordionElement.appendChild(wrapperDiv);
     let flagImg = document.createElement('img');
     flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
@@ -108,7 +107,7 @@ async function createAccordion(visualize, fatherId, params){
             strIdValue = String(params.competition_id)
             spanTitle.innerText = params.competition_name;
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionGames.bind(null, window.parent, params.competition_id));
+            accordionButton.addEventListener('click', openAccordionGames.bind(null, window, params.competition_id));
             break;
         case 'club_nation':
             strIdValue = String(params.local_competition_code)
@@ -228,7 +227,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     let desktopBtn = document.createElement('div');
     switch (type) {
         case 'game':
-            listItem.id = item.data.competitionId
+            listItem.id = item.data.gameId
             listItemLink.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'py-1', 'mx-2');
             let gamesDiv = window.document.createElement('div')
             gamesDiv.classList.add('w-75', 'row', 'align-content-between')

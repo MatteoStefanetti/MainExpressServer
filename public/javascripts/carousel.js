@@ -134,6 +134,8 @@ function setIframesHeight(externalCall) {
     }
 }
 
+/** Function called by an iterator which gives a carousel iframe instance to resize
+ * @param iframe the iframe to adjust in height. */
 function adjustIframeHeight(iframe) {
     try {
         const contentDocument = iframe.contentDocument || iframe.contentWindow.document;
@@ -308,7 +310,8 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 let countryText = document.createElement('span')
                 countryText.innerText = String(elementList[i].country_name)
                 internalDiv.firstElementChild.appendChild(countryText)
-                internalDiv.addEventListener('click',
+                btnElem.id = String(elementList[i].domestic_league_code)
+                btnElem.addEventListener('click',
                     loadNationalCompetition.bind(internalDiv, elementList[i].domestic_league_code))
                 break;
             default:
@@ -326,53 +329,41 @@ async function loadNationalCompetition(domestic_league_code) {
         console.error('Called \'loadNationalCompetition\' with null \'domestic_league_code\'!')
         return;
     }
-    let nationalSection = window.parent.document.getElementById('nationalSection')
-    let otherCarousels = window.parent.document.getElementsByClassName('shown-carousel')
-    if(this.classList.contains('current-nation')) {
-        // it collapse the div
+    const parentWin = window.parent
+    const collapseBtn = parentWin.document.getElementById('btn-collapser')
+    if (this.classList.contains('current-nation')) {    // it collapses the div
+
+        // This triggers the button of the parent element to show or hide the content of the nationalSection
+        collapseBtn.click()
+
         this.classList.remove('current-nation')
-        nationalSection.classList.remove('expanded')
-        for(let elem of otherCarousels) {
-            elem.classList.remove('closed')
-            elem.style.height = elem.scrollHeight + 'px';
-        }
+        for(let iframe of parentWin.document.getElementsByTagName('iframe'))
+            if (iframe.classList.contains('collapse-toggler'))
+                setTimeout(adjustIframeHeight.bind(null, iframe), 400)
     } else {
-        showChargingSpinner(window.parent, true)
+        let nationalSection = parentWin.document.getElementById('nationalSection')
         if (document.getElementsByClassName('current-nation').length !== 0) {
+
             // The div is shown, must recreate the content and modify the selected nation
+            nationalSection.name = domestic_league_code
+
             for ( let elem of document.getElementsByClassName('current-nation'))
                 elem.classList.remove('current-nation')
             this.classList.add('current-nation')
-            window.parent.document.getElementById('gamesAccordion').replaceChildren()
+
+            parentWin.document.getElementById('gamesAccordion').replaceChildren()
         } else {
-            // it shows the div & create the content
-            for(let elem of otherCarousels)
-                elem.classList.add('closed')
+            // it shows the div & creates the content
+            collapseBtn.click()
             this.classList.add('current-nation')
-            nationalSection.style.setProperty('--expanded-height', (nationalSection.scrollHeight) + 'px !important')
-            nationalSection.classList.add('expanded')
-            if (nationalSection.name === domestic_league_code) {
-                showChargingSpinner(window.parent, false)
-                return;
-            }
+
+            if (nationalSection.name === domestic_league_code)
+                return;     // It returns, to avoid reloading data
+
             nationalSection.name = domestic_league_code
-            window.parent.document.getElementById('gamesAccordion').replaceChildren()
+            parentWin.document.getElementById('gamesAccordion').replaceChildren()
         }
-        await makeAxiosGet('/get_competitions/' + String(domestic_league_code))
-            .then(data => {
-                let competitionList = Array(data.data)[0]
-                if(!competitionList || competitionList.length === 0)
-                    console.error('Error! Invalid competitions list returned:', competitionList)
-                try {
-                    competitionList.forEach(val => {
-                        createAccordion('competition_nation', 'gamesAccordion', {
-                            competition_id: val.competition_id, competition_name: retrieveCompetitionName(val.competition_name)})
-                    })
-                } catch (err) {
-                    console.error(err)
-                }
-            })
-            .catch(err => console.error('Error! \'/get_competition/:code\' went wrong:', err))
-        showChargingSpinner(window.parent, false)
+        collapseBtn.classList.add('send-get');      // this should trigger the method to send the get
+        showChargingSpinner(parentWin, true)
     }
 }
