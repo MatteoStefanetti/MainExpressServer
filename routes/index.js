@@ -178,7 +178,6 @@ router.get('/retrieve_last_season/:competition_id', function (req, res) {
         .catch(err => res.status(501).json(err))
 })
 
-
 router.get('/get_players_by_id/:id', function (req, res) {
     if (req.params.id) {
         fetch('http://localhost:8081/players/get_player_by_id/' + String(req.params.id), {
