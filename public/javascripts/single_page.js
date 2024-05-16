@@ -2,17 +2,12 @@ const urlParams = new URLSearchParams(window.location.search);
 const typeParams = urlParams.get('type');
 const idParams = urlParams.get('id');
 
-function openAccordionValuation(id){
-    if (document.getElementById(id).firstChild.children.length === 0){
-
-    }
-}
-
-function initSinglePage() {
+async function initSinglePage() {
+    showChargingSpinner(null, true)
     switch (typeParams) {
         case 'player':
             if (idParams) {
-                makeAxiosGet(`/get_players_by_id/${idParams}`)
+                await makeAxiosGet(`/get_players_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
@@ -29,27 +24,15 @@ function initSinglePage() {
                         playerName.classList.add('h1');
                         infoTitle.appendChild(playerName);
 
-                        makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
+                        await makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
                                 let playerClub = document.createElement('a');
                                 let playerClubString = document.createElement('p');
                                 playerClubString.classList.add('p');
                                 playerClubString.innerHTML = '<b>Current Club:</b> ';
                                 playerClub.innerText = dataClub.data.clubName;
-                                let url = 'single_page.html';
-                                let params = {
-                                    type: 'club',
-                                    id: data.data.current_club_id
-                                };
-                                let queryString = Object.keys(params)
-                                    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-                                    .join('&');
 
-                                if (queryString) {
-                                    url += '?' + queryString;
-                                }
-
-                                playerClub.href = url;
+                                playerClub.href = getUrlForSinglePage({type: 'club', id: data.data.current_club_id});
                                 infoTitle.appendChild(playerClubString);
                                 playerClubString.appendChild(playerClub);
                             })
@@ -121,16 +104,19 @@ function initSinglePage() {
 
                         info2.appendChild(agentName);
 
-                        let accordions = document.getElementById('accordions');
-                        let valuations = document.createElement('ul');
-
+                        // The following line creates the valuation button:
+                        await createAccordion('single_page/pl/player_valuations', 'accordions',
+                            {id: 'valAccordItem_' + idParams})
+                        // The following line creates the appearances button:
+                        await createAccordion('single_page/pl/last_appearances', 'accordions',
+                            {id: 'appearAccordItem_' + idParams})
                     })
                     .catch(err => console.error(err));
             }
             break;
         case 'club':
             if (idParams) {
-                makeAxiosGet(`/clubs/get_club_by_id/${idParams}`)
+                await makeAxiosGet(`/clubs/get_club_by_id/${idParams}`)
                     .then(data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
@@ -147,5 +133,88 @@ function initSinglePage() {
         default:
             //TODO: error type not supported
             break;
+    }
+    let hrElem = (document.getElementById('info').children)[1]
+    hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
+    showChargingSpinner(null, false)
+}
+
+/** Function called to generate the internal info block about the accordion button that triggers it.
+ * @param type {string} It defines if the accordion type to generate is a list or something else.
+ * Should be specified as `'list'`, `'chart'`, etc.
+ * @param id {string} The **id** used as id of the accordion button.
+ * @throws TypeError If any of its argument is null or undefined. */
+async function openAccordionPlayer(type, id){
+    if (!type || !id) {
+        console.error(type, '\n', id);
+        throw TypeError('Invalid argument(s) passed to \'openAccordionPlayer\'!');
+    }
+    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
+    const player_id = id.slice(id.indexOf('_') + 1)
+    if(document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+        let dataResponse
+        switch (type) {
+            case 'list':
+                await makeAxiosGet('/players/get_last_appearances/' +  player_id)
+                    .then(data => {
+                        dataResponse = Array(data.data)[0];
+                        let unList = document.createElement('ul');
+                        unList.classList.add('nav', 'flex-column');
+                        let alternatorCounter = 0;
+                        dataResponse.forEach(el => {
+                            createDynamicListItem(window, 'appearance', dataResponse.length, unList,
+                                {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
+                        })
+                        if(dataResponse.length > 20){
+                            createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                        }
+                        document.getElementById(id).firstElementChild.appendChild(unList);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        throw new TypeError('Error occurred during \'get_last_appearance\' GET');
+                    });
+                break;
+            case 'chart':
+                let canvasContainer = document.createElement('div')
+                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100')
+                let canvasElem = document.createElement('canvas')
+                canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2')
+                await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
+                    .then(data => {
+                        let dataResponse = Array(data.data)[0]
+                        dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString())
+                        const ctx = canvasElem.getContext('2d');
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: dataResponse.map(item => item.date),
+                                datasets: [{
+                                    label: 'Market Value (€)',
+                                    data: dataResponse.map(item => item.market_value_eur),
+                                    borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    x: {title: {display: true, text: 'Date'}},
+                                    y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
+                                }
+                            }
+                        });
+                    }).catch(err => {
+                        console.error(err);
+                        throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
+                    });
+                canvasContainer.appendChild(canvasElem)
+                document.getElementById(id).firstElementChild.appendChild(canvasContainer)
+                break;
+            default:
+                console.error('Warning! openAccordionPlayer() called with invalid field \'type\':', type)
+                break;
+        }
+        showChargingSpinner(null, false);
     }
 }

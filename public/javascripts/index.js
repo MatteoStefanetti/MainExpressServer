@@ -70,12 +70,13 @@ async function getAllFlags() {
  * @param visualize {string} is the type of accordion defined by one of the following values:
  *  - 'competition_nation'
  *  - 'club_nation'
- *  - 'player_valuation'
+ *  - 'single_page/pl/player_valuations'
+ *  - 'single_page/pl/last_appearances'
  * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
  * @param params {object} is the structure containing the values to use in the accordion.
  * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
  * *(e.g. `{parameter_1: 'par1'}` to be referred to as params.parameter_1)* */
-function createAccordion(visualize, fatherId, params){
+async function createAccordion(visualize, fatherId, params){
     let wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
     let header = document.createElement('h2');
@@ -117,12 +118,23 @@ function createAccordion(visualize, fatherId, params){
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
             break;
-        case 'player_valuation':
+        case 'single_page/pl/player_valuations':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Player valuations';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionPlayer.bind(null, 'chart', strIdValue));
+            break;
+        case 'single_page/pl/last_appearances':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Last Appearance';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionPlayer.bind(null, 'list', strIdValue));
             break;
         default:
+            console.error('Warning! index.js:createAccordion() called with invalid field \'visualize\':', visualize)
             break;
     }
-    accordionButton.setAttribute('aria-controls', '#' + strIdValue);
+    accordionButton.setAttribute('aria-controls', strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
 }
@@ -264,6 +276,19 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             createStatsBtn(window, desktopBtn, listItemLink)
             listItemLink.appendChild(desktopBtn);
             if(size > 30 && item.counter > 30)
+                listItem.classList.add('d-none')
+            break;
+        case 'appearance':
+            listItem.id = item.data.game_id
+            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
+            let nameSpan2 = document.createElement('span');
+            nameSpan2.classList.add('ms-3', 'flex-grow-1');
+            // @todo set up of the appearance istance style
+            nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(item.data.game_id);
+            listItemLink.appendChild(nameSpan2);
+            createStatsBtn(window, desktopBtn, listItemLink)
+            listItemLink.appendChild(desktopBtn);
+            if(size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
         default:
