@@ -86,6 +86,17 @@ router.get('/players/get_trend_players', async (req, res) => {
     }
 });
 
+router.get('/players/get_last_appearances/:player_id', async (req, res) => {
+    if(req.params.player_id){
+        fetch('http://localhost:3002/appearances/get_every_player_appearances/' + String(req.params.player_id), {
+            headers: { 'Content-Type': 'application/json' }, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(500).json(err))
+    }
+});
+
 /* ------ Competitions ------ */
 
 router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
@@ -154,9 +165,9 @@ router.get('/get_flags', function (req,res) {
         .catch(err => res.status(500).json(err));
 });
 
-router.get('/clubs/get_club_by_id/:id', function (req, res) {
-    if (req.params.id){
-        fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id),{
+router.get('/clubs/get_club_name_by_id/:club_id', function (req, res) {
+    if (req.params.club_id){
+        fetch('http://localhost:8081/clubs/get_club_name_by_id/' + String(req.params.club_id),{
             headers:{'Content-Type': 'application/json'},
             method: 'get'
         })
@@ -169,29 +180,14 @@ router.get('/clubs/get_club_by_id/:id', function (req, res) {
     }
 });
 
-router.get('/clubs/get_club_by_id/:id', function (req, res) {
-    if (req.params.id) {
-        fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id), {
-            headers: {'Content-Type': 'application/json'},
-            method: 'get'
-        })
-            .then(res => res.json())
-            .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err))
-    } else {
-        console.error('Error! params of \'/clubs/get_club_by_id/\' are wrong!\n')
-    }
-});
-
-router.get('/retrieve_last_season', function (req, res) {
-    fetch('http://localhost:8081/games/get_current_season_year',{
+router.get('/retrieve_last_season/:competition_id', function (req, res) {
+    fetch('http://localhost:8081/games/get_current_season_year/' + String(req.params.competition_id),{
         headers: { 'Content-Type': 'application/json' }, method: 'get'
     })
         .then(res => res.json())
         .then(json => res.status(200).json(json))
         .catch(err => res.status(501).json(err))
 })
-
 
 router.get('/get_players_by_id/:id', function (req, res) {
     if (req.params.id) {
@@ -220,6 +216,22 @@ router.get('/get_players_by_name/:name', function (req, res) {
             });
     } else {
         res.status(500).json(JSON.stringify('Please insert a valid name to search'));
+    }
+});
+
+/* ------------ Single Page ------------ */
+
+router.get('/valuation/get_valuations_of_player/:player_id', (req, res) => {
+    if(req.params.player_id) {
+        fetch('http://localhost:3002/player_valuations/get_valuations_of_player/' + String(req.params.player_id),
+            {headers: {'Content-Type': 'application/json'}, method: 'get'})
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Request content was not found.'));
+            });
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid player_id to search'));
     }
 });
 

@@ -22,11 +22,11 @@
     <script src="javascripts/index.js"></script>
 </head>
 <body onload="initCompetitions()">
-<div class="container-fluid p-0 position-relative">
-    <div class="d-flex justify-content-center align-items-center bg-white border rounded-3 p-1
+<div class="d-flex justify-content-center align-items-center bg-white border rounded-3 p-1
         position-fixed z-3 d-none" id="spinner">
-        <div class="spinner-border text-lightgreen ratio-1x1"></div>
-    </div>
+    <div class="spinner-border text-lightgreen ratio-1x1"></div>
+</div>
+<div class="container-fluid p-0 position-relative">
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
         <nav class="navbar navbar-dark navbar-expand-sm mx-auto mh-100">
@@ -55,7 +55,10 @@
         <div class="col-12 col-lg-9 p-0 pb-3 justify-content-center">
             <div class="mx-auto px-2 position-relative">
                 <iframe src="carousel.html" name="national-carousel-card_national" class="w-100 mt-5"></iframe>
-                <div id="nationalSection" class="position-relative px-3 hiddenInfo">
+
+                <button id="btn-collapser" class="d-none" aria-hidden="true" data-bs-toggle="collapse" data-bs-target=".collapse-toggler" aria-expanded="false"></button>
+
+                <div id="nationalSection" class="position-relative px-3 collapse collapse-toggler" aria-expanded="false">
                     <div class="d-block d-sm-flex row justify-content-center-below-sm position-sticky top-form-container mt-md-1">
                         <p class="col-12 col-sm-2 h4 fw-bold p-0 mb-2 mb-sm-0 text-center">Games</p>
                         <hr class="col-1 d-none d-sm-flex opacity-75 justify-content-center m-0 mx-2 vertical-separator">
@@ -78,9 +81,10 @@
                     </div>
                     <div class="accordion mb-4 px-2" id="gamesAccordion"></div>
                 </div>
-                <iframe src="carousel.html" name="simple-image-carousel-card_international" class="shown-carousel w-100 mt-5">
-                </iframe>
-                <iframe src="carousel.html" name="simple-image-carousel-card_england" class="shown-carousel w-100 mt-5"></iframe>
+                <iframe src="carousel.html" name="simple-image-carousel-card_international"
+                        class="collapse show collapse-toggler w-100 mt-5" aria-expanded="true"></iframe>
+                <iframe src="carousel.html" name="simple-image-carousel-card_england" class="collapse show collapse-toggler w-100 mt-5"
+                        aria-expanded="true"></iframe>
             </div>
         </div>
         <!-- Chat div (default set on d-none) -->

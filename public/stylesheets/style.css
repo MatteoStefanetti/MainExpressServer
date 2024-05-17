@@ -141,7 +141,6 @@ input:focus , button:not(.custom-accordion):focus {
   height: var(--spinner-height);
   top: calc(50vh - (var(--spinner-height) / 2));
   left: calc(50vw - (var(--spinner-width) / 2));
-  /*display: none !important;*/
 }
 
 /* ------------- Header ------------- */

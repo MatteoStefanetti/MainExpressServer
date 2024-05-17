@@ -211,25 +211,27 @@ function sendMessage(event){
 
 
 /** It appends the given html text to the chat div
- * @param userId who sent the message
- * @param text message content
+ * @param userId {string} who sent the message
+ * @param text {string} message content
  * */
 function writeOnChat(userId, text) {
     // handle userId == null case
     if(text && String(text).trim().length !== 0){
         let msgNode = document.createElement('div')
-        msgNode.classList.add('border-bottom', 'py-2')
+        msgNode.classList.add('my-1', 'mx-5',  'p-2')
         if(userId === 'mainServer') {
             msgNode.classList.add('ps-3', 'pe-3', 'text-center')
-            msgNode.innerHTML = '<i>'+ text + '</i>'
+            msgNode.innerHTML = '<i>' + text + '</i>'
         } else {
+            msgNode.classList.add('rounded-4')
             const sender = userId===chatUserName ? "You" : userId
             if(sender === "You")
-                msgNode.classList.add('ps-3', 'pe-1', 'text-end')
+                msgNode.classList.add('me-2', 'border', 'self-message', 'text-end')
             else
-                msgNode.classList.add('ps-1', 'pe-3', 'text-start')
-
-            msgNode.innerHTML = '<b>' + sender + '</b>' + '<br>' + text
+                msgNode.classList.add('ms-2', 'border', 'other-message', 'text-start')
+            let textDiv = document.createElement('div')
+            textDiv.innerText = text
+            msgNode.innerHTML = '<b>' + sender + '</b><br><p class="text-start">' + textDiv.innerText + '</p>'
         }
 
         let msgContainer = document.getElementById('messages');

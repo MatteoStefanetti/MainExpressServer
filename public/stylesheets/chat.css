@@ -1,7 +1,8 @@
-.selfMessage {
-    background-image: radial-gradient(circle at center, var(--lightgreen-disabled), transparent);
+.self-message {
+    background-color: var(--lightgreen-disabled);
+    border-color: var(--lightgreen) !important;
 }
 
-.otherMessage {
-
+.other-message {
+    background-color: var(--bs-light);
 }

@@ -3,6 +3,7 @@
 function initCompetitions() {
     setButtonsListener()
     setCarouselPageHeight()
+    startCompetitionClassesObserver()
 }
 
 /** Setting the listeners of the form buttons */
@@ -53,3 +54,36 @@ async function sendCompetitionQuery(ev) {
     }
 }
 
+/** This method sets an observer to the button used to trigger the data of the national Section.
+ *  When the button gets the 'send-get' class added to its classList,
+ *  the observer checks whether to send or not the axios get. */
+function startCompetitionClassesObserver() {
+    let collapseBtn = document.getElementById('btn-collapser')
+    // Create a new MutationObserver instance to see mutations
+    const observer = new MutationObserver(async (mutationsList, observer) => {
+        console.log(mutationsList)
+        for (let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.target.classList.contains('send-get')) {
+                const domestic_league_code = document.getElementById('nationalSection').name
+                await makeAxiosGet('/get_competitions/' + String(domestic_league_code))
+                    .then(data => {
+                        let competitionList = Array(data.data)[0]
+                        if(!competitionList || competitionList.length === 0)
+                            console.error('Error! Invalid competitions list returned:', competitionList)
+                        try {
+                            competitionList.forEach(val => {
+                                createAccordion('competition_nation', 'gamesAccordion', {
+                                    competition_id: val.competition_id, competition_name: retrieveCompetitionName(val.competition_name)})
+                            })
+                        } catch (err) {
+                            console.error(err)
+                        }
+                    })
+                    .catch(err => console.error('Error! \'/get_competition/:code\' went wrong:', err))
+                showChargingSpinner(null, false)
+                mutation.target.classList.remove('send-get')
+            }
+        }
+    })
+    observer.observe(collapseBtn, {attributeFilter: ['class']}) // Start observing the target element
+}
