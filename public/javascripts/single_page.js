@@ -3,7 +3,25 @@ const typeParams = urlParams.get('type');
 const idParams = urlParams.get('id');
 
 async function initSinglePage() {
-    showChargingSpinner(null, true)
+    let infoTitle = document.getElementById('infoTitle');
+    let info1 = document.getElementById('info1');
+    let imgContainer = document.createElement('div');
+    let singlePageImg = document.createElement('img');
+    let titleDiv = document.createElement('div');
+    let singlePageTitle = document.createElement('p');
+
+    singlePageTitle.classList.add('h1');
+
+
+    singlePageImg.classList.add('img-fluid', 'd-block', 'border', 'border-5', 'border-darkgreen', 'rounded-4', 'player-img-size');
+    singlePageImg.alt = 'image not found';
+    titleDiv.classList.add('align-self-center');
+    infoTitle.appendChild(imgContainer);
+    imgContainer.appendChild(singlePageImg);
+    imgContainer.classList.add('m-2', 'mx-md-5')
+    infoTitle.appendChild(titleDiv);
+    titleDiv.appendChild(singlePageTitle);
+    showChargingSpinner(null, true);
     switch (typeParams) {
         case 'player':
             if (idParams) {
@@ -11,18 +29,9 @@ async function initSinglePage() {
                     .then(async data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
-                        let infoTitle = document.getElementById('infoTitle');
-                        let info1 = document.getElementById('info1');
-                        let playerImg = document.createElement('img');
-                        playerImg.src = data.data.image_url;
-                        playerImg.classList.add('img-fluid', 'd-block', 'border', 'border-5', 'border-darkgreen', 'rounded-4', 'player-img-size');
-                        playerImg.alt = 'image not found';
-                        infoTitle.appendChild(playerImg);
 
-                        let playerName = document.createElement('p');
-                        playerName.innerText = data.data.player_name;
-                        playerName.classList.add('h1');
-                        infoTitle.appendChild(playerName);
+                        singlePageImg.src = data.data.image_url;
+                        singlePageTitle.innerText = data.data.player_name;
 
                         await makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
@@ -33,14 +42,14 @@ async function initSinglePage() {
                                 playerClub.innerText = dataClub.data.clubName;
 
                                 playerClub.href = getUrlForSinglePage({type: 'club', id: data.data.current_club_id});
-                                infoTitle.appendChild(playerClubString);
+                                titleDiv.appendChild(playerClubString);
                                 playerClubString.appendChild(playerClub);
                             })
                             .catch(err => console.error(err));
                         let dobString = document.createElement('p');
                         dobString.classList.add('p');
                         dobString.innerHTML = '<b>Birth:</b> ' + new Date(data.data.date_of_birth).toLocaleDateString() + ' - ' + data.data.city_of_birth + ', ' + data.data.country_of_birth;
-                        infoTitle.appendChild(dobString);
+                        titleDiv.appendChild(dobString);
 
                         let lastSeason = document.createElement('p');
                         lastSeason.classList.add('p');
