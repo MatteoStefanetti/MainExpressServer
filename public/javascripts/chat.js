@@ -5,7 +5,8 @@ let chat_messages = {}
 
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
 if(!localStorage.getItem('isChatOpened'))
-    localStorage.setItem('isChatOpened', 'false');
+    localStorage.setItem('isChatOpened', 'false')
+
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
@@ -13,12 +14,23 @@ function initChat() {
     document.getElementById('closeChat').onclick = closeChat;
     document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
     document.getElementById('declineTermsBtn').onclick = closeChat;
-    document.getElementById("submitForm").onclick =  connectToRoom;
+    document.getElementById("submitForm").onclick =  submitChatForm;
     document.getElementById("leaveButton").onclick =  leaveRoom;
     document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
     document.getElementById('textField').addEventListener('submit', sendMessage)
-    if(localStorage.getItem('acceptedChatTerms'))
+    if(localStorage.getItem('acceptedChatTerms')) {
         closeChatTerms();
+        if(localStorage.getItem('connectedRoom')) {
+            if(localStorage.getItem('connectedRoom') !== 'false') {
+                console.log("connectToRoom from localstorage")
+                connectToRoom(
+                    !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom'),
+                    !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName'),
+                    false
+                    )
+            }
+        }
+    }
     initChatSocket()
     if(localStorage.getItem('isChatOpened') === 'true')
         openChat()
@@ -158,17 +170,31 @@ function initChatSocket() {
 /**
  * Called when 'click' event occurs on login submitForm
  *  extract and stores form's data
- *  send it to the socket
+ *  calls connectToRoom, which connects to socket
  */
-function connectToRoom(event) {//connect button function
-    document.getElementById('submitForm').disabled = true
-
+function submitChatForm(event) {//connect button function
     let formData = extractFormData("chatLoginForm");
-    chatUserName = !formData.customName ? chatUserName : formData.customName
-    roomName = !formData.customRoom ? roomName : formData.customRoom
-    chatSocket.emit('create or join', roomName, chatUserName, formData.makePublic)
+    connectToRoom( !formData.customRoom ? roomName : formData.customRoom,
+        !formData.customName ? chatUserName : formData.customName,
+        formData.makePublic
+    )
 
     event.preventDefault();
+}
+
+/**
+ * Connects to socket
+ * @param room
+ * @param userName
+ * @param makePublic
+ */
+function connectToRoom(room, userName, makePublic) {
+    document.getElementById('submitForm').disabled = true
+    chatUserName = userName
+    roomName = room
+    localStorage.setItem('connectedRoom', room)
+    localStorage.setItem('chatUserName', userName)
+    chatSocket.emit('create or join', roomName, chatUserName, makePublic)
 }
 
 /**
@@ -187,6 +213,7 @@ function leaveRoom(event) {
     chatHeader.classList.remove('bg-light','border_bottom')
     document.getElementById('messages').replaceChildren() //replace children with null
     document.getElementById('submitForm').disabled = false
+    localStorage.setItem('connectedRoom', 'false')
 
     event.preventDefault();
 }
