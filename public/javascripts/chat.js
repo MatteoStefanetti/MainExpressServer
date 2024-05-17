@@ -22,7 +22,6 @@ function initChat() {
         closeChatTerms();
         if(localStorage.getItem('connectedRoom')) {
             if(localStorage.getItem('connectedRoom') !== 'false') {
-                console.log("connectToRoom from localstorage")
                 connectToRoom(
                     !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom'),
                     !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName'),
