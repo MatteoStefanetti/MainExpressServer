@@ -22,11 +22,9 @@ function initChat() {
         closeChatTerms();
         if(localStorage.getItem('connectedRoom')) {
             if(localStorage.getItem('connectedRoom') !== 'false') {
-                connectToRoom(
-                    !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom'),
-                    !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName'),
-                    false
-                    )
+                const room = !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom')
+                const name = !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName')
+                connectToRoom( room, name, false)
             }
         }
     }
@@ -173,19 +171,18 @@ function initChatSocket() {
  */
 function submitChatForm(event) {//connect button function
     let formData = extractFormData("chatLoginForm");
-    connectToRoom( !formData.customRoom ? roomName : formData.customRoom,
-        !formData.customName ? chatUserName : formData.customName,
-        formData.makePublic
-    )
+    const room = !formData.customRoom ? roomName : formData.customRoom
+    const name = !formData.customName ? chatUserName : formData.customName
+    connectToRoom( room, name, formData.makePublic)
 
     event.preventDefault();
 }
 
 /**
  * Connects to socket
- * @param room
- * @param userName
- * @param makePublic
+ * @param room Which room to connect
+ * @param userName which name will be used chatting
+ * @param makePublic if the room will be visible to everyone or not
  */
 function connectToRoom(room, userName, makePublic) {
     document.getElementById('submitForm').disabled = true
