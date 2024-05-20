@@ -276,7 +276,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             nameSpan.innerText = item.data.text;
             listItemLink.appendChild(nameSpan);
             createStatsBtn(window, desktopBtn, listItemLink)
-            if(size > 30 && item.counter > 30)
+            if (size > 30 && item.counter > 30)
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
@@ -286,11 +286,56 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             let gameDiv = window.document.createElement('div');
             gameDiv.classList.add('w-75', 'row', 'align-content-between');
             let desktopAnchor = document.createElement('a');
-            //TODO: makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`) wip
             makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
-                    item.data.club_name1 = visGame.data.clubName1
+                    desktopAnchor.classList.add('d-block', 'm-0', 'p-0')
+                    desktopAnchor.setAttribute('role', 'button')
+                    desktopAnchor.setAttribute('data-bs-trigger', 'focus')
+                    desktopAnchor.setAttribute('data-bs-toggle', 'popover')
+                    desktopAnchor.setAttribute('container', 'body')
+                    desktopAnchor.setAttribute('data-bs-html', 'true')
 
+                    console.log(visGame.data);
+                    if (item.data.player_club_id == visGame.data.clubId1)
+                        desktopAnchor.setAttribute('data-bs-title',
+                            '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId1
+                            }) + '">' + visGame.data.clubName1 + '</b> vs <b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId2
+                            }) + '">' + visGame.data.clubName2 + '</a></b>');
+                    else
+                        desktopAnchor.setAttribute('data-bs-title',
+                            '<b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId1
+                            }) + '">' + visGame.data.clubName1 + '</a></b> vs <b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId2
+                            }) + '">' + visGame.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
+
+                    // @todo data retrieval
+                    desktopAnchor.tabIndex = 0;
+                    let popOverContent = document.createElement('div')
+                    popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
+                    popOverContent.innerHTML =
+                        '<div>' +
+                        '<b>goals:</b> ' + item.data.goals +
+                        '<br><b>assists: </b>' + item.data.assists +
+                        '<br><b>minutes played:</b> ' + item.data.minutes_played +
+                        '<br><span class="bi bi-square-fill text-warning fs-7"></span>: ' + item.data.yellow_cards +
+                        '<br><span class="bi bi-square-fill text-danger fs-7"></span>: ' + ((item.data.red_cards) ? 1 : 0) +
+                        '</div>'
+
+                    desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML);
+                    let containerOfDateAndButton = document.createElement('div');
+                    containerOfDateAndButton.classList.add('d-flex', 'justify-content-around', 'position-relative');
+                    dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
+                    containerOfDateAndButton.appendChild(dateDiv);
+                    createStatsBtn(window, desktopAnchor, containerOfDateAndButton);
+                    listItem.appendChild(containerOfDateAndButton);
+                    new bootstrap.Popover(desktopAnchor);
                     //nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(visGame.data.clubName1) + ' vs. ' + String(visGame.data.clubName2);
                     gameDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 +
@@ -300,37 +345,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span>'
                 })
             listItemLink.appendChild(gameDiv);
-            dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
-            rightDiv.appendChild(dateDiv);
-
-            desktopAnchor.classList.add('d-block', 'm-0', 'p-0')
-            desktopAnchor.setAttribute('role', 'button')
-            desktopAnchor.setAttribute('data-bs-trigger', 'focus')
-            desktopAnchor.setAttribute('data-bs-toggle', 'popover')
-            desktopAnchor.setAttribute('container', 'body')
-            desktopAnchor.setAttribute('data-bs-html', 'true')
-            desktopAnchor.setAttribute('data-bs-title',
-                '<b>' + item.data.club_name1 + '</b> vs <b>' + item.data.club1_name + '</b>');
 
 
-            // @todo data retrieval
-            console.log(item.data);
-            desktopAnchor.tabIndex = 0;
-            let popOverContent = document.createElement('div')
-            popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
-            popOverContent.innerHTML =
-                '<div>' +
-                '<b>goals:</b> ' + item.data.goals + '<br><b>minutes_played:</b> ' + item.data.minutes_played +
-                '<br><b>club:</b> ' + item.data.player_club_id + '<span class="bi bi-person-fill"></span>' +
-                '</div>' +
-                '<hr class="d-none d-sm-flex align-self-center opacity-50 m-0 vertical-separator">' +
-                '<div>' +
-                '<span class="bi bi-square-fill text-warning fs-7"></span>: ' + item.data.yellow_cards +
-                '<br><span class="bi bi-square-fill text-danger fs-7"></span>: ' + ((item.data.red_cards) ? 1 : 0) +
-                '</div>'
-
-            desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML)
-            createStatsBtn(window, desktopAnchor, listItem)
             if (size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
