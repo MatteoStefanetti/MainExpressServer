@@ -273,7 +273,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             nameSpan.innerText = item.data.text;
             listItemLink.appendChild(nameSpan);
             createStatsBtn(window, desktopBtn, listItemLink)
-            listItemLink.appendChild(desktopBtn);
             if(size > 30 && item.counter > 30)
                 listItem.classList.add('d-none')
             break;
@@ -286,7 +285,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(item.data.game_id);
             listItemLink.appendChild(nameSpan2);
             createStatsBtn(window, desktopBtn, listItemLink)
-            listItemLink.appendChild(desktopBtn);
             if(size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
@@ -344,15 +342,15 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     let loadMoreContainer, innerLoadMore;
     if(parentList.tagName !== 'DIV'){
         loadMoreContainer = document.createElement('li');
-        loadMoreContainer.classList.add('nav-item', 'mx-auto', 'py-2');
+        loadMoreContainer.classList.add('nav-item', 'mx-auto', 'py-2', 'load-more-element');
         innerLoadMore = document.createElement('span');
         innerLoadMore.classList.add('text-center', 'px-5');
     } else {
         /* Assertion: inside these brackets, the parentList is a <div> having the 'row' class. */
         loadMoreContainer = document.createElement('div');
-        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4');
+        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4', 'loadMoreElement');
         innerLoadMore = document.createElement('a');
-        innerLoadMore.classList.add('py-1', 'px-5', 'more-players-link');
+        innerLoadMore.classList.add('py-1', 'px-5');
     }
     loadMoreContainer.id =  String(partialId) + 'Loader';
     innerLoadMore.innerText = 'Load more...';
