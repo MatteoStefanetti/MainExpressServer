@@ -295,7 +295,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     desktopAnchor.setAttribute('container', 'body')
                     desktopAnchor.setAttribute('data-bs-html', 'true')
 
-                    console.log(visGame.data);
+                    console.log(item.data);
                     if (item.data.player_club_id == visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
                             '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
@@ -321,7 +321,11 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
                     popOverContent.innerHTML =
                         '<div>' +
-                        '<b>goals:</b> ' + item.data.goals +
+                        '<b>competition: </b><a href="' + getUrlForSinglePage({
+                            type: 'competition',
+                            id: item.data.competition_id
+                        }) + '">' + item.data.competition_id + '</a>' +
+                        '<br><b>goals:</b> ' + item.data.goals +
                         '<br><b>assists: </b>' + item.data.assists +
                         '<br><b>minutes played:</b> ' + item.data.minutes_played +
                         '<br><span class="bi bi-square-fill text-warning fs-7"></span>: ' + item.data.yellow_cards +
