@@ -181,8 +181,8 @@ input:focus , button:not(.custom-accordion):focus {
 /* -------- End of common Header -------- */
 
 #contentHeight {
-   min-height: calc(100vh - var(--header-height) - var(--footer-height)); ;
- }
+  min-height: calc(100vh - var(--header-height) - var(--footer-height)); ;
+}
 
 #chatIconBtn {
   right: 5rem;
@@ -199,16 +199,14 @@ input:focus , button:not(.custom-accordion):focus {
   overflow-y: scroll;
 }
 
-@media (max-height: 605px) {
+@media (max-height: 450px) {
   #adsDiv {
     display: none !important;
   }
 }
 
-@media (max-height: 680px) {
-  #adsDiv {
-    max-height: 55vh;
-  }
+#adsDiv {
+  max-height: 100vh;
 }
 
 /* -------------------------------- */
