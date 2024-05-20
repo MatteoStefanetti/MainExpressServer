@@ -179,6 +179,9 @@ async function openAccordionPlayer(type, id){
                             createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
                         }
                         document.getElementById(id).firstElementChild.appendChild(unList);
+                        // Initializing popovers for appearances tuples:
+                        document.querySelectorAll('[data-bs-toggle="popover"]')
+                            .forEach(el => new bootstrap.Popover(el))
                     })
                     .catch(err => {
                         console.error(err);
