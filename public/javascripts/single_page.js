@@ -143,9 +143,15 @@ async function initSinglePage() {
             //TODO: error type not supported
             break;
     }
+    adjustHRHeight()
+    window.addEventListener('resize', adjustHRHeight)
+    showChargingSpinner(null, false)
+}
+
+/** This function is called inside the `single_page.html` to vertically adjust the `<hr>` element. */
+function adjustHRHeight() {
     let hrElem = (document.getElementById('info').children)[1]
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
-    showChargingSpinner(null, false)
 }
 
 /** Function called to generate the internal info block about the accordion button that triggers it.
@@ -187,32 +193,14 @@ async function openAccordionPlayer(type, id){
                 break;
             case 'chart':
                 let canvasContainer = document.createElement('div')
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100')
+                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
                 let canvasElem = document.createElement('canvas')
-                canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2')
+                canvasElem.classList.add('w-100', 'h-100', 'border', 'rounded-2')
                 await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
                     .then(data => {
                         let dataResponse = Array(data.data)[0]
                         dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString())
-                        const ctx = canvasElem.getContext('2d');
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: dataResponse.map(item => item.date),
-                                datasets: [{
-                                    label: 'Market Value (€)',
-                                    data: dataResponse.map(item => item.market_value_eur),
-                                    borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    x: {title: {display: true, text: 'Date'}},
-                                    y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
-                                }
-                            }
-                        });
+                        drawChart(dataResponse, canvasElem)
                     }).catch(err => {
                         console.error(err);
                         throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
@@ -225,5 +213,61 @@ async function openAccordionPlayer(type, id){
                 break;
         }
         showChargingSpinner(null, false);
+    }
+}
+
+function drawChart(dataResponse, canvasElem) {
+    const ctx = canvasElem.getContext('2d');
+    if (window.scrollWidth > 576) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dataResponse.map(item => item.date),
+                datasets: [{
+                    label: 'Market Value (€)',
+                    data: dataResponse.map(item => item.market_value_eur),
+                    borderColor: 'green', borderWidth: 2, fill: false, backgroundColor: 'green'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {title: {display: true, text: 'Date'}},
+                    y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
+                }
+            }
+        });
+    } else {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dataResponse.map(item => item.date),
+                datasets: [{
+                    label: '',
+                    data: dataResponse.map(item => item.market_value_eur),
+                    borderColor: 'green', borderWidth: 1, fill: false, backgroundColor: 'green'
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Market Value (€)'
+                    }
+                },
+                scales: {
+                    x: { display: false },
+                    y: {
+                        display: false,
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     }
 }
