@@ -194,6 +194,16 @@ router.get('/clubs/get_club_name_by_id/:club_id', function (req, res) {
     }
 });
 
+router.get('/get_club_by_id/:id', (req, res) => {
+    if (req.params.id) {
+        fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id))
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(JSON.stringify('Request content was not found.')));
+    } else
+        res.status(500).json(JSON.stringify('Error in \'/get_club_by_id/\' GET: id passed was null!'))
+})
+
 router.get('/retrieve_last_season/:competition_id', function (req, res) {
     fetch('http://localhost:8081/games/get_current_season_year/' + String(req.params.competition_id), {
         headers: {'Content-Type': 'application/json'}, method: 'get'
@@ -248,5 +258,19 @@ router.get('/valuation/get_valuations_of_player/:player_id', (req, res) => {
         res.status(500).json(JSON.stringify('Please insert a valid player_id to search'));
     }
 });
+
+router.get('/get_nation_name_by_code/:code', (req, res) => {
+    if (req.params.code) {
+        fetch('http://localhost:3002/flags/get_nation_by_code/' + String(req.params.code),
+            {headers: {'Content-Type': 'application/json'}, method: 'get'})
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Request content was not found.'));
+            });
+    } else
+        res.status(200).json(JSON.stringify({country_name: 'International'}))
+})
+
 
 module.exports = router;
