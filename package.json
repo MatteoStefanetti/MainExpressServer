@@ -8,6 +8,8 @@
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~4.3.4",
+    "popover": "^2.4.1",
+    "axios": "^1.6.8",
     "express": "^4.18.2",
     "morgan": "~1.10.0",
     "socket.io": "^4.7.4",
