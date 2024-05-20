@@ -160,10 +160,13 @@ function adjustHRHeight() {
  * @param id {string} The **id** used as id of the accordion button.
  * @throws TypeError If any of its argument is null or undefined. */
 async function openAccordionPlayer(type, id){
+    this.disabled = true
     if (!type || !id) {
         console.error(type, '\n', id);
+        this.disabled = false
         throw TypeError('Invalid argument(s) passed to \'openAccordionPlayer\'!');
     }
+
     console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
     const player_id = id.slice(id.indexOf('_') + 1)
     if(document.getElementById(id).firstElementChild.children.length === 0) {
@@ -214,11 +217,12 @@ async function openAccordionPlayer(type, id){
         }
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 function drawChart(dataResponse, canvasElem) {
     const ctx = canvasElem.getContext('2d');
-    if (window.scrollWidth > 576) {
+    if (window.innerWidth > 768) {
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -238,6 +242,7 @@ function drawChart(dataResponse, canvasElem) {
             }
         });
     } else {
+        dataResponse = dataResponse.slice(-15)
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -250,7 +255,8 @@ function drawChart(dataResponse, canvasElem) {
             },
             options: {
                 responsive: true,
-                indexAxis: 'y',
+                indexAxis: 'x',
+                interaction: {mode: 'nearest', intersect: false},
                 plugins: {
                     legend: {
                         display: false
@@ -258,13 +264,24 @@ function drawChart(dataResponse, canvasElem) {
                     title: {
                         display: true,
                         text: 'Market Value (€)'
-                    }
+                    },
                 },
                 scales: {
-                    x: { display: false },
+                    x: { display: true },
                     y: {
-                        display: false,
-                        beginAtZero: true
+                        display: true,
+                        beginAtZero: true,
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, ticks) {
+                                if(value > 500000)
+                                    return value/1000000+ " M"
+                                else if(value >= 1000)
+                                    return value / 1000 + " K"
+                                else
+                                    return value
+                            }
+                        }
                     }
                 }
             }
