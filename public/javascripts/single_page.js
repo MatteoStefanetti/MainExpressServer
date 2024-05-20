@@ -153,19 +153,19 @@ async function initSinglePage() {
  * Should be specified as `'list'`, `'chart'`, etc.
  * @param id {string} The **id** used as id of the accordion button.
  * @throws TypeError If any of its argument is null or undefined. */
-async function openAccordionPlayer(type, id){
+async function openAccordionPlayer(type, id) {
     if (!type || !id) {
         console.error(type, '\n', id);
         throw TypeError('Invalid argument(s) passed to \'openAccordionPlayer\'!');
     }
     console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
     const player_id = id.slice(id.indexOf('_') + 1)
-    if(document.getElementById(id).firstElementChild.children.length === 0) {
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
         let dataResponse
         switch (type) {
             case 'list':
-                await makeAxiosGet('/players/get_last_appearances/' +  player_id)
+                await makeAxiosGet('/players/get_last_appearances/' + player_id)
                     .then(data => {
                         dataResponse = Array(data.data)[0];
                         let unList = document.createElement('ul');
@@ -175,7 +175,7 @@ async function openAccordionPlayer(type, id){
                             createDynamicListItem(window, 'appearance', dataResponse.length, unList,
                                 {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
                         })
-                        if(dataResponse.length > 20){
+                        if (dataResponse.length > 20) {
                             createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
                         }
                         document.getElementById(id).firstElementChild.appendChild(unList);

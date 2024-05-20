@@ -1,4 +1,3 @@
-
 /** Called by the index.html page. */
 function initHome() {
     setCarouselPageHeight();
@@ -35,7 +34,7 @@ async function getAllFlags() {
         .then(data => {
             const dataR = Array(data.data)[0];
             let flagList = new Map();
-            for(let i in dataR){
+            for (let i in dataR) {
                 flagList.set(dataR[i].domestic_league_code, {
                     'countryName': String(dataR[i].country_name),
                     'flagURL': String(dataR[i].flag_url)
@@ -76,7 +75,7 @@ async function getAllFlags() {
  * @param params {object} is the structure containing the values to use in the accordion.
  * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
  * *(e.g. `{parameter_1: 'par1'}` to be referred to as params.parameter_1)* */
-async function createAccordion(visualize, fatherId, params){
+async function createAccordion(visualize, fatherId, params) {
     let wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
     let header = document.createElement('h2');
@@ -101,7 +100,7 @@ async function createAccordion(visualize, fatherId, params){
     let flagImg = document.createElement('img');
     flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
     flagImg.style.height = '1.2rem';
-    let strIdValue =  ''
+    let strIdValue = ''
     switch (visualize) {
         case 'competition_nation':
             strIdValue = String(params.competition_id)
@@ -147,7 +146,7 @@ async function openAccordionGames(window, id) {
         let currentSeason;
         await getLastSeasonYear(id)
             .then(data => {
-                if(!data.data)
+                if (!data.data)
                     console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
                 currentSeason = Number(data.data)
             })
@@ -163,7 +162,10 @@ async function openAccordionGames(window, id) {
                 window.document.getElementById('gamesAccordion').appendChild(unList)
                 let alternatorCounter = 0;
                 dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'game', dataResponse.length, unList, {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.gameId)});
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.gameId)});
                 });
                 window.document.getElementById(id).firstElementChild.appendChild(unList);
                 if (dataResponse.length > 20) {
@@ -225,6 +227,10 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     if (item.counter !== (size - 1))
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
     let desktopBtn = document.createElement('div');
+    let rightDiv = window.document.createElement('div')
+    rightDiv.classList.add('d-flex', 'align-items-center')
+    let dateDiv = window.document.createElement('div')
+    dateDiv.classList.add('mx-3')
     switch (type) {
         case 'game':
             listItem.id = item.data.gameId
@@ -238,15 +244,12 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + item.data.goal2 +
                 '</span><span class="ms-2 fs-6 p-1">' + item.data.clubName2 + '</span>'
             listItemLink.appendChild(gamesDiv)
-            let rightDiv = window.document.createElement('div')
-            rightDiv.classList.add('d-flex', 'align-items-center')
-            let dateDiv = window.document.createElement('div')
-            dateDiv.classList.add('mx-3')
+
             dateDiv.innerText = new Date(item.data.gameDate).toLocaleDateString()
             rightDiv.appendChild(dateDiv)
             createStatsBtn(window, desktopBtn, rightDiv)
             listItemLink.appendChild(rightDiv)
-            if(size > 20 && item.counter > 20)
+            if (size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
         case 'club':
@@ -277,15 +280,58 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
+            listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
             listItem.id = item.data.game_id
             listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
-            let nameSpan2 = document.createElement('span');
-            nameSpan2.classList.add('ms-3', 'flex-grow-1');
-            // @todo set up of the appearance istance style
-            nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(item.data.game_id);
-            listItemLink.appendChild(nameSpan2);
-            createStatsBtn(window, desktopBtn, listItemLink)
-            if(size > 20 && item.counter > 20)
+            let gameDiv = window.document.createElement('div');
+            gameDiv.classList.add('w-75', 'row', 'align-content-between');
+            let desktopAnchor = document.createElement('a');
+            //TODO: makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`) wip
+            makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
+                .then(visGame => {
+                    item.data.club_name1 = visGame.data.clubName1
+
+                    //nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(visGame.data.clubName1) + ' vs. ' + String(visGame.data.clubName2);
+                    gameDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
+                        '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 +
+                        '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName1 +
+                        '</span></div><div class="col-12 my-2 not-hoverable">' +
+                        '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 +
+                        '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span>'
+                })
+            listItemLink.appendChild(gameDiv);
+            dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
+            rightDiv.appendChild(dateDiv);
+
+            desktopAnchor.classList.add('d-block', 'm-0', 'p-0')
+            desktopAnchor.setAttribute('role', 'button')
+            desktopAnchor.setAttribute('data-bs-trigger', 'focus')
+            desktopAnchor.setAttribute('data-bs-toggle', 'popover')
+            desktopAnchor.setAttribute('container', 'body')
+            desktopAnchor.setAttribute('data-bs-html', 'true')
+            desktopAnchor.setAttribute('data-bs-title',
+                '<b>' + item.data.club_name1 + '</b> vs <b>' + item.data.club1_name + '</b>');
+
+
+            // @todo data retrieval
+            console.log(item.data);
+            desktopAnchor.tabIndex = 0;
+            let popOverContent = document.createElement('div')
+            popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
+            popOverContent.innerHTML =
+                '<div>' +
+                '<b>goals:</b> ' + item.data.goals + '<br><b>minutes_played:</b> ' + item.data.minutes_played +
+                '<br><b>club:</b> ' + item.data.player_club_id + '<span class="bi bi-person-fill"></span>' +
+                '</div>' +
+                '<hr class="d-none d-sm-flex align-self-center opacity-50 m-0 vertical-separator">' +
+                '<div>' +
+                '<span class="bi bi-square-fill text-warning fs-7"></span>: ' + item.data.yellow_cards +
+                '<br><span class="bi bi-square-fill text-danger fs-7"></span>: ' + ((item.data.red_cards) ? 1 : 0) +
+                '</div>'
+
+            desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML)
+            createStatsBtn(window, desktopAnchor, listItem)
+            if (size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
         default:
@@ -335,12 +381,12 @@ function createStatsBtn(window, statsBtn, fatherElement) {
  * @param loadMoreFunction {() => any} A function *pointer* to set the listener of the _"load more"_.
  * @throws Typeerror if one or more arguments are _null_ or _undefined_. */
 function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
-    if(!parentList || !partialId || !loadMoreFunction) {
+    if (!parentList || !partialId || !loadMoreFunction) {
         console.error('', parentList, '\n', partialId, '\n', loadMoreFunction);
         throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement()\'!');
     }
     let loadMoreContainer, innerLoadMore;
-    if(parentList.tagName !== 'DIV'){
+    if (parentList.tagName !== 'DIV') {
         loadMoreContainer = document.createElement('li');
         loadMoreContainer.classList.add('nav-item', 'mx-auto', 'py-2', 'load-more-element');
         innerLoadMore = document.createElement('span');
@@ -352,7 +398,7 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
         innerLoadMore = document.createElement('a');
         innerLoadMore.classList.add('py-1', 'px-5');
     }
-    loadMoreContainer.id =  String(partialId) + 'Loader';
+    loadMoreContainer.id = String(partialId) + 'Loader';
     innerLoadMore.innerText = 'Load more...';
     innerLoadMore.style.textDecoration = 'underline';
     innerLoadMore.addEventListener('click', loadMoreFunction);
@@ -381,10 +427,10 @@ function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
  * @param formId {string} The id of the form to check. */
 function extractFormData(formId) {
     let formElements = document.getElementById(formId).children;
-    let formData={};
+    let formData = {};
     for (let ix = 0; ix < formElements.length; ix++) {
         if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
+            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked : formElements[ix].value;
         }
     }
     return formData;
@@ -406,7 +452,7 @@ function showChargingSpinner(window, toDisplay) {
  * @param unfounded {boolean} If set to `true`, this method will return a message of _**unfounded content**_,
  * otherwise it will display a message of _**too few letters**_ in the input string. */
 function showModalMessage(unfounded) {
-    if(unfounded) {
+    if (unfounded) {
         document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
         document.getElementById('modal-body').innerHTML =
             'The search has found <b>0 players</b>. Please, check the syntax and retry.';
@@ -442,7 +488,7 @@ function setReducedName(lastName, fullName) {
 function retrieveCompetitionName(name) {
     let nameArr = name.split('-');
     for (let i = 0; i < nameArr.length; i++)
-        if(nameArr[i].length <= 3 && nameArr[i] !== 'cup')
+        if (nameArr[i].length <= 3 && nameArr[i] !== 'cup')
             nameArr[i] = nameArr[i].toUpperCase()
         else
             nameArr[i] = nameArr[i].charAt(0).toUpperCase() + nameArr[i].slice(1)
