@@ -295,7 +295,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     desktopAnchor.setAttribute('container', 'body')
                     desktopAnchor.setAttribute('data-bs-html', 'true')
 
-                    console.log(visGame.data);
+                    console.log('data:', visGame.data);
                     if (item.data.player_club_id == visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
                             '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
@@ -344,6 +344,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 +
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span>'
                 })
+                .catch(err => console.error(err))
             listItemLink.appendChild(gameDiv);
 
 

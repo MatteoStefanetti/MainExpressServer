@@ -117,12 +117,15 @@ router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
 });
 
 router.get('/games/get_visualize_game_by_id/:id', function (req, res) {
-    fetch('http://localhost:8081/games/visualize_game_by_id/' + String(req.params.id), {
-        headers: {'Content-Type': 'application/json'}, method: 'get'
-    })
-        .then(res => res.json())
-        .then(json => res.status(200).json(json))
-        .catch(err => res.status(500).json(err))
+    if (req.params.id) {
+        fetch('http://localhost:8081/games/visualize_game_by_id/' + String(req.params.id), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'id\' passed as input!'))
 })
 
 router.get('/get_games_by_league/:id/:season', function (req, res) {
