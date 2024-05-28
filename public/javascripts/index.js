@@ -280,48 +280,26 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
-            listItem.id = item.data.game_id;
-            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
-            let gameDiv = window.document.createElement('div');
-            let lilGameDiv1 = window.document.createElement('div');
-            let lilGameDiv2 = window.document.createElement('div');
-            gameDiv.classList.add('w-75', 'row', 'align-content-between', 'd-none', 'd-md-block');
-            lilGameDiv1.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
-            lilGameDiv2.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
-            let desktopAnchor = document.createElement('a');
-
-            window.addEventListener('resize', function () {
-                if (window.innerWidth >= 768) {
-                    listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
-                    listItem.classList.remove('d-flex', 'align-items-center', 'py-4', 'mx-2');
-                    listItemLink.classList.remove('d-none');
-                } else {
-                    listItem.classList.remove('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
-                    listItem.classList.add('d-flex', 'align-items-center', 'py-4', 'mx-2');
-                    listItemLink.classList.add('d-none');
-                }
-            });
-
-            if (window.innerWidth >= 768) {
-                listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
-                listItem.classList.remove('d-flex', 'align-items-center', 'py-4', 'mx-2');
-                listItemLink.classList.remove('d-none');
-            } else {
-                listItem.classList.remove('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
-                listItem.classList.add('d-flex', 'align-items-center', 'py-4', 'mx-2');
-                listItemLink.classList.add('d-none');
-            }
-
             makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
-                    desktopAnchor.classList.add('m-0', 'p-0', 'd-block', 'justify-content-center');
+                    listItem.id = item.data.game_id;
+                    listItem.classList.add('d-flex', 'py-4', 'mx-2', 'align-items-stretch', 'align-items-md-center')
+                    listItemLink.classList.add('d-none', 'd-md-flex', 'align-items-center', 'flex-grow-1', 'py-2', 'mx-2');
+                    let gameDiv = window.document.createElement('div');
+                    let lilGameDiv1 = window.document.createElement('div');
+                    let lilGameDiv2 = window.document.createElement('div');
+                    gameDiv.classList.add('row', 'align-content-between', 'd-none', 'd-md-block');
+                    lilGameDiv1.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
+                    lilGameDiv2.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
+                    let desktopAnchor = document.createElement('a');
+
+                    desktopAnchor.classList.add('m-0', 'p-0', 'd-flex', 'justify-content-center');
                     desktopAnchor.setAttribute('role', 'button')
                     desktopAnchor.setAttribute('data-bs-trigger', 'focus')
                     desktopAnchor.setAttribute('data-bs-toggle', 'popover')
                     desktopAnchor.setAttribute('container', 'body')
                     desktopAnchor.setAttribute('data-bs-html', 'true')
 
-                    console.log(item.data);
                     if (item.data.player_club_id === visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
                             '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
@@ -342,7 +320,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                             }) + '">' + visGame.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
 
                     // @todo data retrieval
-                    desktopAnchor.tabIndex = 0;
+                    desktopAnchor.tabIndex = 1;
                     let popOverContent = document.createElement('div')
                     popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
                     popOverContent.innerHTML =
@@ -360,37 +338,39 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
                     desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML);
                     let containerOfDateAndButton = document.createElement('div');
-                    containerOfDateAndButton.classList.add('w-100', 'm-auto', 'd-flex', 'flex-column', 'justify-content-center', 'position-relative');
+                    containerOfDateAndButton.classList.add('m-0', 'p-0', 'd-flex', 'flex-column', 'justify-content-evenly', 'justify-content-md-between', 'align-items-center', 'w-100', 'flex-grow-1', 'position-relative', 'responsive-flex-row');
                     dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
-                    containerOfDateAndButton.appendChild(dateDiv);
                     createStatsBtn(window, desktopAnchor, containerOfDateAndButton);
+                    containerOfDateAndButton.appendChild(dateDiv);
                     listItem.appendChild(lilGameDiv1);
                     listItem.appendChild(containerOfDateAndButton);
                     listItem.appendChild(lilGameDiv2);
 
                     new bootstrap.Popover(desktopAnchor);
                     //nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(visGame.data.clubName1) + ' vs. ' + String(visGame.data.clubName2);
-                    gameDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
+                    gameDiv.innerHTML = '<div class="col-12 my-1 py-1">' +
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 +
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName1 +
-                        '</span></div><div class="col-12 my-2 not-hoverable">' +
+                        '</span></div><div class="col-12 my-1 py-1">' +
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 +
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span></div>';
 
                     lilGameDiv1.innerHTML = '<a href="' + getUrlForSinglePage(params) + '"><div class="d-flex justify-content-center my-2"><img src="https://tmssl.akamaized.net/images/wappen/head/' + String(visGame.data.clubId1) + '.png" ' +
-                        'class="img" style="max-width: 2.75rem; max-height: 2.75rem" alt="' + String(visGame.data.clubName1) + ' logo"></div>' +
-                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 + '</span></div></a>';
+                        'class="img" style="max-width: 3.5rem; max-height: 3.5rem" alt="' + String(visGame.data.clubName1) + ' logo"></div>' +
+                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable fs-7">' + visGame.data.goal1 + '</span></div></a>';
 
                     lilGameDiv2.innerHTML = '<a href="' + getUrlForSinglePage(params) + '"><div class="d-flex justify-content-center my-2"><img src="https://tmssl.akamaized.net/images/wappen/head/' + String(visGame.data.clubId2) + '.png" ' +
-                        'class="img" style="max-width: 2.75rem; max-height: 2.75rem" alt="' + String(visGame.data.clubName2) + ' logo"></div>' +
-                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 + '</span></div></a>';
+                        'class="img" style="max-width: 3.5rem; max-height: 3.5rem" alt="' + String(visGame.data.clubName2) + ' logo"></div>' +
+                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable fs-7">' + visGame.data.goal2 + '</span></div></a>';
+                    listItemLink.appendChild(gameDiv);
+
+                    if (size > 20 && item.counter > 20)
+                        listItem.classList.add('d-none')
                 })
-            listItemLink.appendChild(gameDiv);
-
-
-
-            if (size > 20 && item.counter > 20)
-                listItem.classList.add('d-none')
+                .catch(err => {
+                    console.log('error', err)
+                    // @todo pay attention to the item.counter etc
+                })
             break;
         default:
             throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\' type argument!')
