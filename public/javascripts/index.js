@@ -211,6 +211,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
         console.error(type, '\n', size, '\n', unorderedList, '\n', item.counter, '\n', item.data);
         throw TypeError('Invalid argument(s) passed to \'createDynamicListItem\'!');
     }
+    let error = false;
     let listItem = window.document.createElement('li');
     let listItemLink = window.document.createElement('a');
 
@@ -299,13 +300,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     desktopAnchor.setAttribute('container', 'body')
                     desktopAnchor.setAttribute('data-bs-html', 'true')
                     desktopAnchor.tabIndex = 1;
-                    let popOverContent = document.createElement('div')
-                    popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
-
-                    let containerOfDateAndButton = document.createElement('div');
-                    containerOfDateAndButton.classList.add('d-flex', 'justify-content-around', 'position-relative');
-                    dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
-                    containerOfDateAndButton.appendChild(dateDiv);
 
                     if (item.data.player_club_id === visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
@@ -353,7 +347,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     listItem.appendChild(lilGameDiv2);
 
                     new bootstrap.Popover(desktopAnchor);
-                    //nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(visGame.data.clubName1) + ' vs. ' + String(visGame.data.clubName2);
                     gameDiv.innerHTML = '<div class="col-12 my-1 py-1">' +
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 +
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName1 +
@@ -376,12 +369,15 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 .catch(err => {
                     console.log('error', err)
                     // @todo pay attention to the item.counter etc
+                    error = true
                 })
             break;
         default:
+            error = true
             throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\' type argument!')
     }
-    unorderedList.appendChild(listItem)
+    if (!error)
+        unorderedList.appendChild(listItem)
 }
 
 /** Function to define the url {@link string} of the single_page.
@@ -503,7 +499,7 @@ function showModalMessage(unfounded, type) {
         else if (type === 'club')
             document.getElementById('unfoundedModalLabel').innerText = 'No Club Found';
         document.getElementById('modal-body').innerHTML =
-            'The search has found <b>0 players</b>. Please, check the syntax and retry.';
+            'The search has found <b>0 ' + type + 's</b>. Please, check the syntax and retry.';
     } else {
         document.getElementById('unfoundedModalLabel').innerText = 'Invalid Input';
         document.getElementById('modal-body').innerHTML =
