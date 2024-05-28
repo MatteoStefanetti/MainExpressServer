@@ -230,11 +230,11 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     let rightDiv = window.document.createElement('div')
     rightDiv.classList.add('d-flex', 'align-items-center')
     let dateDiv = window.document.createElement('div')
-    dateDiv.classList.add('mx-3')
+    dateDiv.classList.add('mx-3', 'd-flex', 'justify-content-center')
     switch (type) {
         case 'game':
             listItem.id = item.data.gameId
-            listItemLink.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'py-1', 'mx-2');
+            listItemLink.classList.add('d-flex', 'align-items-center', 'py-1', 'mx-2');
             let gamesDiv = window.document.createElement('div')
             gamesDiv.classList.add('w-75', 'row', 'align-content-between')
             gamesDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
@@ -280,15 +280,41 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
-            listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
-            listItem.id = item.data.game_id
+            listItem.id = item.data.game_id;
             listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
             let gameDiv = window.document.createElement('div');
-            gameDiv.classList.add('w-75', 'row', 'align-content-between');
+            let lilGameDiv1 = window.document.createElement('div');
+            let lilGameDiv2 = window.document.createElement('div');
+            gameDiv.classList.add('w-75', 'row', 'align-content-between', 'd-none', 'd-md-block');
+            lilGameDiv1.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
+            lilGameDiv2.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
             let desktopAnchor = document.createElement('a');
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth >= 768) {
+                    listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
+                    listItem.classList.remove('d-flex', 'align-items-center', 'py-4', 'mx-2');
+                    listItemLink.classList.remove('d-none');
+                } else {
+                    listItem.classList.remove('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
+                    listItem.classList.add('d-flex', 'align-items-center', 'py-4', 'mx-2');
+                    listItemLink.classList.add('d-none');
+                }
+            });
+
+            if (window.innerWidth >= 768) {
+                listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
+                listItem.classList.remove('d-flex', 'align-items-center', 'py-4', 'mx-2');
+                listItemLink.classList.remove('d-none');
+            } else {
+                listItem.classList.remove('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
+                listItem.classList.add('d-flex', 'align-items-center', 'py-4', 'mx-2');
+                listItemLink.classList.add('d-none');
+            }
+
             makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
-                    desktopAnchor.classList.add('d-block', 'm-0', 'p-0')
+                    desktopAnchor.classList.add('m-0', 'p-0', 'd-block', 'justify-content-center');
                     desktopAnchor.setAttribute('role', 'button')
                     desktopAnchor.setAttribute('data-bs-trigger', 'focus')
                     desktopAnchor.setAttribute('data-bs-toggle', 'popover')
@@ -296,7 +322,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     desktopAnchor.setAttribute('data-bs-html', 'true')
 
                     console.log(item.data);
-                    if (item.data.player_club_id == visGame.data.clubId1)
+                    if (item.data.player_club_id === visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
                             '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
                                 type: 'club',
@@ -334,11 +360,14 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
                     desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML);
                     let containerOfDateAndButton = document.createElement('div');
-                    containerOfDateAndButton.classList.add('d-flex', 'justify-content-around', 'position-relative');
+                    containerOfDateAndButton.classList.add('w-100', 'm-auto', 'd-flex', 'flex-column', 'justify-content-center', 'position-relative');
                     dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
                     containerOfDateAndButton.appendChild(dateDiv);
                     createStatsBtn(window, desktopAnchor, containerOfDateAndButton);
+                    listItem.appendChild(lilGameDiv1);
                     listItem.appendChild(containerOfDateAndButton);
+                    listItem.appendChild(lilGameDiv2);
+
                     new bootstrap.Popover(desktopAnchor);
                     //nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(visGame.data.clubName1) + ' vs. ' + String(visGame.data.clubName2);
                     gameDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
@@ -346,9 +375,18 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName1 +
                         '</span></div><div class="col-12 my-2 not-hoverable">' +
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 +
-                        '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span>'
+                        '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span></div>';
+
+                    lilGameDiv1.innerHTML = '<a href="' + getUrlForSinglePage(params) + '"><div class="d-flex justify-content-center my-2"><img src="https://tmssl.akamaized.net/images/wappen/head/' + String(visGame.data.clubId1) + '.png" ' +
+                        'class="img" style="max-width: 2.75rem; max-height: 2.75rem" alt="' + String(visGame.data.clubName1) + ' logo"></div>' +
+                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 + '</span></div></a>';
+
+                    lilGameDiv2.innerHTML = '<a href="' + getUrlForSinglePage(params) + '"><div class="d-flex justify-content-center my-2"><img src="https://tmssl.akamaized.net/images/wappen/head/' + String(visGame.data.clubId2) + '.png" ' +
+                        'class="img" style="max-width: 2.75rem; max-height: 2.75rem" alt="' + String(visGame.data.clubName2) + ' logo"></div>' +
+                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 + '</span></div></a>';
                 })
             listItemLink.appendChild(gameDiv);
+
 
 
             if (size > 20 && item.counter > 20)
@@ -381,7 +419,7 @@ function getUrlForSinglePage(params) {
 function createStatsBtn(window, statsBtn, fatherElement) {
     if (!window || !statsBtn || !fatherElement)
         throw new TypeError('Invalid argument(s) passed to \'createStatsBtn()\' function.')
-    statsBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
+    statsBtn.classList.add('d-flex', 'justify-content-center', 'align-items-center',
         'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn')
     statsBtn.style.width = '2.5rem'
     statsBtn.style.minWidth = '2.5rem'
@@ -470,10 +508,14 @@ function showChargingSpinner(window, toDisplay) {
 
 /** This function displays a **modal** to give a feedback of an unsuccessful search.
  * @param unfounded {boolean} If set to `true`, this method will return a message of _**unfounded content**_,
+ * @param type {String} Type of data searched,
  * otherwise it will display a message of _**too few letters**_ in the input string. */
-function showModalMessage(unfounded) {
+function showModalMessage(unfounded, type) {
     if (unfounded) {
-        document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
+        if (type === 'player')
+            document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
+        else if (type === 'club')
+            document.getElementById('unfoundedModalLabel').innerText = 'No Club Found';
         document.getElementById('modal-body').innerHTML =
             'The search has found <b>0 players</b>. Please, check the syntax and retry.';
     } else {

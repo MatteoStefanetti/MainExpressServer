@@ -52,10 +52,10 @@ function searchPlayer(event) {
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_DISPLAYABLE));
             })
             .catch(err => {
-                showModalMessage(true);
+                showModalMessage(true, 'player');
             });
     } else {
-        showModalMessage(false);
+        showModalMessage(false, 'player');
     }
     event.preventDefault();
     document.getElementById('submitPlayerForm').disabled = false;
