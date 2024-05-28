@@ -148,13 +148,13 @@ function searchClubs(event) {
                     createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
             })
             .catch(err => {
-                showModalMessage(true);
+                showModalMessage(true, 'club');
             })
     } else {
         if (!club) {
             location.reload();
         } else
-            showModalMessage(false);
+            showModalMessage(false, 'club');
     }
     event.preventDefault();
     document.getElementById('submitClubForm').disabled = false;
