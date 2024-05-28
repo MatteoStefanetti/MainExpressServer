@@ -200,11 +200,11 @@ async function initSinglePage() {
                         foreignersNumber.innerHTML = '<b>Foreigner Number:</b> ' + data.data.foreigners_number;
                         info2.appendChild(foreignersNumber);
 
-                        let ForeignersPerc = document.createElement('p');
-                        ForeignersPerc.classList.add('p');
-                        ForeignersPerc.innerHTML =
+                        let foreignersPerc = document.createElement('p');
+                        foreignersPerc.classList.add('p');
+                        foreignersPerc.innerHTML =
                             '<b>Foreigners Percentage:</b> ' + data.data.foreigners_percentage + '%';
-                        info2.appendChild(ForeignersPerc);
+                        info2.appendChild(foreignersPerc);
 
                         // @todo insert accordions
                     })
