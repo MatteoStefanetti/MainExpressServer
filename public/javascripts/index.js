@@ -284,7 +284,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
                     listItem.id = item.data.game_id;
-                    listItem.classList.add('d-flex', 'py-4', 'mx-2', 'align-items-stretch', 'align-items-md-center')
+                    listItem.classList.add('d-flex', 'py-2', 'mx-2', 'align-items-stretch', 'align-items-md-center')
                     listItemLink.classList.add('d-none', 'd-md-flex', 'align-items-center', 'flex-grow-1', 'py-2', 'mx-2');
                     let gameDiv = window.document.createElement('div');
                     let lilGameDiv1 = window.document.createElement('div');
