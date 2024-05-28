@@ -280,23 +280,30 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
-            listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
-            listItem.id = item.data.game_id
-            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
-            let gameDiv = window.document.createElement('div');
-            gameDiv.classList.add('w-75', 'row', 'align-content-between');
-            let desktopAnchor = document.createElement('a');
             makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
+                    listItem.id = item.data.game_id
+                    listItem.classList.add('d-flex', 'justify-content-between', 'py-2', 'align-items-center');
+                    listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
+                    let gameDiv = window.document.createElement('div');
+                    gameDiv.classList.add('w-75', 'row', 'align-content-between');
+                    let desktopAnchor = document.createElement('a');
                     desktopAnchor.classList.add('d-block', 'm-0', 'p-0')
                     desktopAnchor.setAttribute('role', 'button')
                     desktopAnchor.setAttribute('data-bs-trigger', 'focus')
                     desktopAnchor.setAttribute('data-bs-toggle', 'popover')
                     desktopAnchor.setAttribute('container', 'body')
                     desktopAnchor.setAttribute('data-bs-html', 'true')
+                    desktopAnchor.tabIndex = 1;
+                    let popOverContent = document.createElement('div')
+                    popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
 
-                    console.log('data:', visGame.data);
-                    if (item.data.player_club_id == visGame.data.clubId1)
+                    let containerOfDateAndButton = document.createElement('div');
+                    containerOfDateAndButton.classList.add('d-flex', 'justify-content-around', 'position-relative');
+                    dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
+                    containerOfDateAndButton.appendChild(dateDiv);
+
+                    if (item.data.player_club_id === visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
                             '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
                                 type: 'club',
@@ -316,9 +323,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                             }) + '">' + visGame.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
 
                     // @todo data retrieval
-                    desktopAnchor.tabIndex = 0;
-                    let popOverContent = document.createElement('div')
-                    popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
                     popOverContent.innerHTML =
                         '<div>' +
                         '<b>goals:</b> ' + item.data.goals +
@@ -329,10 +333,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         '</div>'
 
                     desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML);
-                    let containerOfDateAndButton = document.createElement('div');
-                    containerOfDateAndButton.classList.add('d-flex', 'justify-content-around', 'position-relative');
-                    dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
-                    containerOfDateAndButton.appendChild(dateDiv);
+
                     createStatsBtn(window, desktopAnchor, containerOfDateAndButton);
                     listItem.appendChild(containerOfDateAndButton);
                     new bootstrap.Popover(desktopAnchor);
@@ -343,13 +344,12 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         '</span></div><div class="col-12 my-2 not-hoverable">' +
                         '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 +
                         '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span>'
+
+                    listItemLink.appendChild(gameDiv);
+                    if (size > 20 && item.counter > 20)
+                        listItem.classList.add('d-none')
                 })
                 .catch(err => console.error(err))
-            listItemLink.appendChild(gameDiv);
-
-
-            if (size > 20 && item.counter > 20)
-                listItem.classList.add('d-none')
             break;
         default:
             throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\' type argument!')
