@@ -12,8 +12,7 @@ async function initSinglePage() {
 
     singlePageTitle.classList.add('h1');
 
-
-    singlePageImg.classList.add('img-fluid', 'd-block', 'border', 'border-5', 'border-darkgreen', 'rounded-4', 'player-img-size');
+    singlePageImg.classList.add('img-fluid', 'd-block', 'player-img-size');
     singlePageImg.alt = 'image not found';
     titleDiv.classList.add('align-self-center');
     infoTitle.appendChild(imgContainer);
@@ -29,7 +28,7 @@ async function initSinglePage() {
                     .then(async data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
-
+                        singlePageImg.classList.add('border', 'border-5', 'border-darkgreen', 'rounded-4')
                         singlePageImg.src = data.data.image_url;
                         singlePageTitle.innerText = data.data.player_name;
 
@@ -125,10 +124,89 @@ async function initSinglePage() {
             break;
         case 'club':
             if (idParams) {
-                await makeAxiosGet(`/clubs/get_club_by_id/${idParams}`)
-                    .then(data => {
+                await makeAxiosGet(`/get_club_by_id/${idParams}`)
+                    .then(async data => {
                         console.log(data.data);
-                        //TODO: build the rest of the page using the data retrieved
+
+                        singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
+                            data.data.club_id + '.png';
+                        singlePageTitle.innerText = data.data.club_name;
+
+                        let nationalityAnchor = document.createElement('a');
+                        let nationalityLabel = document.createElement('p');
+                        nationalityAnchor.style.textDecoration = 'underline'
+                        nationalityLabel.classList.add('p');
+                        nationalityLabel.innerHTML = '<b>Nationality:</b> ';
+                        await makeAxiosGet('/get_nation_name_by_code/' + data.data.local_competition_code)
+                            .then(nation => {
+                                nation.data = nation.data[0]
+                                if (nation.data.flag_url)
+                                    data.data.flag_url = nation.data.flag_url
+                                data.data.country_name = nation.data.country_name
+                            })
+                            .catch(err => console.error(err))
+                        nationalityAnchor.innerText = data.data.country_name;
+                        nationalityAnchor.href = 'competitions.html'
+                        titleDiv.appendChild(nationalityLabel);
+                        nationalityLabel.appendChild(nationalityAnchor);
+                        if (data.data.flag_url) {
+                            let nationFlag = document.createElement('img')
+                            nationFlag.classList.add('img-fluid', 'mx-1', 'rounded-1')
+                            nationFlag.style.width = '1.6rem'
+                            nationFlag.style.height = '1rem'
+                            nationFlag.src = data.data.flag_url
+                            nationalityLabel.appendChild(nationFlag)
+                        }
+
+                        let last_season = document.createElement('p');
+                        last_season.classList.add('p');
+                        last_season.innerHTML = '<b>Last Season:</b> ' + data.data.last_season;
+                        info1.appendChild(last_season);
+
+                        let stadiumName = document.createElement('p');
+                        stadiumName.classList.add('p');
+                        stadiumName.innerHTML = '<b>Stadium:</b> ' + data.data.stadium_name;
+                        info1.appendChild(stadiumName);
+
+                        let stadiumSeats = document.createElement('p');
+                        stadiumSeats.classList.add('p');
+                        stadiumSeats.innerHTML = '<b>Stadium Seats:</b> ' + data.data.stadium_seats;
+                        info1.appendChild(stadiumSeats);
+
+                        let transferRecord = document.createElement('p');
+                        transferRecord.classList.add('p');
+                        transferRecord.innerHTML =
+                            '<b>Net Transfer Record:</b> ' + data.data.net_transfer_record + ' (€)';
+                        info1.appendChild(transferRecord);
+
+                        let AverAge = document.createElement('p');
+                        AverAge.classList.add('p');
+                        AverAge.innerHTML = '<b>Average Age:</b> ' + data.data.average_age;
+                        info1.appendChild(AverAge);
+
+                        let squadSize = document.createElement('p');
+                        squadSize.classList.add('p');
+                        squadSize.innerHTML = '<b>Squad Size:</b> ' + data.data.squad_size;
+                        info2.appendChild(squadSize);
+
+                        let nationalTeamPlayers = document.createElement('p');
+                        nationalTeamPlayers.classList.add('p');
+                        nationalTeamPlayers.innerHTML =
+                            '<b>National Team Players:</b> ' + data.data.national_team_players;
+                        info2.appendChild(nationalTeamPlayers);
+
+                        let foreignersNumber = document.createElement('p');
+                        foreignersNumber.classList.add('p');
+                        foreignersNumber.innerHTML = '<b>Foreigner Number:</b> ' + data.data.foreigners_number;
+                        info2.appendChild(foreignersNumber);
+
+                        let ForeignersPerc = document.createElement('p');
+                        ForeignersPerc.classList.add('p');
+                        ForeignersPerc.innerHTML =
+                            '<b>Foreigners Percentage:</b> ' + data.data.foreigners_percentage + '%';
+                        info2.appendChild(ForeignersPerc);
+
+                        // @todo insert accordions
                     })
                     .catch(err => console.error(err));
             }

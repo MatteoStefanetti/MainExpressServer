@@ -292,13 +292,20 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                     lilGameDiv1.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
                     lilGameDiv2.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
                     let desktopAnchor = document.createElement('a');
-
                     desktopAnchor.classList.add('m-0', 'p-0', 'd-flex', 'justify-content-center');
                     desktopAnchor.setAttribute('role', 'button')
                     desktopAnchor.setAttribute('data-bs-trigger', 'focus')
                     desktopAnchor.setAttribute('data-bs-toggle', 'popover')
                     desktopAnchor.setAttribute('container', 'body')
                     desktopAnchor.setAttribute('data-bs-html', 'true')
+                    desktopAnchor.tabIndex = 1;
+                    let popOverContent = document.createElement('div')
+                    popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
+
+                    let containerOfDateAndButton = document.createElement('div');
+                    containerOfDateAndButton.classList.add('d-flex', 'justify-content-around', 'position-relative');
+                    dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
+                    containerOfDateAndButton.appendChild(dateDiv);
 
                     if (item.data.player_club_id === visGame.data.clubId1)
                         desktopAnchor.setAttribute('data-bs-title',
@@ -320,7 +327,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                             }) + '">' + visGame.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
 
                     // @todo data retrieval
-                    desktopAnchor.tabIndex = 1;
                     let popOverContent = document.createElement('div')
                     popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
                     popOverContent.innerHTML =
