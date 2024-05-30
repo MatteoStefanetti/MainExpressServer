@@ -5,6 +5,7 @@ const idParams = urlParams.get('id');
 async function initSinglePage() {
     let infoTitle = document.getElementById('infoTitle');
     let info1 = document.getElementById('info1');
+    let info2 = document.getElementById('info2');
     let imgContainer = document.createElement('div');
     let singlePageImg = document.createElement('img');
     let titleDiv = document.createElement('div');
@@ -206,6 +207,8 @@ async function initSinglePage() {
                             '<b>Foreigners Percentage:</b> ' + data.data.foreigners_percentage + '%';
                         info2.appendChild(foreignersPerc);
 
+                        await createAccordion('single_page/cl/players', 'accordions',
+                            {id: 'clubPlayers_' + idParams});
                         // @todo insert accordions
                     })
                     .catch(err => console.error(err));
@@ -226,82 +229,116 @@ async function initSinglePage() {
     showChargingSpinner(null, false)
 }
 
-/** Function called to generate the internal info block about the accordion button that triggers it.
- * @param type {string} It defines if the accordion type to generate is a list or something else.
- * Should be specified as `'list'`, `'chart'`, etc.
+/**
+ * Function called to generate the internal info block of the valuation accordion.
+ *
  * @param id {string} The **id** used as id of the accordion button.
- * @throws TypeError If any of its argument is null or undefined. */
-async function openAccordionPlayer(type, id) {
-    if (!type || !id) {
-        console.error(type, '\n', id);
-        throw TypeError('Invalid argument(s) passed to \'openAccordionPlayer\'!');
+ * @throws TypeError If id is null or undefined.
+ * */
+async function openAccordionPlayerValuation(id) {
+    if (!id) {
+        console.error(id);
+        throw TypeError('Invalid argument(s) passed to \'openAccordionPlayerValuation\'!');
     }
+
+    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
+    const player_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+
+        showChargingSpinner(null, true);
+
+        let canvasContainer = document.createElement('div');
+        canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100');
+
+        let canvasElem = document.createElement('canvas');
+        canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2');
+
+        await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
+            .then(data => {
+
+                let dataResponse = Array(data.data)[0];
+                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString());
+
+                const ctx = canvasElem.getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dataResponse.map(item => item.date),
+                        datasets: [{
+                            label: 'Market Value (€)',
+                            data: dataResponse.map(item => item.market_value_eur),
+                            borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {title: {display: true, text: 'Date'}},
+                            y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
+                        }
+                    }
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
+                //TODO: check errors
+            });
+
+        canvasContainer.appendChild(canvasElem);
+        document.getElementById(id).firstElementChild.appendChild(canvasContainer);
+
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
+ * Function called to generate the internal info block of the Appearances accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button.
+ * @throws TypeError If id is null or undefined. */
+async function openAccordionPlayerAppearances(id) {
+    if (!id) {
+        console.error(id);
+        throw TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
+    }
+
     console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
-    const player_id = id.slice(id.indexOf('_') + 1)
+    const player_id = id.slice(id.indexOf('_') + 1);
+
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
-        let dataResponse
-        switch (type) {
-            case 'list':
-                await makeAxiosGet('/players/get_last_appearances/' + player_id)
-                    .then(data => {
-                        dataResponse = Array(data.data)[0];
-                        let unList = document.createElement('ul');
-                        unList.classList.add('nav', 'flex-column');
-                        let alternatorCounter = 0;
-                        dataResponse.forEach(el => {
-                            createDynamicListItem(window, 'appearance', dataResponse.length, unList,
-                                {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
-                        })
-                        if (dataResponse.length > 20) {
-                            createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
-                        }
-                        document.getElementById(id).firstElementChild.appendChild(unList);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        throw new TypeError('Error occurred during \'get_last_appearance\' GET');
-                    });
-                break;
-            case 'chart':
-                let canvasContainer = document.createElement('div')
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100')
-                let canvasElem = document.createElement('canvas')
-                canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2')
-                await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
-                    .then(data => {
-                        let dataResponse = Array(data.data)[0]
-                        dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString())
-                        const ctx = canvasElem.getContext('2d');
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: dataResponse.map(item => item.date),
-                                datasets: [{
-                                    label: 'Market Value (€)',
-                                    data: dataResponse.map(item => item.market_value_eur),
-                                    borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    x: {title: {display: true, text: 'Date'}},
-                                    y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
-                                }
-                            }
-                        });
-                    }).catch(err => {
-                        console.error(err);
-                        throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
-                    });
-                canvasContainer.appendChild(canvasElem)
-                document.getElementById(id).firstElementChild.appendChild(canvasContainer)
-                break;
-            default:
-                console.error('Warning! openAccordionPlayer() called with invalid field \'type\':', type)
-                break;
-        }
+
+        let dataResponse;
+
+        await makeAxiosGet('/players/get_last_appearances/' + player_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+
+                let alternatorCounter = 0;
+
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'appearance', dataResponse.length, unList,
+                        {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
+                });
+
+                if (dataResponse.length > 20) {
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                }
+
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_last_appearance\' GET');
+                //TODO: check errors
+            });
+
         showChargingSpinner(null, false);
     }
 }
