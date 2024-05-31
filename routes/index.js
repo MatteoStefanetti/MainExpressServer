@@ -157,6 +157,23 @@ router.get('/clubs/get_current_players/:clubId', function (req, res) {
    }
 });
 
+router.get('/clubs/get_past_players/:clubId', function (req, res) {
+    if (req.params.clubId) {
+        fetch('http://localhost:8081/clubs/get_past_players/' + String(req.params.clubId), {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Error occurred: ' + err));
+            });
+    }
+    else{
+        res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
+    }
+});
+
 router.get(`/get_clubs_by_local_competition_code/:localCompetitionCode`, function (req, res) {
     if (req.params.localCompetitionCode) {
         fetch('http://localhost:8081/clubs/clubs_by_nation/' + String(req.params.localCompetitionCode), {

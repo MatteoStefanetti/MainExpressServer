@@ -210,6 +210,9 @@ async function initSinglePage() {
 
                         await createAccordion('single_page/cl/players', 'accordions',
                             {id: 'clubPlayers_' + idParams});
+
+                        await createAccordion('single_page/cl/past_players', 'accordions',
+                            {id: 'pastPlayers_' + idParams});
                         // @todo insert accordions
                     })
                     .catch(err => console.error(err));
@@ -228,6 +231,66 @@ async function initSinglePage() {
     let hrElem = (document.getElementById('info').children)[1]
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
     showChargingSpinner(null, false)
+}
+
+async function openAccordionPastMember(id) {
+    if (!id) {
+        console.log(id);
+        throw TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
+    }
+
+    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
+    const club_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+
+        let playerList = document.createElement('div');
+        playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
+
+        let dataResponse;
+
+        await makeAxiosGet('/clubs/get_past_players/' + club_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                playerList.replaceChildren();
+
+                dataResponse.forEach((player) => {
+                    const playerContainer = document.createElement('div');
+                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
+                    let clickableContent = document.createElement('a');
+                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
+                    clickableContent.classList.add('text-dark');
+                    clickableContent.innerHTML =
+                        '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                        'border-darkgreen rounded-4 player-img-size" alt="image not found"/>' +
+                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
+                        '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
+                        '</div>';
+
+                    playerContainer.appendChild(clickableContent);
+
+                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
+                        playerContainer.classList.add('d-none');
+                    }
+
+                    playerList.appendChild(playerContainer);
+                });
+
+                if (dataResponse.length > MAX_ELEMENTS_TO_SHOW)
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
+            })
+            .catch(err => {
+                console.log(err);
+                throw new TypeError('Error occurred during \'get_past_players\' GET');
+                //TODO: check errors
+            });
+
+        document.getElementById(id).firstElementChild.appendChild(playerList);
+        showChargingSpinner(null, false);
+    }
 }
 
 /**
@@ -254,12 +317,8 @@ async function openAccordionClubMember(id) {
 
         let dataResponse;
 
-        console.log(club_id);
-
         await makeAxiosGet('/clubs/get_current_players/' + club_id)
             .then(data => {
-                console.log(data);
-
                 dataResponse = Array(data.data)[0];
 
                 playerList.replaceChildren();
@@ -285,11 +344,10 @@ async function openAccordionClubMember(id) {
                     }
 
                     playerList.appendChild(playerContainer);
-                })
+                });
 
                 if (dataResponse.length > MAX_ELEMENTS_TO_SHOW)
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
-
             })
             .catch(err => {
                 console.log(err);
