@@ -1,6 +1,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const typeParams = urlParams.get('type');
 const idParams = urlParams.get('id');
+const MAX_ELEMENTS_TO_SHOW = 12;
 
 async function initSinglePage() {
     let infoTitle = document.getElementById('infoTitle');
@@ -230,6 +231,78 @@ async function initSinglePage() {
 }
 
 /**
+ * Function to generate the content of the active players accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button
+ * @throws TypeError If id is null or undefined
+ * */
+async function openAccordionClubMember(id) {
+    if (!id) {
+        console.log(id);
+        throw TypeError('Invalid argument passed to \'openAccordionClubMember(\'' + id + '\')');
+    }
+
+    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
+    const club_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+
+        showChargingSpinner(null, true);
+
+        let playerList = document.createElement('div');
+        playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
+
+        let dataResponse;
+
+        console.log(club_id);
+
+        await makeAxiosGet('/clubs/get_current_players/' + club_id)
+            .then(data => {
+                console.log(data);
+
+                dataResponse = Array(data.data)[0];
+
+                playerList.replaceChildren();
+
+                dataResponse.forEach((player) => {
+                    const playerContainer = document.createElement('div');
+                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
+                    let clickableContent = document.createElement('a');
+                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
+                    clickableContent.classList.add('text-dark');
+                    clickableContent.innerHTML =
+                        '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                        'border-darkgreen rounded-4 player-img-size" alt="image not found"/>' +
+                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
+                        '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
+                        '</div>';
+
+                    playerContainer.appendChild(clickableContent);
+
+                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
+                        playerContainer.classList.add('d-none');
+                    }
+
+                    playerList.appendChild(playerContainer);
+                })
+
+                if (dataResponse.length > MAX_ELEMENTS_TO_SHOW)
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
+
+            })
+            .catch(err => {
+                console.log(err);
+                throw new TypeError('Error occurred during \'get_current_players\' GET');
+                //TODO: check errors
+            });
+
+        document.getElementById(id).firstElementChild.appendChild(playerList);
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
  * Function called to generate the internal info block of the valuation accordion.
  *
  * @param id {string} The **id** used as id of the accordion button.
@@ -238,7 +311,7 @@ async function initSinglePage() {
 async function openAccordionPlayerValuation(id) {
     if (!id) {
         console.error(id);
-        throw TypeError('Invalid argument(s) passed to \'openAccordionPlayerValuation\'!');
+        throw TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
     }
 
     console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;

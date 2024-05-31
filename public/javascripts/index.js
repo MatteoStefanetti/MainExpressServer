@@ -132,7 +132,7 @@ async function createAccordion(visualize, fatherId, params) {
             strIdValue = params.id;
             spanTitle.innerText = 'Active Squad';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPlayerAppearances.bind(null, strIdValue));
+            accordionButton.addEventListener('click', openAccordionClubMember.bind(null, strIdValue));
             break;
         default:
             console.error('Warning! index.js:createAccordion() called with invalid field \'visualize\':', visualize)
