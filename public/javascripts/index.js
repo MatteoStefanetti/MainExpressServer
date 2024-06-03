@@ -71,6 +71,9 @@ async function getAllFlags() {
  *  - 'club_nation'
  *  - 'single_page/pl/player_valuations'
  *  - 'single_page/pl/last_appearances'
+ *  - 'single_page/cl/players'
+ *  - 'single_page/cl/past_players'
+ *  - 'single_page/cl/last_games'
  * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
  * @param params {object} is the structure containing the values to use in the accordion.
  * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
@@ -78,29 +81,38 @@ async function getAllFlags() {
 async function createAccordion(visualize, fatherId, params) {
     let wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
+
     let header = document.createElement('h2');
     header.classList.add('accordion-header');
     wrapperDiv.appendChild(header);
+
     let accordionButton = document.createElement('button');
     accordionButton.classList.add('accordion-button', 'custom-accordion', 'collapsed');
     accordionButton.type = "button";
     accordionButton.setAttribute('data-bs-toggle', 'collapse');
     accordionButton.setAttribute('aria-expanded', 'false');
     header.appendChild(accordionButton);
+
     let spanTitle = document.createElement('span');
+
     let collapseDiv = document.createElement('div');
     collapseDiv.classList.add('accordion-collapse', 'collapse');
     collapseDiv.setAttribute('data-bs-parent', '#' + String(fatherId));
     wrapperDiv.appendChild(collapseDiv);
+
     let accBody = document.createElement('div');
     accBody.classList.add('accordion-body');
     collapseDiv.appendChild(accBody);
+
     const accordionElement = document.getElementById(fatherId)
     accordionElement.appendChild(wrapperDiv);
+
     let flagImg = document.createElement('img');
     flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
     flagImg.style.height = '1.2rem';
-    let strIdValue = ''
+
+    let strIdValue = '';
+
     switch (visualize) {
         case 'competition_nation':
             strIdValue = String(params.competition_id)
@@ -140,16 +152,25 @@ async function createAccordion(visualize, fatherId, params) {
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionPastMember.bind(null, strIdValue));
             break;
+        case 'single_page/cl/last_games':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Last Season Games';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionClubLastGames.bind(null, strIdValue));
+            break;
         default:
             console.error('Warning! index.js:createAccordion() called with invalid field \'visualize\':', visualize)
             break;
     }
+
     accordionButton.setAttribute('aria-controls', strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
 }
 
-/** Triggered when an accordion button is clicked.
+/**
+ * Triggered when an accordion button is clicked.
+ *
  * @param window {Window} the window into which create the elements
  * @param id {string} the id of a useless */
 async function openAccordionGames(window, id) {
@@ -392,10 +413,13 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
         unorderedList.appendChild(listItem)
 }
 
-/** Function to define the url {@link string} of the single_page.
+/**
+ *  Function to define the url {@link string} of the single_page.
+ *
  * @param params {object} It is a `{type: <string>, key: <value>, ...}` object element,
  * that defines how the *single_page.html* page shall load.
- * @throws TypeError if the argument `params` is not defined. */
+ * @throws TypeError if the argument `params` is not defined.
+ * */
 function getUrlForSinglePage(params) {
     if (!params)
         throw new TypeError('\'single_page.html\' badly called.')

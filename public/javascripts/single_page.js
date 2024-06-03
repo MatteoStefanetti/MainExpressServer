@@ -208,6 +208,9 @@ async function initSinglePage() {
                             '<b>Foreigners Percentage:</b> ' + data.data.foreigners_percentage + '%';
                         info2.appendChild(foreignersPerc);
 
+                        await createAccordion('single_page/cl/last_games', 'accordions',
+                            {id: 'lastGames_' + idParams});
+
                         await createAccordion('single_page/cl/players', 'accordions',
                             {id: 'clubPlayers_' + idParams});
 
@@ -426,6 +429,58 @@ async function openAccordionPlayerValuation(id) {
 }
 
 /**
+ * Function called to generate the internal info block of the Last Games accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button
+ * @throws TypeError If id is null or undefined
+ * */
+async function openAccordionClubLastGames(id) {
+    if (!id) {
+        console.error(id);
+        throw TypeError('Invalid argument passed to \'openAccordionClubLastGames\'!');
+    }
+
+    console.log('id', id);
+    const club_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+
+        let dataResponse;
+
+        makeAxiosGet('/clubs/get_last_games_by_club/' + club_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+
+                let alternatorCounter = 0;
+
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.game_id)});
+                })
+
+                if (dataResponse.length > 20) {
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                }
+
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_last_games_by_club\' GET');
+                //TODO: check errors
+            });
+
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
  * Function called to generate the internal info block of the Appearances accordion.
  *
  * @param id {string} The **id** used as id of the accordion button.
@@ -454,8 +509,10 @@ async function openAccordionPlayerAppearances(id) {
                 let alternatorCounter = 0;
 
                 dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'appearance', dataResponse.length, unList,
-                        {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
+                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.game_id)});
                 });
 
                 if (dataResponse.length > 20) {

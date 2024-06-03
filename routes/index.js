@@ -140,21 +140,36 @@ router.get('/get_games_by_league/:id/:season', function (req, res) {
 
 /* ------ Clubs ------ */
 
+router.get('/clubs/get_last_games_by_club/:clubId', function (req, res) {
+    if (req.params.clubId) {
+        fetch('http://localhost:8081/games/get_last_games_by_club/' + String(req.params.clubId), {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Error occurred: ' + err));
+            });
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
+    }
+})
+
 router.get('/clubs/get_current_players/:clubId', function (req, res) {
-   if (req.params.clubId) {
-       fetch('http://localhost:8081/clubs/get_current_players/' + String(req.params.clubId), {
-           headers: {'Content-Type': 'application/json'},
-           method: 'get'
-       })
-           .then(res => res.json())
-           .then(json => res.status(200).json(json))
-           .catch(err => {
-               res.status(404).json(JSON.stringify('Error occurred: ' + err));
-           });
-   }
-   else{
-       res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
-   }
+    if (req.params.clubId) {
+        fetch('http://localhost:8081/clubs/get_current_players/' + String(req.params.clubId), {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Error occurred: ' + err));
+            });
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
+    }
 });
 
 router.get('/clubs/get_past_players/:clubId', function (req, res) {
@@ -168,8 +183,7 @@ router.get('/clubs/get_past_players/:clubId', function (req, res) {
             .catch(err => {
                 res.status(404).json(JSON.stringify('Error occurred: ' + err));
             });
-    }
-    else{
+    } else {
         res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
     }
 });
