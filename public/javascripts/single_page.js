@@ -1,10 +1,12 @@
 const urlParams = new URLSearchParams(window.location.search);
 const typeParams = urlParams.get('type');
 const idParams = urlParams.get('id');
+const MAX_ELEMENTS_TO_SHOW = 12;
 
 async function initSinglePage() {
     let infoTitle = document.getElementById('infoTitle');
     let info1 = document.getElementById('info1');
+    let info2 = document.getElementById('info2');
     let imgContainer = document.createElement('div');
     let singlePageImg = document.createElement('img');
     let titleDiv = document.createElement('div');
@@ -206,6 +208,14 @@ async function initSinglePage() {
                             '<b>Foreigners Percentage:</b> ' + data.data.foreigners_percentage + '%';
                         info2.appendChild(foreignersPerc);
 
+                        await createAccordion('single_page/cl/last_games', 'accordions',
+                            {id: 'lastGames_' + idParams});
+
+                        await createAccordion('single_page/cl/players', 'accordions',
+                            {id: 'clubPlayers_' + idParams});
+
+                        await createAccordion('single_page/cl/past_players', 'accordions',
+                            {id: 'pastPlayers_' + idParams});
                         // @todo insert accordions
                     })
                     .catch(err => console.error(err));
@@ -226,82 +236,297 @@ async function initSinglePage() {
     showChargingSpinner(null, false)
 }
 
-/** Function called to generate the internal info block about the accordion button that triggers it.
- * @param type {string} It defines if the accordion type to generate is a list or something else.
- * Should be specified as `'list'`, `'chart'`, etc.
- * @param id {string} The **id** used as id of the accordion button.
- * @throws TypeError If any of its argument is null or undefined. */
-async function openAccordionPlayer(type, id) {
-    if (!type || !id) {
-        console.error(type, '\n', id);
-        throw TypeError('Invalid argument(s) passed to \'openAccordionPlayer\'!');
+async function openAccordionPastMember(id) {
+    if (!id) {
+        console.log(id);
+        throw TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
     }
-    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
-    const player_id = id.slice(id.indexOf('_') + 1)
+
+    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
+    const club_id = id.slice(id.indexOf('_') + 1);
+
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
-        let dataResponse
-        switch (type) {
-            case 'list':
-                await makeAxiosGet('/players/get_last_appearances/' + player_id)
-                    .then(data => {
-                        dataResponse = Array(data.data)[0];
-                        let unList = document.createElement('ul');
-                        unList.classList.add('nav', 'flex-column');
-                        let alternatorCounter = 0;
-                        dataResponse.forEach(el => {
-                            createDynamicListItem(window, 'appearance', dataResponse.length, unList,
-                                {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.game_id)});
-                        })
-                        if (dataResponse.length > 20) {
-                            createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+
+        let playerList = document.createElement('div');
+        playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
+
+        let dataResponse;
+
+        await makeAxiosGet('/clubs/get_past_players/' + club_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                playerList.replaceChildren();
+
+                dataResponse.forEach((player) => {
+                    const playerContainer = document.createElement('div');
+                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
+                    let clickableContent = document.createElement('a');
+                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
+                    clickableContent.classList.add('text-dark');
+                    clickableContent.innerHTML =
+                        '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                        'border-darkgreen rounded-4 player-img-size" alt="image not found"/>' +
+                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
+                        '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
+                        '</div>';
+
+                    playerContainer.appendChild(clickableContent);
+
+                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
+                        playerContainer.classList.add('d-none');
+                    }
+
+                    playerList.appendChild(playerContainer);
+                });
+
+                if (dataResponse.length > MAX_ELEMENTS_TO_SHOW)
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
+            })
+            .catch(err => {
+                console.log(err);
+                throw new TypeError('Error occurred during \'get_past_players\' GET');
+                //TODO: check errors
+            });
+
+        document.getElementById(id).firstElementChild.appendChild(playerList);
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
+ * Function to generate the content of the active players accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button
+ * @throws TypeError If id is null or undefined
+ * */
+async function openAccordionClubMember(id) {
+    if (!id) {
+        console.log(id);
+        throw TypeError('Invalid argument passed to \'openAccordionClubMember(\'' + id + '\')');
+    }
+
+    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
+    const club_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+
+        showChargingSpinner(null, true);
+
+        let playerList = document.createElement('div');
+        playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
+
+        let dataResponse;
+
+        await makeAxiosGet('/clubs/get_current_players/' + club_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                playerList.replaceChildren();
+
+                dataResponse.forEach((player) => {
+                    const playerContainer = document.createElement('div');
+                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
+                    let clickableContent = document.createElement('a');
+                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
+                    clickableContent.classList.add('text-dark');
+                    clickableContent.innerHTML =
+                        '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                        'border-darkgreen rounded-4 player-img-size" alt="image not found"/>' +
+                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
+                        '   <span class="h6 text-center p-0">' + player.playerName + '</span>' +
+                        '</div>';
+
+                    playerContainer.appendChild(clickableContent);
+
+                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
+                        playerContainer.classList.add('d-none');
+                    }
+
+                    playerList.appendChild(playerContainer);
+                });
+
+                if (dataResponse.length > MAX_ELEMENTS_TO_SHOW)
+                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
+            })
+            .catch(err => {
+                console.log(err);
+                throw new TypeError('Error occurred during \'get_current_players\' GET');
+                //TODO: check errors
+            });
+
+        document.getElementById(id).firstElementChild.appendChild(playerList);
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
+ * Function called to generate the internal info block of the valuation accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button.
+ * @throws TypeError If id is null or undefined.
+ * */
+async function openAccordionPlayerValuation(id) {
+    if (!id) {
+        console.error(id);
+        throw TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
+    }
+
+    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
+    const player_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+
+        showChargingSpinner(null, true);
+
+        let canvasContainer = document.createElement('div');
+        canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100');
+
+        let canvasElem = document.createElement('canvas');
+        canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2');
+
+        await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
+            .then(data => {
+
+                let dataResponse = Array(data.data)[0];
+                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString());
+
+                const ctx = canvasElem.getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dataResponse.map(item => item.date),
+                        datasets: [{
+                            label: 'Market Value (€)',
+                            data: dataResponse.map(item => item.market_value_eur),
+                            borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {title: {display: true, text: 'Date'}},
+                            y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
                         }
-                        document.getElementById(id).firstElementChild.appendChild(unList);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        throw new TypeError('Error occurred during \'get_last_appearance\' GET');
-                    });
-                break;
-            case 'chart':
-                let canvasContainer = document.createElement('div')
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100')
-                let canvasElem = document.createElement('canvas')
-                canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2')
-                await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
-                    .then(data => {
-                        let dataResponse = Array(data.data)[0]
-                        dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString())
-                        const ctx = canvasElem.getContext('2d');
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: dataResponse.map(item => item.date),
-                                datasets: [{
-                                    label: 'Market Value (€)',
-                                    data: dataResponse.map(item => item.market_value_eur),
-                                    borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    x: {title: {display: true, text: 'Date'}},
-                                    y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
-                                }
-                            }
-                        });
-                    }).catch(err => {
-                        console.error(err);
-                        throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
-                    });
-                canvasContainer.appendChild(canvasElem)
-                document.getElementById(id).firstElementChild.appendChild(canvasContainer)
-                break;
-            default:
-                console.error('Warning! openAccordionPlayer() called with invalid field \'type\':', type)
-                break;
-        }
+                    }
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
+                //TODO: check errors
+            });
+
+        canvasContainer.appendChild(canvasElem);
+        document.getElementById(id).firstElementChild.appendChild(canvasContainer);
+
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
+ * Function called to generate the internal info block of the Last Games accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button
+ * @throws TypeError If id is null or undefined
+ * */
+async function openAccordionClubLastGames(id) {
+    if (!id) {
+        console.error(id);
+        throw TypeError('Invalid argument passed to \'openAccordionClubLastGames\'!');
+    }
+
+    console.log('id', id);
+    const club_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+
+        let dataResponse;
+
+        makeAxiosGet('/clubs/get_last_games_by_club/' + club_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+
+                let alternatorCounter = 0;
+
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.game_id)});
+                })
+
+                if (dataResponse.length > 20) {
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                }
+
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_last_games_by_club\' GET');
+                //TODO: check errors
+            });
+
+        showChargingSpinner(null, false);
+    }
+}
+
+/**
+ * Function called to generate the internal info block of the Appearances accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button.
+ * @throws TypeError If id is null or undefined. */
+async function openAccordionPlayerAppearances(id) {
+    if (!id) {
+        console.error(id);
+        throw TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
+    }
+
+    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
+    const player_id = id.slice(id.indexOf('_') + 1);
+
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+
+        let dataResponse;
+
+        await makeAxiosGet('/players/get_last_appearances/' + player_id)
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+
+                let alternatorCounter = 0;
+
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.game_id)});
+                });
+
+                if (dataResponse.length > 20) {
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                }
+
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                throw new TypeError('Error occurred during \'get_last_appearance\' GET');
+                //TODO: check errors
+            });
+
         showChargingSpinner(null, false);
     }
 }
