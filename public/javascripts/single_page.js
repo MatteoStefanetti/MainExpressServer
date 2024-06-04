@@ -270,7 +270,7 @@ async function openAccordionPastMember(id) {
 
         let dataResponse;
 
-        await makeAxiosGet('/single_page//get_past_players/' + club_id)
+        await makeAxiosGet('/single_page/get_past_players/' + club_id)
             .then(data => {
                 dataResponse = Array(data.data)[0];
 
