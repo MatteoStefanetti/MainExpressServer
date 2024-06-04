@@ -196,13 +196,18 @@ async function openAccordionPlayer(type, id){
                 break;
             case 'chart':
                 let canvasContainer = document.createElement('div')
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
+                if(window.innerWidth > 768 ) {
+                    canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
+                }
+                else {
+                    canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-4x3')
+                }
                 let canvasElem = document.createElement('canvas')
                 canvasElem.classList.add('w-100', 'h-100', 'border', 'rounded-2')
                 await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
                     .then(data => {
                         let dataResponse = Array(data.data)[0]
-                        dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString())
+                        dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB',{day: 'numeric', year:'2-digit', month: 'numeric'}))
                         drawChart(dataResponse, canvasElem)
                     }).catch(err => {
                         console.error(err);
@@ -255,6 +260,7 @@ function drawChart(dataResponse, canvasElem) {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 indexAxis: 'x',
                 interaction: {mode: 'nearest', intersect: false},
                 plugins: {
