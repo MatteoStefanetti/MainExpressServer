@@ -64,7 +64,7 @@ function startCompetitionClassesObserver() {
         for (let mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.target.classList.contains('send-get')) {
                 const domestic_league_code = document.getElementById('nationalSection').name
-                await makeAxiosGet('/get_competitions/' + String(domestic_league_code))
+                await makeAxiosGet('/competitions/get_competitions/' + String(domestic_league_code))
                     .then(data => {
                         let competitionList = Array(data.data)[0]
                         if(!competitionList || competitionList.length === 0)

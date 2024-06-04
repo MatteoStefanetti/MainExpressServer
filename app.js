@@ -3,6 +3,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var competitionsRouter = require('./routes/competitions.js')
 var clubsRouter = require('./routes/clubs.js')
 var indexRouter = require('./routes/index');
 var singlePageRouter = require('./routes/single_page.js')
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/competitions', competitionsRouter);
 app.use('/clubs', clubsRouter);
 app.use('/single_page', singlePageRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));

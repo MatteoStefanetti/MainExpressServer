@@ -96,17 +96,17 @@ async function initCarousel() {
 async function retrieveCarouselData(retrieveStr) {
     switch (retrieveStr) {
         case 'lastGames':
-            return makeAxiosGet('/games/get_last_games')
+            return makeAxiosGet('/home/get_last_games')
         case 'recentClubsNews':
-            return makeAxiosGet('/clubs/get_recent_clubs_news')
+            return makeAxiosGet('/home/get_recent_clubs_news')
         case 'trendPlayers':
-            return makeAxiosGet('/players/get_trend_players')
+            return makeAxiosGet('/home/get_trend_players')
         case 'national':
             return makeAxiosGet('/get_flags')
         case 'international':
-            return makeAxiosGet('/get_competitions/null')
+            return makeAxiosGet('/competitions/get_competitions/null')
         case 'england':
-            return makeAxiosGet('/get_competitions/GB1')
+            return makeAxiosGet('/competitions/get_competitions/GB1')
         default:
             return null;
     }

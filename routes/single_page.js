@@ -114,4 +114,69 @@ router.get('/get_last_games_by_club/:clubId', function (req, res) {
     }
 })
 
+/** GET route called by player single_page.
+ * @param id {string} - The 'player_id' of the player whose appearances we are querying. */
+router.get('/get_last_appearances/:player_id', async (req, res) => {
+    if (req.params.player_id) {
+        fetch('http://localhost:3002/appearances/get_every_player_appearances/' + String(req.params.player_id), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(500).json(err))
+    }
+});
+
+/** GET route to retrieve the active squad of a club.
+ * @param clubId {string} - the id of the club. */
+router.get('/get_current_players/:clubId', function (req, res) {
+    if (req.params.clubId) {
+        fetch('http://localhost:8081/clubs/get_current_players/' + String(req.params.clubId), {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Error occurred: ' + err));
+            });
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
+    }
+});
+
+/** Called by club single_page.
+ * It retrieves players are the players that stopped playing while in the club with `clubId`.
+ * It retrieves an {@link array} of objects containing players data.
+ * @param clubId {string} - The id of the club. */
+router.get('/get_past_players/:clubId', function (req, res) {
+    if (req.params.clubId) {
+        fetch('http://localhost:8081/clubs/get_past_players/' + String(req.params.clubId), {
+            headers: {'Content-Type': 'application/json'},
+            method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => {
+                res.status(404).json(JSON.stringify('Error occurred: ' + err));
+            });
+    } else {
+        res.status(500).json(JSON.stringify('Please insert a valid club id to search'));
+    }
+});
+
+/** GET route that retrieves game data in base of an 'id'.
+ * @param id {string} - The game_id of the game we want to analyse */
+router.get('/get_visualize_game_by_id/:id', function (req, res) {
+    if (req.params.id) {
+        fetch('http://localhost:8081/games/visualize_game_by_id/' + String(req.params.id), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'id\' passed as input!'))
+})
+
 module.exports = router;

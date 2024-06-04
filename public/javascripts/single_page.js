@@ -248,10 +248,15 @@ function adjustHRHeight() {
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
 }
 
+
+/** openAccordion for the past members of a club.
+ * @param id {string} the id of the club of which we are querying data.
+ * @throws TypeError If 'id' is null or undefined.
+ * @throws Error If GET route fails. */
 async function openAccordionPastMember(id) {
     if (!id) {
         console.log(id);
-        throw TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
+        throw new TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
     }
 
     console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
@@ -265,7 +270,7 @@ async function openAccordionPastMember(id) {
 
         let dataResponse;
 
-        await makeAxiosGet('/clubs/get_past_players/' + club_id)
+        await makeAxiosGet('/single_page//get_past_players/' + club_id)
             .then(data => {
                 dataResponse = Array(data.data)[0];
 
@@ -299,7 +304,7 @@ async function openAccordionPastMember(id) {
             })
             .catch(err => {
                 console.log(err);
-                throw new TypeError('Error occurred during \'get_past_players\' GET');
+                throw new Error('Error occurred during \'/get_past_players\' GET');
                 //TODO: check errors
             });
 
@@ -312,12 +317,13 @@ async function openAccordionPastMember(id) {
  * Function to generate the content of the active players accordion.
  *
  * @param id {string} The **id** used as id of the accordion button
- * @throws TypeError If id is null or undefined
+ * @throws TypeError If id is null or undefined.
+ * @throws Error If GET route fails.
  * */
 async function openAccordionClubMember(id) {
     if (!id) {
         console.log(id);
-        throw TypeError('Invalid argument passed to \'openAccordionClubMember(\'' + id + '\')');
+        throw new TypeError('Invalid argument passed to \'openAccordionClubMember(\'' + id + '\')');
     }
 
     console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
@@ -332,7 +338,7 @@ async function openAccordionClubMember(id) {
 
         let dataResponse;
 
-        await makeAxiosGet('/clubs/get_current_players/' + club_id)
+        await makeAxiosGet('/single_page/get_current_players/' + club_id)
             .then(data => {
                 dataResponse = Array(data.data)[0];
 
@@ -366,7 +372,7 @@ async function openAccordionClubMember(id) {
             })
             .catch(err => {
                 console.log(err);
-                throw new TypeError('Error occurred during \'get_current_players\' GET');
+                throw new Error('Error occurred during \'/get_current_players\' GET');
                 //TODO: check errors
             });
 
@@ -380,13 +386,14 @@ async function openAccordionClubMember(id) {
  *
  * @param id {string} The **id** used as id of the accordion button.
  * @throws TypeError If id is null or undefined.
+ * @throws Error If GET route fails.
  * */
 async function openAccordionPlayerValuation(id) {
     this.disabled = true;
     if (!id) {
         console.error(id);
         this.disabled = false;
-        throw TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
+        throw new TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
     }
 
     console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
@@ -416,7 +423,7 @@ async function openAccordionPlayerValuation(id) {
              })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'/get_valuations_of_player\' GET');
+                throw new Error('Error occurred during \'/get_valuations_of_player\' GET');
                 //TODO: check errors
             });
 
@@ -431,12 +438,12 @@ async function openAccordionPlayerValuation(id) {
  * Function called to generate the internal info block of the Last Games accordion.
  *
  * @param id {string} The **id** used as id of the accordion button
- * @throws TypeError If id is null or undefined
- * */
+ * @throws TypeError If id is null or undefined.
+ * @throws Error If GET route fails. */
 async function openAccordionClubLastGames(id) {
     if (!id) {
         console.error(id);
-        throw TypeError('Invalid argument passed to \'openAccordionClubLastGames\'!');
+        throw new TypeError('Invalid argument passed to \'openAccordionClubLastGames\'!');
     }
 
     console.log('id', id);
@@ -483,11 +490,12 @@ async function openAccordionClubLastGames(id) {
  * Function called to generate the internal info block of the Appearances accordion.
  *
  * @param id {string} The **id** used as id of the accordion button.
- * @throws TypeError If id is null or undefined. */
+ * @throws TypeError If id is null or undefined.
+ * @throws Error If GET route fails. */
 async function openAccordionPlayerAppearances(id) {
     if (!id) {
         console.error(id);
-        throw TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
+        throw new TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
     }
 
     console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
@@ -498,7 +506,7 @@ async function openAccordionPlayerAppearances(id) {
 
         let dataResponse;
 
-        await makeAxiosGet('/players/get_last_appearances/' + player_id)
+        await makeAxiosGet('/single_page/get_last_appearances/' + player_id)
             .then(data => {
                 dataResponse = Array(data.data)[0];
 
@@ -522,7 +530,7 @@ async function openAccordionPlayerAppearances(id) {
             })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'get_last_appearance\' GET');
+                throw new Error('Error occurred during \'/get_last_appearance\' GET');
                 //TODO: check errors
             });
       

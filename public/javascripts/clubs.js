@@ -75,7 +75,7 @@ function getNationNameOf(localCompetitionCode) {
 
 /** Function that sends a SPRINGBOOT GET to retrieve the data about clubs of a localCompetitionCode.
  * @param id {string} is the localCompetitionCode used as ID of the accordion button.
- * @throws TypeError if catch case of the axios GET occurs. */
+ * @throws Error if catch case of the axios GET occurs. */
 async function openAccordionClubs(id) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true)
@@ -104,18 +104,20 @@ async function openAccordionClubs(id) {
             })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'clubs_by_local_competition_code\' GET');
+                throw new Error('Error occurred during \'/clubs_by_local_competition_code\' GET');
             })
         showChargingSpinner(null, false)
     }
 }
 
+/** It sends a GET extracting the form data and retrieving a club list as an {@link array}.
+ * @param event - event fired when the form is submitted. */
 function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
     let formData = extractFormData('searchClub');
     let club = formData.searchBar;
     if (club && club.length > 2) {
-        axios.get(`/get_clubs_by_string/${club}`, {
+        axios.get(`/clubs/get_clubs_by_string/${club}`, {
             headers: {'Content-Type': 'application/json'},
             method: 'get'
         })
@@ -174,7 +176,7 @@ function searchClubs(event) {
 function createListItem(size, unorderedList, elementCounter, id, text, params) {
     if (!size || !unorderedList || elementCounter < 0 || !id || !text) {
         console.error('', size, '\n', unorderedList, '\n', elementCounter, '\n', id, '\n', text);
-        throw TypeError('Invalid argument(s) passed to \'createListItem\'!');
+        throw new TypeError('Invalid argument(s) passed to \'createListItem\'!');
     }
     let listItem = document.createElement('li');
     let listItemLink = document.createElement('a');

@@ -28,7 +28,7 @@ async function makeAxiosGet(url) {
 /** This is an EXPRESS GET function:
  * @returns {Promise} a promise from the Axios GET.
  * The promise will return a {@link Map} to take trace of flags and nations.
- * @throws TypeError if the Axios GET fails. */
+ * @throws Error if the Axios GET fails. */
 async function getAllFlags() {
     return axios.get('/get_flags')
         .then(data => {
@@ -44,7 +44,7 @@ async function getAllFlags() {
         })
         .catch(err => {
             console.error(err);
-            throw new TypeError('Error occurred during \'flags\' GET');
+            throw new Error('Error occurred during \'flags\' GET');
         })
 }
 
@@ -172,7 +172,8 @@ async function createAccordion(visualize, fatherId, params) {
  * Triggered when an accordion button is clicked.
  *
  * @param window {Window} the window into which create the elements
- * @param id {string} the id of a useless */
+ * @param id {string} the id of a useless
+ * @throws Error if the GET route fails. */
 async function openAccordionGames(window, id) {
     if (window.document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(window, true)
@@ -187,7 +188,7 @@ async function openAccordionGames(window, id) {
                 console.error('Error in \'getLastSeasonYear()\':', err)
                 currentSeason = null;
             })
-        await makeAxiosGet(`/get_games_by_league/${id}/` + currentSeason)
+        await makeAxiosGet(`/competitions/get_games_by_league/${id}/` + currentSeason)
             .then(data => {
                 let dataResponse = Array(data.data)[0];
                 let unList = window.document.createElement('ul');
@@ -207,7 +208,7 @@ async function openAccordionGames(window, id) {
             })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'/get_games_by_league\' GET');
+                throw new Error('Error occurred during \'/get_games_by_league\' GET');
             })
         showChargingSpinner(window, false)
     }
@@ -242,7 +243,7 @@ function loadRemainingElements(loader) {
 function createDynamicListItem(window, type, size, unorderedList, item, params) {
     if (!window || !type || !size || !unorderedList || !item || item.counter < 0 || !item.data) {
         console.error(type, '\n', size, '\n', unorderedList, '\n', item.counter, '\n', item.data);
-        throw TypeError('Invalid argument(s) passed to \'createDynamicListItem\'!');
+        throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\'!');
     }
     let error = false;
     let listItem = window.document.createElement('li');
@@ -314,7 +315,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
-            makeAxiosGet(`/get_visualize_game_by_id/${item.data.game_id}`)
+            makeAxiosGet(`/single_page/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
                     listItem.id = item.data.game_id;
                     listItem.classList.add('d-flex', 'py-2', 'mx-2', 'align-items-stretch', 'align-items-md-center')
@@ -433,7 +434,8 @@ function getUrlForSinglePage(params) {
 /** It will set the "stats Button" style to display a useless button.
  * @param window {Window} the window of the document in which create the elements.
  * @param statsBtn {HTMLElement} the `div` element that will be transformed in the statsBtn.
- * @param fatherElement the {@link HTMLElement} to which append the statsBtn as a child. */
+ * @param fatherElement the {@link HTMLElement} to which append the statsBtn as a child.
+ * @throws TypeError when one or more arguments are invalid. */
 function createStatsBtn(window, statsBtn, fatherElement) {
     if (!window || !statsBtn || !fatherElement)
         throw new TypeError('Invalid argument(s) passed to \'createStatsBtn()\' function.')
@@ -459,7 +461,7 @@ function createStatsBtn(window, statsBtn, fatherElement) {
 function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     if (!parentList || !partialId || !loadMoreFunction) {
         console.error('', parentList, '\n', partialId, '\n', loadMoreFunction);
-        throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement()\'!');
+        throw new TypeError('Invalid argument(s) passed to \'createLoadMoreElement()\'!');
     }
     let loadMoreContainer, innerLoadMore;
     if (parentList.tagName !== 'DIV') {
