@@ -13,6 +13,8 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerAutogen = require('swagger-autogen')();
 const swaggerFile = require('./swagger/swagger-output.json')
 
+console.log("MainExpressServer started")
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
