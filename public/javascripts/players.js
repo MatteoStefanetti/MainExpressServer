@@ -2,7 +2,7 @@
 const MAX_ELEMENTS_DISPLAYABLE = 24;
 
 /** Called by the players.html page. */
-function initPlayers(){
+function initPlayers() {
     document.getElementById('submitPlayerForm').onclick = searchPlayer;
 }
 
@@ -29,8 +29,7 @@ function searchPlayer(event) {
                 playerList.replaceChildren();
                 dataResponse.forEach((player) => {
                     const playerContainer = document.createElement('div');
-                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center',
-                        'align-items-center', 'mb-4', 'px-1');
+                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
                     let clickableContent = document.createElement('a');
 
                     clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
@@ -52,10 +51,10 @@ function searchPlayer(event) {
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_DISPLAYABLE));
             })
             .catch(err => {
-                showModalMessage(true);
+                showModalMessage(true, 'player');
             });
     } else {
-        showModalMessage(false);
+        showModalMessage(false, 'player');
     }
     event.preventDefault();
     document.getElementById('submitPlayerForm').disabled = false;

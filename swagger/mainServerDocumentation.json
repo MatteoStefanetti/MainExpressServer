@@ -1,14 +1,14 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "MainExpressServer",
-    "description": "Frontend server",
+    "title": "Main Express Server",
+    "description": "Front-End server of the Football Lens project.",
     "version": "1.0.0"
   },
   "servers": [
     {
       "url": "http://localhost:3001/",
-      "description": "local frontend server"
+      "description": "Local Front-End server"
     }
   ],
   "paths": {

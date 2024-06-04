@@ -1,4 +1,3 @@
-
 /** Called by the index.html page. */
 function initHome() {
     setCarouselPageHeight();
@@ -35,7 +34,7 @@ async function getAllFlags() {
         .then(data => {
             const dataR = Array(data.data)[0];
             let flagList = new Map();
-            for(let i in dataR){
+            for (let i in dataR) {
                 flagList.set(dataR[i].domestic_league_code, {
                     'countryName': String(dataR[i].country_name),
                     'flagURL': String(dataR[i].flag_url)
@@ -72,36 +71,48 @@ async function getAllFlags() {
  *  - 'club_nation'
  *  - 'single_page/pl/player_valuations'
  *  - 'single_page/pl/last_appearances'
+ *  - 'single_page/cl/players'
+ *  - 'single_page/cl/past_players'
+ *  - 'single_page/cl/last_games'
  * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
  * @param params {object} is the structure containing the values to use in the accordion.
  * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
  * *(e.g. `{parameter_1: 'par1'}` to be referred to as params.parameter_1)* */
-async function createAccordion(visualize, fatherId, params){
+async function createAccordion(visualize, fatherId, params) {
     let wrapperDiv = document.createElement('div');
     wrapperDiv.classList.add('accordion-item', 'rounded-1', 'mb-1');
+
     let header = document.createElement('h2');
     header.classList.add('accordion-header');
     wrapperDiv.appendChild(header);
+
     let accordionButton = document.createElement('button');
     accordionButton.classList.add('accordion-button', 'custom-accordion', 'collapsed');
     accordionButton.type = "button";
     accordionButton.setAttribute('data-bs-toggle', 'collapse');
     accordionButton.setAttribute('aria-expanded', 'false');
     header.appendChild(accordionButton);
+
     let spanTitle = document.createElement('span');
+
     let collapseDiv = document.createElement('div');
     collapseDiv.classList.add('accordion-collapse', 'collapse');
     collapseDiv.setAttribute('data-bs-parent', '#' + String(fatherId));
     wrapperDiv.appendChild(collapseDiv);
+
     let accBody = document.createElement('div');
     accBody.classList.add('accordion-body');
     collapseDiv.appendChild(accBody);
+
     const accordionElement = document.getElementById(fatherId)
     accordionElement.appendChild(wrapperDiv);
+
     let flagImg = document.createElement('img');
     flagImg.classList.add('img', 'me-2', 'custom-rounded-0_5');
     flagImg.style.height = '1.2rem';
-    let strIdValue =  ''
+
+    let strIdValue = '';
+
     switch (visualize) {
         case 'competition_nation':
             strIdValue = String(params.competition_id)
@@ -121,26 +132,45 @@ async function createAccordion(visualize, fatherId, params){
             strIdValue = params.id;
             spanTitle.innerText = 'Player valuations';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPlayer.bind(accordionButton, 'chart', strIdValue));
+            accordionButton.addEventListener('click', openAccordionPlayerValuation.bind(null, strIdValue));
             break;
         case 'single_page/pl/last_appearances':
-
             strIdValue = params.id;
             spanTitle.innerText = 'Last Appearance';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPlayer.bind(accordionButton, 'list', strIdValue));
-
+            accordionButton.addEventListener('click', openAccordionPlayerAppearances.bind(null, strIdValue));
+            break;
+        case 'single_page/cl/players':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Active Squad';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionClubMember.bind(null, strIdValue));
+            break;
+        case 'single_page/cl/past_players':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Past Players';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionPastMember.bind(null, strIdValue));
+            break;
+        case 'single_page/cl/last_games':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Last Season Games';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionClubLastGames.bind(null, strIdValue));
             break;
         default:
             console.error('Warning! index.js:createAccordion() called with invalid field \'visualize\':', visualize)
             break;
     }
+
     accordionButton.setAttribute('aria-controls', strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
 }
 
-/** Triggered when an accordion button is clicked.
+/**
+ * Triggered when an accordion button is clicked.
+ *
  * @param window {Window} the window into which create the elements
  * @param id {string} the id of a useless */
 async function openAccordionGames(window, id) {
@@ -149,7 +179,7 @@ async function openAccordionGames(window, id) {
         let currentSeason;
         await getLastSeasonYear(id)
             .then(data => {
-                if(!data.data)
+                if (!data.data)
                     console.error('Error in \'getLastSeasonYear()\': data.data is empty!')
                 currentSeason = Number(data.data)
             })
@@ -165,7 +195,10 @@ async function openAccordionGames(window, id) {
                 window.document.getElementById('gamesAccordion').appendChild(unList)
                 let alternatorCounter = 0;
                 dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'game', dataResponse.length, unList, {counter: alternatorCounter++, data: el}, {type: 'games', id: String(el.gameId)});
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.gameId)});
                 });
                 window.document.getElementById(id).firstElementChild.appendChild(unList);
                 if (dataResponse.length > 20) {
@@ -211,6 +244,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
         console.error(type, '\n', size, '\n', unorderedList, '\n', item.counter, '\n', item.data);
         throw TypeError('Invalid argument(s) passed to \'createDynamicListItem\'!');
     }
+    let error = false;
     let listItem = window.document.createElement('li');
     let listItemLink = window.document.createElement('a');
 
@@ -227,10 +261,14 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     if (item.counter !== (size - 1))
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
     let desktopBtn = document.createElement('div');
+    let rightDiv = window.document.createElement('div')
+    rightDiv.classList.add('d-flex', 'align-items-center')
+    let dateDiv = window.document.createElement('div')
+    dateDiv.classList.add('mx-3', 'd-flex', 'justify-content-center')
     switch (type) {
         case 'game':
             listItem.id = item.data.gameId
-            listItemLink.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'py-1', 'mx-2');
+            listItemLink.classList.add('d-flex', 'align-items-center', 'py-1', 'mx-2');
             let gamesDiv = window.document.createElement('div')
             gamesDiv.classList.add('w-75', 'row', 'align-content-between')
             gamesDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
@@ -240,15 +278,12 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + item.data.goal2 +
                 '</span><span class="ms-2 fs-6 p-1">' + item.data.clubName2 + '</span>'
             listItemLink.appendChild(gamesDiv)
-            let rightDiv = window.document.createElement('div')
-            rightDiv.classList.add('d-flex', 'align-items-center')
-            let dateDiv = window.document.createElement('div')
-            dateDiv.classList.add('mx-3')
+
             dateDiv.innerText = new Date(item.data.gameDate).toLocaleDateString()
             rightDiv.appendChild(dateDiv)
             createStatsBtn(window, desktopBtn, rightDiv)
             listItemLink.appendChild(rightDiv)
-            if(size > 20 && item.counter > 20)
+            if (size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
         case 'club':
@@ -275,33 +310,116 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             nameSpan.innerText = item.data.text;
             listItemLink.appendChild(nameSpan);
             createStatsBtn(window, desktopBtn, listItemLink)
-            listItemLink.appendChild(desktopBtn);
-            if(size > 30 && item.counter > 30)
+            if (size > 30 && item.counter > 30)
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
-            listItem.id = item.data.game_id
-            listItemLink.classList.add('d-flex', 'align-items-center', 'py-2', 'mx-2');
-            let nameSpan2 = document.createElement('span');
-            nameSpan2.classList.add('ms-3', 'flex-grow-1');
-            // @todo set up of the appearance istance style
-            nameSpan2.innerText = new Date(item.data.game_date).toLocaleDateString() + ' ' + String(item.data.game_id);
-            listItemLink.appendChild(nameSpan2);
-            createStatsBtn(window, desktopBtn, listItemLink)
-            listItemLink.appendChild(desktopBtn);
-            if(size > 20 && item.counter > 20)
-                listItem.classList.add('d-none')
+            makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
+                .then(visGame => {
+                    listItem.id = item.data.game_id;
+                    listItem.classList.add('d-flex', 'py-2', 'mx-2', 'align-items-stretch', 'align-items-md-center')
+                    listItemLink.classList.add('d-none', 'd-md-flex', 'align-items-center', 'flex-grow-1', 'py-2', 'mx-2');
+                    let gameDiv = window.document.createElement('div');
+                    let lilGameDiv1 = window.document.createElement('div');
+                    let lilGameDiv2 = window.document.createElement('div');
+                    gameDiv.classList.add('row', 'align-content-between', 'd-none', 'd-md-block');
+                    lilGameDiv1.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
+                    lilGameDiv2.classList.add('w-100', 'd-md-none', 'my-2', 'not-hoverable', 'd-flex', 'flex-column', 'mb-3');
+                    let desktopAnchor = document.createElement('a');
+                    desktopAnchor.classList.add('m-0', 'p-0', 'd-flex', 'justify-content-center');
+                    desktopAnchor.setAttribute('role', 'button')
+                    desktopAnchor.setAttribute('data-bs-trigger', 'focus')
+                    desktopAnchor.setAttribute('data-bs-toggle', 'popover')
+                    desktopAnchor.setAttribute('container', 'body')
+                    desktopAnchor.setAttribute('data-bs-html', 'true')
+                    desktopAnchor.tabIndex = 1;
+
+                    if (item.data.player_club_id === visGame.data.clubId1)
+                        desktopAnchor.setAttribute('data-bs-title',
+                            '<span class="bi bi-person-fill"></span> <b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId1
+                            }) + '">' + visGame.data.clubName1 + '</b> vs <b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId2
+                            }) + '">' + visGame.data.clubName2 + '</a></b>');
+                    else
+                        desktopAnchor.setAttribute('data-bs-title',
+                            '<b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId1
+                            }) + '">' + visGame.data.clubName1 + '</a></b> vs <b><a href="' + getUrlForSinglePage({
+                                type: 'club',
+                                id: visGame.data.clubId2
+                            }) + '">' + visGame.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
+
+                    // @todo data retrieval
+                    let popOverContent = document.createElement('div')
+                    popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
+                    popOverContent.innerHTML =
+                        '<div>' +
+                        '<b>competition: </b><a href="' + getUrlForSinglePage({
+                            type: 'competition',
+                            id: item.data.competition_id
+                        }) + '">' + item.data.competition_id + '</a>' +
+                        '<br><b>goals:</b> ' + item.data.goals +
+                        '<br><b>assists: </b>' + item.data.assists +
+                        '<br><b>minutes played:</b> ' + item.data.minutes_played +
+                        '<br><span class="bi bi-square-fill text-warning fs-7"></span>: ' + item.data.yellow_cards +
+                        '<br><span class="bi bi-square-fill text-danger fs-7"></span>: ' + ((item.data.red_cards) ? 1 : 0) +
+                        '</div>'
+
+                    desktopAnchor.setAttribute('data-bs-content', popOverContent.innerHTML);
+                    let containerOfDateAndButton = document.createElement('div');
+                    containerOfDateAndButton.classList.add('m-0', 'p-0', 'd-flex', 'flex-column', 'justify-content-evenly', 'justify-content-md-between', 'align-items-center', 'w-100', 'flex-grow-1', 'position-relative', 'responsive-flex-row');
+                    dateDiv.innerText = new Date(item.data.game_date).toLocaleDateString();
+                    createStatsBtn(window, desktopAnchor, containerOfDateAndButton);
+                    containerOfDateAndButton.appendChild(dateDiv);
+                    listItem.appendChild(lilGameDiv1);
+                    listItem.appendChild(containerOfDateAndButton);
+                    listItem.appendChild(lilGameDiv2);
+
+                    new bootstrap.Popover(desktopAnchor);
+                    gameDiv.innerHTML = '<div class="col-12 my-1 py-1">' +
+                        '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal1 +
+                        '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName1 +
+                        '</span></div><div class="col-12 my-1 py-1">' +
+                        '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + visGame.data.goal2 +
+                        '</span><span class="ms-2 fs-6 p-1">' + visGame.data.clubName2 + '</span></div>';
+
+                    lilGameDiv1.innerHTML = '<a href="' + getUrlForSinglePage(params) + '"><div class="d-flex justify-content-center my-2"><img src="https://tmssl.akamaized.net/images/wappen/head/' + String(visGame.data.clubId1) + '.png" ' +
+                        'class="img" style="max-width: 3.5rem; max-height: 3.5rem" alt="' + String(visGame.data.clubName1) + ' logo"></div>' +
+                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable fs-7">' + visGame.data.goal1 + '</span></div></a>';
+
+                    lilGameDiv2.innerHTML = '<a href="' + getUrlForSinglePage(params) + '"><div class="d-flex justify-content-center my-2"><img src="https://tmssl.akamaized.net/images/wappen/head/' + String(visGame.data.clubId2) + '.png" ' +
+                        'class="img" style="max-width: 3.5rem; max-height: 3.5rem" alt="' + String(visGame.data.clubName2) + ' logo"></div>' +
+                        '<div class="d-flex justify-content-center my-2"><span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable fs-7">' + visGame.data.goal2 + '</span></div></a>';
+                    listItemLink.appendChild(gameDiv);
+
+                    if (size > 20 && item.counter > 20)
+                        listItem.classList.add('d-none')
+                })
+                .catch(err => {
+                    console.log('error', err)
+                    // @todo pay attention to the item.counter etc
+                    error = true
+                })
             break;
         default:
+            error = true
             throw new TypeError('Invalid argument(s) passed to \'createDynamicListItem\' type argument!')
     }
-    unorderedList.appendChild(listItem)
+    if (!error)
+        unorderedList.appendChild(listItem)
 }
 
-/** Function to define the url {@link string} of the single_page.
+/**
+ *  Function to define the url {@link string} of the single_page.
+ *
  * @param params {object} It is a `{type: <string>, key: <value>, ...}` object element,
  * that defines how the *single_page.html* page shall load.
- * @throws TypeError if the argument `params` is not defined. */
+ * @throws TypeError if the argument `params` is not defined.
+ * */
 function getUrlForSinglePage(params) {
     if (!params)
         throw new TypeError('\'single_page.html\' badly called.')
@@ -319,7 +437,7 @@ function getUrlForSinglePage(params) {
 function createStatsBtn(window, statsBtn, fatherElement) {
     if (!window || !statsBtn || !fatherElement)
         throw new TypeError('Invalid argument(s) passed to \'createStatsBtn()\' function.')
-    statsBtn.classList.add('d-none', 'd-sm-flex', 'justify-content-center', 'align-items-center',
+    statsBtn.classList.add('d-flex', 'justify-content-center', 'align-items-center',
         'bg-lightgreen', 'rounded-3', 'me-1', 'p-1', 'tuple-btn')
     statsBtn.style.width = '2.5rem'
     statsBtn.style.minWidth = '2.5rem'
@@ -339,24 +457,24 @@ function createStatsBtn(window, statsBtn, fatherElement) {
  * @param loadMoreFunction {() => any} A function *pointer* to set the listener of the _"load more"_.
  * @throws Typeerror if one or more arguments are _null_ or _undefined_. */
 function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
-    if(!parentList || !partialId || !loadMoreFunction) {
+    if (!parentList || !partialId || !loadMoreFunction) {
         console.error('', parentList, '\n', partialId, '\n', loadMoreFunction);
         throw TypeError('Invalid argument(s) passed to \'createLoadMoreElement()\'!');
     }
     let loadMoreContainer, innerLoadMore;
-    if(parentList.tagName !== 'DIV'){
+    if (parentList.tagName !== 'DIV') {
         loadMoreContainer = document.createElement('li');
-        loadMoreContainer.classList.add('nav-item', 'mx-auto', 'py-2');
+        loadMoreContainer.classList.add('nav-item', 'mx-auto', 'py-2', 'load-more-element');
         innerLoadMore = document.createElement('span');
         innerLoadMore.classList.add('text-center', 'px-5');
     } else {
         /* Assertion: inside these brackets, the parentList is a <div> having the 'row' class. */
         loadMoreContainer = document.createElement('div');
-        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4');
+        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4', 'loadMoreElement');
         innerLoadMore = document.createElement('a');
-        innerLoadMore.classList.add('py-1', 'px-5', 'more-players-link');
+        innerLoadMore.classList.add('py-1', 'px-5');
     }
-    loadMoreContainer.id =  String(partialId) + 'Loader';
+    loadMoreContainer.id = String(partialId) + 'Loader';
     innerLoadMore.innerText = 'Load more...';
     innerLoadMore.style.textDecoration = 'underline';
     innerLoadMore.addEventListener('click', loadMoreFunction);
@@ -385,10 +503,10 @@ function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
  * @param formId {string} The id of the form to check. */
 function extractFormData(formId) {
     let formElements = document.getElementById(formId).children;
-    let formData={};
+    let formData = {};
     for (let ix = 0; ix < formElements.length; ix++) {
         if (formElements[ix].name) {
-            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked :  formElements[ix].value;
+            formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked : formElements[ix].value;
         }
     }
     return formData;
@@ -408,12 +526,16 @@ function showChargingSpinner(window, toDisplay) {
 
 /** This function displays a **modal** to give a feedback of an unsuccessful search.
  * @param unfounded {boolean} If set to `true`, this method will return a message of _**unfounded content**_,
+ * @param type {String} Type of data searched,
  * otherwise it will display a message of _**too few letters**_ in the input string. */
-function showModalMessage(unfounded) {
-    if(unfounded) {
-        document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
+function showModalMessage(unfounded, type) {
+    if (unfounded) {
+        if (type === 'player')
+            document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
+        else if (type === 'club')
+            document.getElementById('unfoundedModalLabel').innerText = 'No Club Found';
         document.getElementById('modal-body').innerHTML =
-            'The search has found <b>0 players</b>. Please, check the syntax and retry.';
+            'The search has found <b>0 ' + type + 's</b>. Please, check the syntax and retry.';
     } else {
         document.getElementById('unfoundedModalLabel').innerText = 'Invalid Input';
         document.getElementById('modal-body').innerHTML =
@@ -446,7 +568,7 @@ function setReducedName(lastName, fullName) {
 function retrieveCompetitionName(name) {
     let nameArr = name.split('-');
     for (let i = 0; i < nameArr.length; i++)
-        if(nameArr[i].length <= 3 && nameArr[i] !== 'cup')
+        if (nameArr[i].length <= 3 && nameArr[i] !== 'cup')
             nameArr[i] = nameArr[i].toUpperCase()
         else
             nameArr[i] = nameArr[i].charAt(0).toUpperCase() + nameArr[i].slice(1)

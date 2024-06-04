@@ -276,12 +276,13 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                 break;
             case 'player-carousel-card':
                 internalDiv.classList.remove('mx-auto', 'rounded-4', 'text-center');
-                internalDiv.classList.add('bg-lightgreen', 'border-3', 'border-darkgreen', 'rounded-3',
+                internalDiv.classList.add('bg-lightgreen', 'd-flex', 'justify-content-center', 'border-3', 'border-darkgreen', 'rounded-3',
                     'player-carousel-card', 'h-100')
+                internalDiv.firstElementChild.classList.add('w-100')
                 internalDiv.firstElementChild.href =
                     getUrlForSinglePage({type: 'player', id: String(elementList[i].playerId)})
                 internalDiv.firstElementChild.title = String(elementList[i].playerName)
-                cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3')
+                cardImg.classList.add('img-fluid', 'p-1', 'pb-0', 'rounded-3', 'w-100')
                 cardImg.src = String(elementList[i].imageUrl)
                 cardImg.alt = ' '
                 let textContainer = document.createElement('div')

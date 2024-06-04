@@ -61,7 +61,6 @@ function startCompetitionClassesObserver() {
     let collapseBtn = document.getElementById('btn-collapser')
     // Create a new MutationObserver instance to see mutations
     const observer = new MutationObserver(async (mutationsList, observer) => {
-        console.log(mutationsList)
         for (let mutation of mutationsList) {
             if (mutation.type === 'attributes' && mutation.target.classList.contains('send-get')) {
                 const domestic_league_code = document.getElementById('nationalSection').name

@@ -6,11 +6,13 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~4.3.4",
-    "express": "^4.18.2",
-    "morgan": "~1.10.0",
-    "socket.io": "^4.7.4",
+    "popover": "^2.4.1",
+    "cookie-parser": "1.4.6",
+    "debug": "^4.3.4",
+    "axios": "^1.7.1",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.7.5",
     "swagger-ui-express": "^5.0.0",
     "node-fetch": "2.7.0"
   }
