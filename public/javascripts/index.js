@@ -207,7 +207,7 @@ async function openAccordionGames(window, id) {
             })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'get_games_by_league\' GET');
+                throw new TypeError('Error occurred during \'/get_games_by_league\' GET');
             })
         showChargingSpinner(window, false)
     }
@@ -314,7 +314,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 listItem.classList.add('d-none')
             break;
         case 'appearance':
-            makeAxiosGet(`/games/get_visualize_game_by_id/${item.data.game_id}`)
+            makeAxiosGet(`/get_visualize_game_by_id/${item.data.game_id}`)
                 .then(visGame => {
                     listItem.id = item.data.game_id;
                     listItem.classList.add('d-flex', 'py-2', 'mx-2', 'align-items-stretch', 'align-items-md-center')

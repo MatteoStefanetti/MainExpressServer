@@ -26,7 +26,7 @@ async function initSinglePage() {
     switch (typeParams) {
         case 'player':
             if (idParams) {
-                await makeAxiosGet(`/get_players_by_id/${idParams}`)
+                await makeAxiosGet(`/single_page/get_player_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
                         //TODO: build the rest of the page using the data retrieved
@@ -34,7 +34,7 @@ async function initSinglePage() {
                         singlePageImg.src = data.data.image_url;
                         singlePageTitle.innerText = data.data.player_name;
 
-                        await makeAxiosGet(`/clubs/get_club_name_by_id/${data.data.current_club_id}`)
+                        await makeAxiosGet(`/single_page/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
                                 let playerClub = document.createElement('a');
                                 let playerClubString = document.createElement('p');
@@ -126,7 +126,7 @@ async function initSinglePage() {
             break;
         case 'club':
             if (idParams) {
-                await makeAxiosGet(`/get_club_by_id/${idParams}`)
+                await makeAxiosGet(`/single_page/get_club_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
 
@@ -139,7 +139,7 @@ async function initSinglePage() {
                         nationalityAnchor.style.textDecoration = 'underline'
                         nationalityLabel.classList.add('p');
                         nationalityLabel.innerHTML = '<b>Nationality:</b> ';
-                        await makeAxiosGet('/get_nation_name_by_code/' + data.data.local_competition_code)
+                        await makeAxiosGet('/single_page/get_nation_name_by_code/' + data.data.local_competition_code)
                             .then(nation => {
                                 nation.data = nation.data[0]
                                 if (nation.data.flag_url)
@@ -222,7 +222,13 @@ async function initSinglePage() {
             }
             break;
         case 'game':
-            //TODO: single_page initialization for game
+            if (idParams) {
+                makeAxiosGet('/single_page/get_game_by_id/' + String(idParams))
+                    .then(async data => {
+                        console.log(data.data)
+                    })
+                    .catch(err => console.error(err))
+            }
             break;
         case 'competition':
             //TODO: single_page initialization for competition
@@ -389,7 +395,7 @@ async function openAccordionPlayerValuation(id) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
 
         showChargingSpinner(null, true);
-      
+
         let canvasContainer = document.createElement('div')
         if(window.innerWidth > 768 ) {
                 canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
@@ -401,7 +407,7 @@ async function openAccordionPlayerValuation(id) {
         let canvasElem = document.createElement('canvas')
         canvasElem.classList.add('w-100', 'h-100', 'border', 'rounded-2')
       
-        await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
+        await makeAxiosGet('/single_page/get_valuations_of_player/' + player_id)
             .then(data => {
 
                 let dataResponse = Array(data.data)[0];
@@ -410,7 +416,7 @@ async function openAccordionPlayerValuation(id) {
              })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
+                throw new TypeError('Error occurred during \'/get_valuations_of_player\' GET');
                 //TODO: check errors
             });
 
@@ -441,7 +447,7 @@ async function openAccordionClubLastGames(id) {
 
         let dataResponse;
 
-        makeAxiosGet('/clubs/get_last_games_by_club/' + club_id)
+        await makeAxiosGet('/single_page/get_last_games_by_club/' + club_id)
             .then(data => {
                 dataResponse = Array(data.data)[0];
 
@@ -465,7 +471,7 @@ async function openAccordionClubLastGames(id) {
             })
             .catch(err => {
                 console.error(err);
-                throw new TypeError('Error occurred during \'get_last_games_by_club\' GET');
+                throw new Error('Error occurred during \'/get_last_games_by_club\' GET');
                 //TODO: check errors
             });
 

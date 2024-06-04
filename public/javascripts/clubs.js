@@ -79,7 +79,7 @@ function getNationNameOf(localCompetitionCode) {
 async function openAccordionClubs(id) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true)
-        await makeAxiosGet(`/get_clubs_by_local_competition_code/${id}`)
+        await makeAxiosGet(`/clubs/get_clubs_by_local_competition_code/${id}`)
             .then(data => {
                 let dataResponse = Array(data.data)[0];
                 dataResponse.sort((st, nd) => {
