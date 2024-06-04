@@ -231,9 +231,15 @@ async function initSinglePage() {
             //TODO: error type not supported
             break;
     }
+    adjustHRHeight()
+    window.addEventListener('resize', adjustHRHeight)
+    showChargingSpinner(null, false)
+}
+
+/** This function is called inside the `single_page.html` to vertically adjust the `<hr>` element. */
+function adjustHRHeight() {
     let hrElem = (document.getElementById('info').children)[1]
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
-    showChargingSpinner(null, false)
 }
 
 async function openAccordionPastMember(id) {
@@ -370,8 +376,10 @@ async function openAccordionClubMember(id) {
  * @throws TypeError If id is null or undefined.
  * */
 async function openAccordionPlayerValuation(id) {
+    this.disabled = true;
     if (!id) {
         console.error(id);
+        this.disabled = false;
         throw TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
     }
 
@@ -381,40 +389,25 @@ async function openAccordionPlayerValuation(id) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
 
         showChargingSpinner(null, true);
-
-        let canvasContainer = document.createElement('div');
-        canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100');
-
-        let canvasElem = document.createElement('canvas');
-        canvasElem.classList.add('w-100', 'ratio', 'ratio-4x3', 'border', 'rounded-2');
-
+      
+        let canvasContainer = document.createElement('div')
+        if(window.innerWidth > 768 ) {
+                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
+        }
+        else {
+                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-4x3')
+        }
+      
+        let canvasElem = document.createElement('canvas')
+        canvasElem.classList.add('w-100', 'h-100', 'border', 'rounded-2')
+      
         await makeAxiosGet('/valuation/get_valuations_of_player/' + player_id)
             .then(data => {
 
                 let dataResponse = Array(data.data)[0];
-                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString());
-
-                const ctx = canvasElem.getContext('2d');
-
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: dataResponse.map(item => item.date),
-                        datasets: [{
-                            label: 'Market Value (€)',
-                            data: dataResponse.map(item => item.market_value_eur),
-                            borderColor: 'green', borderWidth: 4, fill: false, backgroundColor: 'green'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            x: {title: {display: true, text: 'Date'}},
-                            y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
-                        }
-                    }
-                });
-            })
+                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB',{day: 'numeric', year:'2-digit', month: 'numeric'})));
+                drawChart(dataResponse, canvasElem)
+             })
             .catch(err => {
                 console.error(err);
                 throw new TypeError('Error occurred during \'get_valuations_of_player\' GET');
@@ -526,7 +519,78 @@ async function openAccordionPlayerAppearances(id) {
                 throw new TypeError('Error occurred during \'get_last_appearance\' GET');
                 //TODO: check errors
             });
-
+      
         showChargingSpinner(null, false);
+    }
+    this.disabled = false
+}
+
+function drawChart(dataResponse, canvasElem) {
+    const ctx = canvasElem.getContext('2d');
+    if (window.innerWidth > 768) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dataResponse.map(item => item.date),
+                datasets: [{
+                    label: 'Market Value (€)',
+                    data: dataResponse.map(item => item.market_value_eur),
+                    borderColor: 'green', borderWidth: 2, fill: false, backgroundColor: 'green'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {title: {display: true, text: 'Date'}},
+                    y: {beginAtZero: true, title: {display: true, text: 'Value (€)'}}
+                }
+            }
+        });
+    } else {
+        dataResponse = dataResponse.slice(-15)
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dataResponse.map(item => item.date),
+                datasets: [{
+                    label: '',
+                    data: dataResponse.map(item => item.market_value_eur),
+                    borderColor: 'green', borderWidth: 1, fill: false, backgroundColor: 'green'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'x',
+                interaction: {mode: 'nearest', intersect: false},
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Market Value (€)'
+                    },
+                },
+                scales: {
+                    x: { display: true },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, ticks) {
+                                if(value > 500000)
+                                    return value/1000000+ " M"
+                                else if(value >= 1000)
+                                    return value / 1000 + " K"
+                                else
+                                    return value
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 }
