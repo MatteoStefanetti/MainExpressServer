@@ -181,10 +181,10 @@ async function initSinglePage() {
                             '<b>Net Transfer Record:</b> ' + data.data.net_transfer_record + ' (€)';
                         info1.appendChild(transferRecord);
 
-                        let AverAge = document.createElement('p');
-                        AverAge.classList.add('p');
-                        AverAge.innerHTML = '<b>Average Age:</b> ' + data.data.average_age;
-                        info1.appendChild(AverAge);
+                        let averAge = document.createElement('p');
+                        averAge.classList.add('p');
+                        averAge.innerHTML = '<b>Average Age:</b> ' + data.data.average_age;
+                        info1.appendChild(averAge);
 
                         let squadSize = document.createElement('p');
                         squadSize.classList.add('p');
@@ -223,11 +223,63 @@ async function initSinglePage() {
             break;
         case 'game':
             if (idParams) {
-                makeAxiosGet('/single_page/get_game_by_id/' + String(idParams))
+                await makeAxiosGet('/single_page/get_game_by_id/' + String(idParams))
                     .then(async data => {
-                        console.log(data.data)
+                        delete data.data.date
+                        makeAxiosGet(`/single_page/get_visualize_game_by_id/${idParams}`)
+                            .then(res => {
+                                let response = data.data
+                                let resKeys = Object.keys(res.data)
+                                for (let attr of resKeys) {
+                                    const transformedKey = castCamelCaseToSneakCase(attr)
+                                    if(!response[transformedKey])
+                                        response[transformedKey] = res.data[attr]
+                                }
+                                console.log(response) // DEB/DEV ONLY!
+                                // here we put the output elements
+                                singlePageTitle.innerHTML = '<span class="col-sm-5">' + response.club_name1 +
+                                    '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5">'
+                                    + response.club_name2 + '</span>';
+                                singlePageTitle.classList.replace('h1', 'h3')
+                                singlePageTitle.classList.add('fw-bold', 'text-center', 'w-100', 'd-flex', 'flex-column',
+                                    'flex-sm-row')
+                                titleDiv.classList.add('w-100', 'mt-4')
+
+                                let competitionAnchor = document.createElement('a');
+                                let competitionLabel = document.createElement('p');
+                                competitionAnchor.style.textDecoration = 'underline'
+                                competitionLabel.classList.add('p', 'text-center', 'my-3');
+                                competitionLabel.innerHTML = '<b>Competition:</b> ';
+                                competitionAnchor.innerText = response.competition_id;
+                                competitionAnchor.href = getUrlForSinglePage({type: 'competition', id: response.competition_id})
+                                competitionLabel.appendChild(competitionAnchor)
+                                titleDiv.appendChild(competitionLabel)
+
+                                singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
+                                    response.club_id1 + '.png';
+                                imgContainer.remove()
+                                info1.appendChild(imgContainer)
+                                let imgContainer2 = document.createElement('div')
+                                let singlePageImg2 = document.createElement('img')
+                                singlePageImg2.classList.add('img-fluid', 'd-block', 'player-img-size');
+                                singlePageImg2.alt = 'image not found';
+                                imgContainer2.classList.add('m-2', 'mx-md-5')
+                                singlePageImg2.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
+                                    response.club_id2 + '.png';
+                                imgContainer2.appendChild(singlePageImg2);
+                                info2.appendChild(imgContainer2)
+
+
+                            })
+                            .catch(err => {
+                                console.error(err)
+                                // @todo handle error
+                            })
                     })
-                    .catch(err => console.error(err))
+                    .catch(err => {
+                        console.error(err)
+                        // @todo handle error
+                    })
             }
             break;
         case 'competition':
@@ -405,22 +457,22 @@ async function openAccordionPlayerValuation(id) {
 
         let canvasContainer = document.createElement('div')
         if(window.innerWidth > 768 ) {
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
+            canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
         }
         else {
-                canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-4x3')
+            canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-4x3')
         }
-      
+
         let canvasElem = document.createElement('canvas')
         canvasElem.classList.add('w-100', 'h-100', 'border', 'rounded-2')
-      
+
         await makeAxiosGet('/single_page/get_valuations_of_player/' + player_id)
             .then(data => {
 
                 let dataResponse = Array(data.data)[0];
                 dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB',{day: 'numeric', year:'2-digit', month: 'numeric'}));
                 drawChart(dataResponse, canvasElem)
-             })
+            })
             .catch(err => {
                 console.error(err);
                 throw new Error('Error occurred during \'/get_valuations_of_player\' GET');
@@ -533,7 +585,7 @@ async function openAccordionPlayerAppearances(id) {
                 throw new Error('Error occurred during \'/get_last_appearance\' GET');
                 //TODO: check errors
             });
-      
+
         showChargingSpinner(null, false);
     }
     this.disabled = false
@@ -607,4 +659,10 @@ function drawChart(dataResponse, canvasElem) {
             }
         });
     }
+}
+
+/** function used when we want to cast camelCase format of attributes to sneak_case.
+ * @param str {string} the string to transform. */
+function castCamelCaseToSneakCase(str) {
+    return str.split(/(?=[A-Z])/).map(word => word.toLowerCase()).join('_');
 }
