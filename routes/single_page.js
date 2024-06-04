@@ -8,17 +8,15 @@ const {json} = require("express");
 /** GET route to retrieve data about a specific game
  * @param id {string} - the game_id of the game to retrieve.
  * */
-router.get('/single_page/get_game_by_id/:id', (req, res) => {
+router.get('/get_game_by_id/:id', async (req, res) => {
     if (req.params.id) {
         fetch('http://localhost:8081/games/get_game_by_id/' + String(req.params.id),
             {headers: {'Content-Type': 'application/json'}, method: 'get'})
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => {
-                res.status(404).json(JSON.stringify('Request content was not found.'));
-            });
+            .catch(err => res.status(404).json(JSON.stringify('Request content was not found.')));
     } else
-        res.status(500).json("Error! Called a GET without the required params. required: 'id'. get: '/get_game_by_id'")
+        res.status(500).json("Error! Called a GET without the required params. REQUIRED PARAMETER: 'id'. GET: '/get_game_by_id'")
 });
 
 /** GET route to retrieve data about a club.

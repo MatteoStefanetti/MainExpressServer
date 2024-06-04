@@ -53,7 +53,7 @@ router.get('/home/get_trend_players', async (req, res) => {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         });
         if (!firstResponse.ok)
-            res.status(500).json({error: 'Error fetching player_valuations from MongoDB'})
+            res.status(firstResponse.status).json({error: 'Error fetching player_valuations from MongoDB'})
         const valueList = await firstResponse.json();
         let playerValueMap = new Map();
         for (let elem of valueList)
@@ -63,7 +63,7 @@ router.get('/home/get_trend_players', async (req, res) => {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         });
         if (!secondResponse.ok)
-            res.status(500).json({error: 'Error fetching players from JPA'})
+            res.status(secondResponse.status).json({error: 'Error fetching players from JPA'})
         let playerList = await secondResponse.json();
         if (playerList.length !== valueList.length)
             res.status(500).json({error: 'Lists retrieved had different sizes.'})
