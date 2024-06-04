@@ -405,7 +405,7 @@ async function openAccordionPlayerValuation(id) {
             .then(data => {
 
                 let dataResponse = Array(data.data)[0];
-                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB',{day: 'numeric', year:'2-digit', month: 'numeric'})));
+                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB',{day: 'numeric', year:'2-digit', month: 'numeric'}));
                 drawChart(dataResponse, canvasElem)
              })
             .catch(err => {
