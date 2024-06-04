@@ -204,7 +204,7 @@
         }
       }
     },
-    "/single_page/get_game_by_id/{id}": {
+    "/single_page/single_page/get_game_by_id/{id}": {
       "get": {
         "description": "",
         "parameters": [

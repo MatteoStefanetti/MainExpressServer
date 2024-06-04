@@ -8,9 +8,9 @@ const {json} = require("express");
 /** GET route to retrieve data about a specific game
  * @param id {string} - the game_id of the game to retrieve.
  * */
-router.get('/get_game_by_id/:id', (req, res) => {
+router.get('/single_page/get_game_by_id/:id', (req, res) => {
     if (req.params.id) {
-        fetch('http://localhost:8081/single_page/get_game_by_id/' + String(req.params.id),
+        fetch('http://localhost:8081/games/get_game_by_id/' + String(req.params.id),
             {headers: {'Content-Type': 'application/json'}, method: 'get'})
             .then(res => res.json())
             .then(json => res.status(200).json(json))
