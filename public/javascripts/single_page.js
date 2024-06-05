@@ -134,31 +134,24 @@ async function initSinglePage() {
                             data.data.club_id + '.png';
                         singlePageTitle.innerText = data.data.club_name;
 
-                        let nationalityAnchor = document.createElement('a');
                         let nationalityLabel = document.createElement('p');
-                        nationalityAnchor.style.textDecoration = 'underline'
                         nationalityLabel.classList.add('p');
                         nationalityLabel.innerHTML = '<b>Nationality:</b> ';
                         await makeAxiosGet('/single_page/get_nation_name_by_code/' + data.data.local_competition_code)
                             .then(nation => {
                                 nation.data = nation.data[0]
-                                if (nation.data.flag_url)
-                                    data.data.flag_url = nation.data.flag_url
-                                data.data.country_name = nation.data.country_name
+                                nationalityLabel.innerHTML += nation.data.country_name;
+
+                                let nationFlag = document.createElement('img')
+                                nationFlag.classList.add('img-fluid', 'mx-1', 'rounded-1')
+                                nationFlag.style.width = '1.6rem'
+                                nationFlag.style.height = '1rem'
+                                nationFlag.src = nation.data.flag_url
+                                nationalityLabel.appendChild(nationFlag)
                             })
                             .catch(err => console.error(err))
-                        nationalityAnchor.innerText = data.data.country_name;
-                        nationalityAnchor.href = 'competitions.html'
+
                         titleDiv.appendChild(nationalityLabel);
-                        nationalityLabel.appendChild(nationalityAnchor);
-                        if (data.data.flag_url) {
-                            let nationFlag = document.createElement('img')
-                            nationFlag.classList.add('img-fluid', 'mx-1', 'rounded-1')
-                            nationFlag.style.width = '1.6rem'
-                            nationFlag.style.height = '1rem'
-                            nationFlag.src = data.data.flag_url
-                            nationalityLabel.appendChild(nationFlag)
-                        }
 
                         let last_season = document.createElement('p');
                         last_season.classList.add('p');
@@ -232,7 +225,7 @@ async function initSinglePage() {
                                 let resKeys = Object.keys(res.data)
                                 for (let attr of resKeys) {
                                     const transformedKey = castCamelCaseToSneakCase(attr)
-                                    if(!response[transformedKey])
+                                    if (!response[transformedKey])
                                         response[transformedKey] = res.data[attr]
                                 }
                                 console.log(response) // DEB/DEV ONLY!
@@ -251,7 +244,10 @@ async function initSinglePage() {
                                 competitionLabel.classList.add('p', 'text-center', 'my-3');
                                 competitionLabel.innerHTML = '<b>Competition:</b> ';
                                 competitionAnchor.innerText = response.competition_id;
-                                competitionAnchor.href = getUrlForSinglePage({type: 'competition', id: response.competition_id})
+                                competitionAnchor.href = getUrlForSinglePage({
+                                    type: 'competition',
+                                    id: response.competition_id
+                                })
                                 competitionLabel.appendChild(competitionAnchor)
                                 titleDiv.appendChild(competitionLabel)
 
@@ -283,6 +279,54 @@ async function initSinglePage() {
             }
             break;
         case 'competition':
+            if (idParams) {
+                let nationalityLabel = document.createElement('p');
+                nationalityLabel.classList.add('p');
+                nationalityLabel.innerHTML = '<b>Nationality:</b> ';
+                let lastSeason = document.createElement('p');
+                lastSeason.classList.add('p');
+                lastSeason.innerHTML = '<b>Last Season:</b> ';
+
+                await makeAxiosGet('/single_page/get_competition_by_id/' + String(idParams))
+                    .then(async data => {
+                        console.log(data.data);
+                        singlePageImg.src = 'https://tmssl.akamaized.net/images/logo/header/' + String(data.data.competition_id).toLowerCase() + '.png';
+                        singlePageTitle.innerHTML = retrieveCompetitionName(data.data.competition_name);
+
+                        let nationalityLabel = document.createElement('p');
+                        nationalityLabel.classList.add('p');
+                        nationalityLabel.innerHTML = '<b>Nationality:</b> ';
+
+                        await makeAxiosGet('/single_page/get_nation_name_by_code/' + String(data.data.domestic_league_code))
+                            .then(async nation => {
+                                nation.data = nation.data[0];
+                                let nationFlag = document.createElement('img');
+                                nationFlag.classList.add('img-fluid', 'mx-1', 'rounded-1');
+                                nationFlag.style.width = '1.6rem';
+                                nationFlag.style.height = '1rem';
+                                nationFlag.src = nation.data.flag_url;
+                                nationalityLabel.innerHTML += data.data.country_name;
+                                nationalityLabel.appendChild(nationFlag);
+                            })
+                            .catch(err => {
+                                nationalityLabel.innerHTML = nationalityLabel.innerHTML + 'International <span class="bi bi-globe-americas"></span>';
+                            })
+                        titleDiv.appendChild(nationalityLabel);
+
+                        await makeAxiosGet('/retrieve_last_season/' + String(data.data.competition_id))
+                            .then(lastSeasonYear => {
+                                lastSeason.innerHTML += lastSeasonYear.data;
+                            })
+                            .catch(err => {
+                                console.error(err);
+                            })
+                        titleDiv.appendChild(lastSeason);
+                        document.getElementById('info').classList.add('d-none');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            }
             //TODO: single_page initialization for competition
             break;
         default:
@@ -456,10 +500,9 @@ async function openAccordionPlayerValuation(id) {
         showChargingSpinner(null, true);
 
         let canvasContainer = document.createElement('div')
-        if(window.innerWidth > 768 ) {
+        if (window.innerWidth > 768) {
             canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-16x9')
-        }
-        else {
+        } else {
             canvasContainer.classList.add('d-flex', 'justify-content-center', 'w-100', 'ratio', 'ratio-4x3')
         }
 
@@ -470,7 +513,11 @@ async function openAccordionPlayerValuation(id) {
             .then(data => {
 
                 let dataResponse = Array(data.data)[0];
-                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB',{day: 'numeric', year:'2-digit', month: 'numeric'}));
+                dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    year: '2-digit',
+                    month: 'numeric'
+                }));
                 drawChart(dataResponse, canvasElem)
             })
             .catch(err => {
@@ -639,16 +686,16 @@ function drawChart(dataResponse, canvasElem) {
                     },
                 },
                 scales: {
-                    x: { display: true },
+                    x: {display: true},
                     y: {
                         display: true,
                         beginAtZero: true,
                         ticks: {
                             // Include a dollar sign in the ticks
                             callback: function (value, index, ticks) {
-                                if(value > 500000)
-                                    return value/1000000+ " M"
-                                else if(value >= 1000)
+                                if (value > 500000)
+                                    return value / 1000000 + " M"
+                                else if (value >= 1000)
                                     return value / 1000 + " K"
                                 else
                                     return value

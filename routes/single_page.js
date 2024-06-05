@@ -31,6 +31,32 @@ router.get('/get_game_by_id/:id', async (req, res) => {
         res.status(500).json("Error! Called a GET without the required params. REQUIRED PARAMETER: 'id'. GET: '/get_game_by_id'")
 });
 
+router.get('/get_competition_by_id/:id', async (req, res) => {
+    /*#swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve data about a competition.'
+    #swagger.parameters['id'] = {
+        in: 'path',
+        description: 'the \`competition_id\` of the competition to retrieve.',
+        type: 'string',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
+    }
+    #swagger.responses[500] = {
+        description: 'Error in \'/get_competition_by_id/\' GET: id passed was null!'
+    }
+    */
+    if (req.params.id) {
+        fetch('http://localhost:3002/competitions/get_competition_by_id/' + String(req.params.id))
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(JSON.stringify('Request content was not found.')));
+    } else {
+        res.status(500).json(JSON.stringify('Error in \'/get_competition_by_id\' GET: id passed was null'));
+    }
+})
+
 router.get('/get_club_by_id/:id', (req, res) => {
     /* #swagger.tags = ['Single Page']
     #swagger.description = 'GET route to retrieve data about a club.'
