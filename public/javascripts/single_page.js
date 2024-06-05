@@ -255,19 +255,38 @@ async function initSinglePage() {
                                 competitionLabel.appendChild(competitionAnchor)
                                 titleDiv.appendChild(competitionLabel)
 
+                                let datePar = document.createElement('p');
+                                datePar.classList.add('p', 'fs-6', 'text-center', 'my-3')
+                                datePar.innerText = new Date(response.game_date).toLocaleDateString()
+                                titleDiv.appendChild(datePar)
+
+                                // Setting the images and their containers
+                                imgContainer.remove()
+                                let imgContainer1 = document.createElement('a')
+                                imgContainer1.classList.add('d-block', 'm-2', 'mx-md-5')
+                                imgContainer1.href = getUrlForSinglePage({type: 'club', id: response.club_id1})
                                 singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                                     response.club_id1 + '.png';
-                                imgContainer.remove()
-                                info1.appendChild(imgContainer)
-                                let imgContainer2 = document.createElement('div')
+                                singlePageImg.classList.replace('player-img-size', 'club-img-size')
+                                imgContainer1.appendChild(singlePageImg)
+                                info1.appendChild(imgContainer1)
+
+                                let imgContainer2 = document.createElement('a')
+                                imgContainer2.classList.add('d-block', 'm-2', 'mx-md-5')
+                                imgContainer2.href = getUrlForSinglePage({type: 'club', id: response.club_id2})
                                 let singlePageImg2 = document.createElement('img')
-                                singlePageImg2.classList.add('img-fluid', 'd-block', 'player-img-size');
+                                singlePageImg2.classList.add('img-fluid', 'd-block', 'club-img-size')
                                 singlePageImg2.alt = 'image not found';
-                                imgContainer2.classList.add('m-2', 'mx-md-5')
                                 singlePageImg2.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                                     response.club_id2 + '.png';
                                 imgContainer2.appendChild(singlePageImg2);
+                                info1.appendChild(imgContainer)
                                 info2.appendChild(imgContainer2)
+
+                                // Setting data into info boxes
+                                let infoDiv = document.getElementById('info')
+                                infoDiv.classList.add('flex-column', 'flex-sm-row')
+
 
 
                             })
@@ -299,7 +318,6 @@ function adjustHRHeight() {
     let hrElem = (document.getElementById('info').children)[1]
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
 }
-
 
 /** openAccordion for the past members of a club.
  * @param id {string} the id of the club of which we are querying data.
