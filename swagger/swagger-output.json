@@ -204,15 +204,19 @@
         }
       }
     },
-    "/single_page/single_page/get_game_by_id/{id}": {
+    "/single_page/get_game_by_id/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve data about a specific game.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the 'game_id' of the game to retrieve."
           }
         ],
         "responses": {
@@ -220,23 +224,27 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Request content was not found."
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Error! Called a GET without the required params. REQUIRED PARAMETER: 'id'. GET: '/get_game_by_id'"
           }
         }
       }
     },
     "/single_page/get_club_by_id/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve data about a club.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the 'club_id' of the club to retrieve."
           }
         ],
         "responses": {
@@ -244,23 +252,27 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Request content was not found."
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Error in '/get_club_by_id/' GET: id passed was null!"
           }
         }
       }
     },
     "/single_page/get_player_by_id/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve data about a player.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the player_id of the player to retrieve."
           }
         ],
         "responses": {
@@ -275,13 +287,17 @@
     },
     "/single_page/get_valuations_of_player/{player_id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve valuation data about a player.",
         "parameters": [
           {
             "name": "player_id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the 'player_id' of *player_valuation* data to retrieve."
           }
         ],
         "responses": {
@@ -289,23 +305,27 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Request content was not found."
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Please insert a valid player_id to search"
           }
         }
       }
     },
     "/single_page/get_nation_name_by_code/{code}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve name of a country in base of a `league_code`.",
         "parameters": [
           {
             "name": "code",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "a 'domestic_league_code'."
           }
         ],
         "responses": {
@@ -313,20 +333,24 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Request content was not found."
           }
         }
       }
     },
     "/single_page/get_club_name_by_id/{club_id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve the name of a club in base of its id.",
         "parameters": [
           {
             "name": "club_id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the id of the club of which we want to know the name."
           }
         ],
         "responses": {
@@ -334,23 +358,27 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Error occurred: Not Found"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Please insert a valid club id to search"
           }
         }
       }
     },
     "/single_page/get_last_games_by_club/{clubId}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve an `array` with the last games of a club in base of its id.",
         "parameters": [
           {
             "name": "clubId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the 'club_id'."
           }
         ],
         "responses": {
@@ -358,23 +386,27 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Error occurred: Not Found"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Please insert a valid club id to search"
           }
         }
       }
     },
     "/single_page/get_last_appearances/{player_id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route called by player single_page.",
         "parameters": [
           {
             "name": "player_id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "The 'player_id' of the player whose appearances we are querying."
           }
         ],
         "responses": {
@@ -389,13 +421,17 @@
     },
     "/single_page/get_current_players/{clubId}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve the active squad of a club.",
         "parameters": [
           {
             "name": "clubId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "the id of the club."
           }
         ],
         "responses": {
@@ -403,23 +439,27 @@
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Error occurred: Not Found"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Please insert a valid club id to search"
           }
         }
       }
     },
     "/single_page/get_past_players/{clubId}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "It retrieves players are the players that stopped playing while in the club with `clubId`.",
         "parameters": [
           {
             "name": "clubId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "number",
+            "description": "The id of the club."
           }
         ],
         "responses": {
@@ -430,20 +470,24 @@
             "description": "Not Found"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Please insert a valid club id to search"
           }
         }
       }
     },
     "/single_page/get_visualize_game_by_id/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves game data in base of an \\'id\\'.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "The game_id of the game we want to analyse."
           }
         ],
         "responses": {
@@ -454,7 +498,7 @@
             "description": "Not Found"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "Invalid 'id' passed as input!"
           }
         }
       }

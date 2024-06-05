@@ -5,10 +5,22 @@ const {json} = require("express");
 
 // ---- Calling the following routes requires the prefix '/single_page'
 
-/** GET route to retrieve data about a specific game
- * @param id {string} - the game_id of the game to retrieve.
- * */
 router.get('/get_game_by_id/:id', async (req, res) => {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve data about a specific game.'
+    #swagger.parameters['id'] = {
+        in: 'path',
+        description: 'the \`game_id\` of the game to retrieve.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
+    }
+    #swagger.responses[500] = {
+        description: 'Error! Called a GET without the required params. REQUIRED PARAMETER: \'id\'. GET: \'/get_game_by_id\''
+    }
+    */
     if (req.params.id) {
         fetch('http://localhost:8081/games/get_game_by_id/' + String(req.params.id),
             {headers: {'Content-Type': 'application/json'}, method: 'get'})
@@ -19,9 +31,22 @@ router.get('/get_game_by_id/:id', async (req, res) => {
         res.status(500).json("Error! Called a GET without the required params. REQUIRED PARAMETER: 'id'. GET: '/get_game_by_id'")
 });
 
-/** GET route to retrieve data about a club.
- * @param id - the club_id of the club to retrieve. */
 router.get('/get_club_by_id/:id', (req, res) => {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve data about a club.'
+    #swagger.parameters['id'] = {
+        in: 'path',
+        description: 'the \`club_id\` of the club to retrieve.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
+    }
+    #swagger.responses[500] = {
+        description: 'Error in \'/get_club_by_id/\' GET: id passed was null!'
+    }
+    */
     if (req.params.id) {
         fetch('http://localhost:8081/clubs/get_club_by_id/' + String(req.params.id))
             .then(res => res.json())
@@ -31,9 +56,16 @@ router.get('/get_club_by_id/:id', (req, res) => {
         res.status(500).json(JSON.stringify('Error in \'/get_club_by_id/\' GET: id passed was null!'))
 })
 
-/** GET route to retrieve data about a player.
- * @param id - the player_id of the player to retrieve. */
 router.get('/get_player_by_id/:id', function (req, res) {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve data about a player.'
+    #swagger.parameters['id'] = {
+        in: 'path',
+        description: 'the player_id of the player to retrieve.',
+        type: 'number',
+        required: 'true'
+    }
+    */
     if (req.params.id) {
         fetch('http://localhost:8081/players/get_player_by_id/' + String(req.params.id), {
             headers: {'Content-Type': 'application/json'},
@@ -47,9 +79,22 @@ router.get('/get_player_by_id/:id', function (req, res) {
     }
 })
 
-/** GET route to retrieve valuation data about a player
- * @param player_id {string} - the player_id of player_valuation data to retrieve. */
 router.get('/get_valuations_of_player/:player_id', (req, res) => {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve valuation data about a player.'
+    #swagger.parameters['player_id'] = {
+        in: 'path',
+        description: 'the \`player_id\` of *player_valuation* data to retrieve.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
+    }
+    #swagger.responses[500] = {
+        description: 'Please insert a valid player_id to search'
+    }
+    */
     if (req.params.player_id) {
         fetch('http://localhost:3002/player_valuations/get_valuations_of_player/' + String(req.params.player_id),
             {headers: {'Content-Type': 'application/json'}, method: 'get'})
@@ -63,9 +108,19 @@ router.get('/get_valuations_of_player/:player_id', (req, res) => {
     }
 });
 
-/** GET route to retrieve name of a country in base of a `league_code`.
- * @param code {string} - a `domestic_league_code` */
 router.get('/get_nation_name_by_code/:code', (req, res) => {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve name of a country in base of a `league_code`.'
+    #swagger.parameters['code'] = {
+        in: 'path',
+        description: 'a \`domestic_league_code\`.',
+        type: 'string',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
+    }
+    */
     if (req.params.code) {
         fetch('http://localhost:3002/flags/get_nation_by_code/' + String(req.params.code),
             {headers: {'Content-Type': 'application/json'}, method: 'get'})
@@ -78,9 +133,22 @@ router.get('/get_nation_name_by_code/:code', (req, res) => {
         res.status(200).json(JSON.stringify({country_name: 'International'}))
 });
 
-/** GET route to retrieve the name of a club in base of its id.
- * @param club_id {string} - the id of the club of which we want to know the name. */
 router.get('/get_club_name_by_id/:club_id', function (req, res) {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve the name of a club in base of its id.'
+    #swagger.parameters['club_id'] = {
+        in: 'path',
+        description: 'the id of the club of which we want to know the name.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Error occurred: Not Found'
+    }
+    #swagger.responses[500] = {
+        description: 'Please insert a valid club id to search'
+    }
+    */
     if (req.params.club_id) {
         fetch('http://localhost:8081/clubs/get_club_name_by_id/' + String(req.params.club_id), {
             headers: {'Content-Type': 'application/json'},
@@ -94,9 +162,22 @@ router.get('/get_club_name_by_id/:club_id', function (req, res) {
     }
 });
 
-/** GET route to retrieve an {@link array} with the last games of a club in base of its id.
- * @param club_id {string} - a club id. */
 router.get('/get_last_games_by_club/:clubId', function (req, res) {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve an `array` with the last games of a club in base of its id.'
+    #swagger.parameters['clubId'] {
+        in: 'path',
+        description: 'the \`club_id\`.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Error occurred: Not Found'
+    }
+    #swagger.responses[500] = {
+        description: 'Please insert a valid club id to search'
+    }
+    */
     if (req.params.clubId) {
         fetch('http://localhost:8081/games/get_last_games_by_club/' + String(req.params.clubId), {
             headers: {'Content-Type': 'application/json'},
@@ -112,9 +193,16 @@ router.get('/get_last_games_by_club/:clubId', function (req, res) {
     }
 })
 
-/** GET route called by player single_page.
- * @param id {string} - The 'player_id' of the player whose appearances we are querying. */
 router.get('/get_last_appearances/:player_id', async (req, res) => {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route called by player single_page.'
+    #swagger.parameters['player_id'] {
+        in: 'path',
+        description: 'The \'player_id\' of the player whose appearances we are querying.',
+        type: 'number',
+        required: 'true'
+    }
+    */
     if (req.params.player_id) {
         fetch('http://localhost:3002/appearances/get_every_player_appearances/' + String(req.params.player_id), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
@@ -125,9 +213,22 @@ router.get('/get_last_appearances/:player_id', async (req, res) => {
     }
 });
 
-/** GET route to retrieve the active squad of a club.
- * @param clubId {string} - the id of the club. */
 router.get('/get_current_players/:clubId', function (req, res) {
+    /* #swagger.tags = ['Single Page']
+    #swagger.description = 'GET route to retrieve the active squad of a club.'
+    #swagger.parameters['clubId'] = {
+        in: 'path',
+        description: 'the id of the club.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Error occurred: Not Found'
+    }
+    #swagger.responses[500] = {
+        description: 'Please insert a valid club id to search'
+    }
+    */
     if (req.params.clubId) {
         fetch('http://localhost:8081/clubs/get_current_players/' + String(req.params.clubId), {
             headers: {'Content-Type': 'application/json'},
@@ -143,11 +244,19 @@ router.get('/get_current_players/:clubId', function (req, res) {
     }
 });
 
-/** Called by club single_page.
- * It retrieves players are the players that stopped playing while in the club with `clubId`.
- * It retrieves an {@link array} of objects containing players data.
- * @param clubId {string} - The id of the club. */
 router.get('/get_past_players/:clubId', function (req, res) {
+    /* #swagger.tags = ['Single Page']
+     #swagger.description = 'It retrieves players are the players that stopped playing while in the club with `clubId`.'
+     #swagger.parameters['clubId'] = {
+        in: 'path',
+        description: 'The id of the club.',
+        type: 'number',
+        required: 'true'
+    }
+    #swagger.responses[500] = {
+        description: 'Please insert a valid club id to search'
+    }
+    */
     if (req.params.clubId) {
         fetch('http://localhost:8081/clubs/get_past_players/' + String(req.params.clubId), {
             headers: {'Content-Type': 'application/json'},
@@ -163,9 +272,19 @@ router.get('/get_past_players/:clubId', function (req, res) {
     }
 });
 
-/** GET route that retrieves game data in base of an 'id'.
- * @param id {string} - The game_id of the game we want to analyse */
 router.get('/get_visualize_game_by_id/:id', function (req, res) {
+    /* #swagger.tags = ['Single Page']
+     #swagger.description = 'GET route that retrieves game data in base of an \'id\'.'
+     #swagger.parameters['id'] = {
+        in: 'path',
+        description: 'The game_id of the game we want to analyse.',
+        type: 'string',
+        required: 'true'
+    }
+    #swagger.responses[500] = {
+        description: 'Invalid \'id\' passed as input!'
+    }
+    */
     if (req.params.id) {
         fetch('http://localhost:8081/games/visualize_game_by_id/' + String(req.params.id), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
