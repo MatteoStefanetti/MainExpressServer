@@ -31,4 +31,4 @@ router.get('/get_games_by_league/:id/:season', function (req, res) {
         .catch(err => res.status(500).json(err))
 })
 
-module.exports = router;
+module.exports = router;module.exports = router;
