@@ -252,9 +252,8 @@ function writeOnChat(userId, text) {
                 msgNode.classList.add('me-2', 'border', 'self-message', 'text-end')
             else
                 msgNode.classList.add('ms-2', 'border', 'other-message', 'text-start')
-            let textDiv = document.createElement('div')
-            textDiv.innerText = text
-            msgNode.innerHTML = '<b>' + sender + '</b><br><p class="text-start">' + textDiv.innerText + '</p>'
+            msgNode.innerHTML = '<b>' + sender + '</b><br><p class="text-start"></p>'
+            msgNode.lastElementChild.innerText = text
         }
 
         let msgContainer = document.getElementById('messages');
