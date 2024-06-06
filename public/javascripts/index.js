@@ -199,7 +199,7 @@ async function openAccordionGames(window, id) {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'games', id: String(el.gameId)});
+                    }, {type: 'game', id: String(el.gameId)});
                 });
                 window.document.getElementById(id).firstElementChild.appendChild(unList);
                 if (dataResponse.length > 20) {

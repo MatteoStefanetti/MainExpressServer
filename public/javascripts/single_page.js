@@ -226,13 +226,13 @@ async function initSinglePage() {
                 await makeAxiosGet('/single_page/get_game_by_id/' + String(idParams))
                     .then(async data => {
                         delete data.data.date
-                        makeAxiosGet(`/single_page/get_visualize_game_by_id/${idParams}`)
-                            .then(res => {
+                        await makeAxiosGet(`/single_page/get_visualize_game_by_id/${idParams}`)
+                            .then(async res => {
                                 let response = data.data
                                 let resKeys = Object.keys(res.data)
                                 for (let attr of resKeys) {
                                     const transformedKey = castCamelCaseToSneakCase(attr)
-                                    if(!response[transformedKey])
+                                    if (!response[transformedKey])
                                         response[transformedKey] = res.data[attr]
                                 }
                                 console.log(response) // DEB/DEV ONLY!
@@ -251,7 +251,10 @@ async function initSinglePage() {
                                 competitionLabel.classList.add('p', 'text-center', 'my-3');
                                 competitionLabel.innerHTML = '<b>Competition:</b> ';
                                 competitionAnchor.innerText = response.competition_id;
-                                competitionAnchor.href = getUrlForSinglePage({type: 'competition', id: response.competition_id})
+                                competitionAnchor.href = getUrlForSinglePage({
+                                    type: 'competition',
+                                    id: response.competition_id
+                                })
                                 competitionLabel.appendChild(competitionAnchor)
                                 titleDiv.appendChild(competitionLabel)
 
@@ -260,10 +263,15 @@ async function initSinglePage() {
                                 datePar.innerText = new Date(response.game_date).toLocaleDateString()
                                 titleDiv.appendChild(datePar)
 
+                                let infoDiv = document.getElementById('info')
+                                infoDiv.classList.add('flex-column', 'flex-sm-row')
+                                // "generalInfo" div cloned HERE to import the div with the <hr> but not with images and other data.
+                                let generalInfo = infoDiv.cloneNode(true)
+
                                 // Setting the images and their containers
                                 imgContainer.remove()
                                 let imgContainer1 = document.createElement('a')
-                                imgContainer1.classList.add('d-block', 'm-2', 'mx-md-5')
+                                imgContainer1.classList.add('m-2', 'mx-auto')
                                 imgContainer1.href = getUrlForSinglePage({type: 'club', id: response.club_id1})
                                 singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                                     response.club_id1 + '.png';
@@ -272,7 +280,7 @@ async function initSinglePage() {
                                 info1.appendChild(imgContainer1)
 
                                 let imgContainer2 = document.createElement('a')
-                                imgContainer2.classList.add('d-block', 'm-2', 'mx-md-5')
+                                imgContainer2.classList.add('m-2', 'mx-auto')
                                 imgContainer2.href = getUrlForSinglePage({type: 'club', id: response.club_id2})
                                 let singlePageImg2 = document.createElement('img')
                                 singlePageImg2.classList.add('img-fluid', 'd-block', 'club-img-size')
@@ -280,13 +288,69 @@ async function initSinglePage() {
                                 singlePageImg2.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                                     response.club_id2 + '.png';
                                 imgContainer2.appendChild(singlePageImg2);
-                                info1.appendChild(imgContainer)
                                 info2.appendChild(imgContainer2)
+                                singlePageImg.classList.add('mx-auto')
+                                singlePageImg2.classList.add('mx-auto')
+                                info1.classList.add('col-12', 'col-sm-5', 'justify-content-center')
+                                info2.classList.add('col-12', 'col-sm-5', 'justify-content-center')
 
-                                // Setting data into info boxes
-                                let infoDiv = document.getElementById('info')
-                                infoDiv.classList.add('flex-column', 'flex-sm-row')
 
+                                // Setting up general info about the match
+                                generalInfo.id = 'generalInfo'
+                                generalInfo.children[0].id = 'genInfo1'
+                                generalInfo.children[2].id = 'genInfo2'
+                                infoDiv.insertAdjacentElement('afterend', generalInfo)
+                                generalInfo.insertAdjacentElement('beforebegin', document.createElement('hr'))
+                                let genInfo1 = document.getElementById('genInfo1')
+                                let genInfo2 = document.getElementById('genInfo2')
+
+                                let referee = document.createElement('p')
+                                referee.classList.add('p');
+                                referee.innerHTML = (response.referee) ? '<b>Referee:</b> ' + response.referee :
+                                    '<b>Referee:</b> N/A';
+                                genInfo1.appendChild(referee);
+
+                                let matchRound = document.createElement('p')
+                                matchRound.classList.add('p');
+                                matchRound.innerHTML = (response.round) ? '<b>Match Round:</b> ' + response.round :
+                                    '<b>Match Round:</b> N/A';
+                                genInfo1.appendChild(matchRound);
+
+                                let season = document.createElement('p')
+                                season.classList.add('p');
+                                season.innerHTML = (response.season) ? '<b>Season:</b> ' + response.season :
+                                    '<b>Season:</b> N/A';
+                                genInfo1.appendChild(season);
+
+                                let stadium = document.createElement('p')
+                                stadium.classList.add('p');
+                                stadium.innerHTML = (response.stadium) ? '<b>Stadium:</b> ' + response.stadium :
+                                    '<b>Stadium:</b> N/A';
+                                genInfo2.appendChild(stadium);
+
+                                let attendance = document.createElement('p')
+                                attendance.classList.add('p');
+                                attendance.innerHTML = (response.attendance !== -1) ? '<b>Attendance:</b> ' + response.attendance :
+                                    '<b>Attendance:</b> N/A';
+                                genInfo2.appendChild(attendance);
+
+                                // Starting Lineups
+                                await makeAxiosGet('/single_page/get_starting_lineups/' + String(response.game_id))
+                                    .then(startingLineup => {
+                                        let startingLuDiv = document.createElement('div')
+                                        startingLuDiv.id = 'startingLineUp'
+                                        startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p><br>' +
+                                            '<hr class="mt-0 mb-3 w-100 opacity-50">'
+                                        generalInfo.insertAdjacentElement('afterend', startingLuDiv)
+                                        // @todo Starting Lineup
+
+
+                                    })
+                                    .catch(err => {
+                                        if (err.status === 404)
+                                            console.log('Starting Lineups not found for game:', response.game_id);
+                                        else console.error(err)
+                                    })
 
 
                             })
@@ -308,14 +372,15 @@ async function initSinglePage() {
             //TODO: error type not supported
             break;
     }
-    adjustHRHeight()
-    window.addEventListener('resize', adjustHRHeight)
+    for (let elem of document.getElementsByClassName('info-separator')) {
+        adjustHRHeight(elem)
+        window.addEventListener('resize', adjustHRHeight.bind(window, elem))
+    }
     showChargingSpinner(null, false)
 }
 
 /** This function is called inside the `single_page.html` to vertically adjust the `<hr>` element. */
-function adjustHRHeight() {
-    let hrElem = (document.getElementById('info').children)[1]
+function adjustHRHeight(hrElem) {
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
 }
 
@@ -537,7 +602,7 @@ async function openAccordionClubLastGames(id) {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'games', id: String(el.game_id)});
+                    }, {type: 'game', id: String(el.game_id)});
                 })
 
                 if (dataResponse.length > 20) {
@@ -589,7 +654,7 @@ async function openAccordionPlayerAppearances(id) {
                     createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'games', id: String(el.game_id)});
+                    }, {type: 'game', id: String(el.game_id)});
                 });
 
                 if (dataResponse.length > 20) {
