@@ -502,6 +502,74 @@
           }
         }
       }
+    },
+    "/single_page/get_starting_lineups/{game_id}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves starting lineups data in base of an \\'id\\'.",
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The game_id of the game we want to analyse.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'id' passed as input!"
+          }
+        }
+      }
+    },
+    "/single_page/get_events_of/{game_id}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves game events data in base of an \\'id\\'.",
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The game_id of the game we want to analyse.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'id' passed as input!"
+          }
+        }
+      }
     }
   }
 }

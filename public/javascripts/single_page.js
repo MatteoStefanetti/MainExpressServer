@@ -298,11 +298,14 @@ async function initSinglePage() {
                                 // Setting up general info about the match
                                 generalInfo.id = 'generalInfo'
                                 generalInfo.children[0].id = 'genInfo1'
+                                generalInfo.children[1].classList.add('col-2')
                                 generalInfo.children[2].id = 'genInfo2'
                                 infoDiv.insertAdjacentElement('afterend', generalInfo)
                                 generalInfo.insertAdjacentElement('beforebegin', document.createElement('hr'))
                                 let genInfo1 = document.getElementById('genInfo1')
+                                genInfo1.classList.add('col-12', 'col-sm-5', 'ps-2')
                                 let genInfo2 = document.getElementById('genInfo2')
+                                genInfo2.classList.add('col-12', 'col-sm-5', 'ps-2')
 
                                 let referee = document.createElement('p')
                                 referee.classList.add('p');
@@ -334,17 +337,77 @@ async function initSinglePage() {
                                     '<b>Attendance:</b> N/A';
                                 genInfo2.appendChild(attendance);
 
+                                let goal1 = document.createElement('p')
+                                goal1.classList.add('h2', 'fw-bold', 'text-center')
+                                goal1.innerHTML = response.goal1;
+                                info1.appendChild(goal1);
+
+                                let goal2 = document.createElement('p')
+                                goal2.classList.add('h2', 'fw-bold', 'text-center')
+                                goal2.innerHTML = response.goal2;
+                                info2.appendChild(goal2);
+
+                                let substitutionsArray = [];
+                                let goalsArray = [];
+                                let cardsArray = [];
+                                // Querying game_events
+                                await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
+                                    .then(events => {
+                                        if (events.data.length) {
+                                            for(let elem of events.data)
+                                                switch (String(elem.event_type)) {
+                                                    case 'Substitutions':
+                                                        substitutionsArray.push(elem)
+                                                        break;
+                                                    case 'Goals':
+                                                        goalsArray.push(elem)
+                                                        break;
+                                                    case 'Cards':
+                                                        cardsArray.push(elem)
+                                                        break;
+                                                    default:
+                                                        console.log('default case for event:', elem)
+                                                }
+
+                                            console.log('arrays:', goalsArray, '\n2\n\n', cardsArray)
+                                            let countSub1 = 0, countSub2 = 0;
+                                            for (let i = 0; i < substitutionsArray.length; i++) {
+                                                if (substitutionsArray[i].club_id === response.club_id1) countSub1++
+                                                else if (substitutionsArray[i].club_id === response.club_id2) countSub2++
+                                            }
+                                            let substitutionPar1 = document.createElement('p')
+                                            substitutionPar1.classList.add('p', 'ms-1', 'ms-md-2');
+                                            substitutionPar1.innerHTML = '<b>Substitutions:</b> ' + countSub1;
+                                            info1.appendChild(substitutionPar1);
+                                            let substitutionPar2 = document.createElement('p')
+                                            substitutionPar2.classList.add('p', 'ms-1', 'ms-md-2');
+                                            substitutionPar2.innerHTML = '<b>Substitutions:</b> ' + countSub2;
+                                            info2.appendChild(substitutionPar2);
+
+
+
+                                        } else
+                                            console.log('game_events not found for game:', response.game_id)
+                                    })
+                                    .catch(err => {
+                                        if (err.status === 404)
+                                            console.log('game_events not found for game:', response.game_id)
+                                    })
+
                                 // Starting Lineups
                                 await makeAxiosGet('/single_page/get_starting_lineups/' + String(response.game_id))
                                     .then(startingLineup => {
-                                        let startingLuDiv = document.createElement('div')
-                                        startingLuDiv.id = 'startingLineUp'
-                                        startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p><br>' +
-                                            '<hr class="mt-0 mb-3 w-100 opacity-50">'
-                                        generalInfo.insertAdjacentElement('afterend', startingLuDiv)
-                                        // @todo Starting Lineup
+                                        if (startingLineup.data.length) {
+                                            console.log(startingLineup) // debug
+                                            let startingLuDiv = document.createElement('div')
+                                            startingLuDiv.id = 'startingLineUp'
+                                            startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p><br>' +
+                                                '<hr class="mt-0 mb-3 w-100 opacity-50">'
+                                            generalInfo.insertAdjacentElement('afterend', startingLuDiv)
+                                            // @todo Starting Lineup
 
-
+                                        } else
+                                            console.log('Starting Lineups not found for game:', response.game_id);
                                     })
                                     .catch(err => {
                                         if (err.status === 404)
@@ -352,7 +415,7 @@ async function initSinglePage() {
                                         else console.error(err)
                                     })
 
-
+                                // @todo add accordions
                             })
                             .catch(err => {
                                 console.error(err)
