@@ -235,10 +235,8 @@ async function initSinglePage() {
                                     if (!response[transformedKey])
                                         response[transformedKey] = res.data[attr]
                                 }
-                                console.log(response) // DEB/DEV ONLY!
                                 // ----- here we put the output elements -----
-
-                                // Adding names and icon for the hosting club
+                                // - Adding names and icon for the hosting club
                                 singlePageTitle.innerHTML = '<span class="col-sm-5">' + response.club_name1 +
                                     '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5">'
                                     + response.club_name2 + '</span>';
@@ -250,11 +248,9 @@ async function initSinglePage() {
                                     let hostingIcon = document.createElement('span')
                                     hostingIcon.classList.add('bi', 'bi-house-fill', 'text-darkgreen', 'ms-1')
                                     if (response.hosting1)
-                                        singlePageTitle.firstElementChild.insertAdjacentElement('beforeend',
-                                            hostingIcon)
+                                        singlePageTitle.firstElementChild.insertAdjacentElement('beforeend', hostingIcon)
                                     else
-                                        singlePageTitle.lastElementChild.insertAdjacentElement('beforeend',
-                                            hostingIcon)
+                                        singlePageTitle.lastElementChild.insertAdjacentElement('beforeend', hostingIcon)
                                 }
 
                                 let datePar = document.createElement('p');
@@ -271,6 +267,9 @@ async function initSinglePage() {
                                 infoDiv.previousElementSibling.remove()   // it removes the horizontal <hr>
                                 // "generalInfo" div cloned HERE to import the div with the <hr> but not with images and other data.
                                 let generalInfo = infoDiv.cloneNode(true)
+                                // we modify the elements after the clone, so we have different styles
+                                info1.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3', 'mb-2', 'mb-sm-0')
+                                info2.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3')
 
                                 // Setting the images and their containers
                                 imgContainer.remove()
@@ -295,42 +294,19 @@ async function initSinglePage() {
                                 info2.appendChild(imgContainer2)
                                 singlePageImg.classList.add('mx-auto')
                                 singlePageImg2.classList.add('mx-auto')
+                                console.log(info1,'\n', response.goal1)
+                                createParagraphForSP(info1, true, '', String(response.goal1), 'h2', 'fw-bold', 'text-center')
+                                createParagraphForSP(info1, response.manager1, 'Manager', response.manager1,
+                                    'p', 'ms-1', 'ms-md-2')
+                                createParagraphForSP(info1, response.formation1, 'Formation', response.formation1,
+                                    'p', 'ms-1', 'ms-md-2')
 
-                                let goal1 = document.createElement('p')
-                                goal1.classList.add('h2', 'fw-bold', 'text-center')
-                                goal1.innerHTML = response.goal1;
-                                info1.appendChild(goal1);
 
-                                let goal2 = document.createElement('p')
-                                goal2.classList.add('h2', 'fw-bold', 'text-center')
-                                goal2.innerHTML = response.goal2;
-                                info2.appendChild(goal2);
-
-                                let manager1 = document.createElement('p')
-                                manager1.classList.add('p', 'ms-1', 'ms-md-2');
-                                manager1.innerHTML = (response.manager1) ? '<b>Manager:</b> ' + response.manager1 :
-                                    '<b>Manager:</b> N/A';
-                                info1.appendChild(manager1);
-
-                                let manager2 = document.createElement('p')
-                                manager2.classList.add('p', 'ms-1', 'ms-md-2');
-                                manager2.innerHTML = (response.manager2) ? '<b>Manager:</b> ' + response.manager2 :
-                                    '<b>Manager:</b> N/A';
-                                info2.appendChild(manager2);
-
-                                let formation1 = document.createElement('p')
-                                formation1.classList.add('p', 'ms-1', 'ms-md-2');
-                                formation1.innerHTML = (response.formation1) ? '<b>Formation:</b> ' + response.formation1 :
-                                    '<b>Formation:</b> N/A';
-                                info1.appendChild(formation1);
-
-                                let formation2 = document.createElement('p')
-                                formation2.classList.add('p', 'ms-1', 'ms-md-2');
-                                formation2.innerHTML = (response.formation2) ? '<b>Formation:</b> ' + response.formation2 :
-                                    '<b>Formation:</b> N/A';
-                                info2.appendChild(formation2);
-                                info1.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3', 'mb-2', 'mb-sm-0')
-                                info2.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3')
+                                createParagraphForSP(info2, true, '', String(response.goal2), 'h2', 'fw-bold', 'text-center')
+                                createParagraphForSP(info2, response.manager2, 'Manager', response.manager2,
+                                    'p', 'ms-1', 'ms-md-2')
+                                createParagraphForSP(info2, response.formation2, 'Formation', response.formation2,
+                                    'p', 'ms-1', 'ms-md-2')
 
                                 // Setting up general info about the match
                                 generalInfo.id = 'generalInfo'
@@ -340,8 +316,8 @@ async function initSinglePage() {
                                 generalInfo.children[2].id = 'genInfo2'
                                 infoDiv.insertAdjacentElement('beforebegin', generalInfo)
                                 let genInfo1 = document.getElementById('genInfo1')
-                                genInfo1.classList.add('col-12', 'col-sm-6', 'ps-2')
                                 let genInfo2 = document.getElementById('genInfo2')
+                                genInfo1.classList.add('col-12', 'col-sm-6', 'ps-2')
                                 genInfo2.classList.add('col-12', 'col-sm-6', 'ps-2')
 
                                 let competitionAnchor = document.createElement('a');
@@ -358,35 +334,13 @@ async function initSinglePage() {
                                 competitionLabel.appendChild(competitionAnchor)
                                 genInfo1.appendChild(competitionLabel)
 
-                                let matchRound = document.createElement('p')
-                                matchRound.classList.add('p');
-                                matchRound.innerHTML = (response.round) ? '<b>Match Round:</b> ' + response.round :
-                                    '<b>Match Round:</b> N/A';
-                                genInfo1.appendChild(matchRound);
+                                createParagraphForSP(genInfo1, response.round, 'Match Round', response.round, 'p')
+                                createParagraphForSP(genInfo1, response.season, 'Season', response.season, 'p')
 
-                                let season = document.createElement('p')
-                                season.classList.add('p');
-                                season.innerHTML = (response.season) ? '<b>Season:</b> ' + response.season :
-                                    '<b>Season:</b> N/A';
-                                genInfo1.appendChild(season);
-
-                                let referee = document.createElement('p')
-                                referee.classList.add('p');
-                                referee.innerHTML = (response.referee) ? '<b>Referee:</b> ' + response.referee :
-                                    '<b>Referee:</b> N/A';
-                                genInfo2.appendChild(referee);
-
-                                let stadium = document.createElement('p')
-                                stadium.classList.add('p');
-                                stadium.innerHTML = (response.stadium) ? '<b>Stadium:</b> ' + response.stadium :
-                                    '<b>Stadium:</b> N/A';
-                                genInfo2.appendChild(stadium);
-
-                                let attendance = document.createElement('p')
-                                attendance.classList.add('p');
-                                attendance.innerHTML = (response.attendance !== -1) ? '<b>Attendance:</b> ' + response.attendance :
-                                    '<b>Attendance:</b> N/A';
-                                genInfo2.appendChild(attendance);
+                                createParagraphForSP(genInfo2, response.referee, 'Referee', response.referee, 'p')
+                                createParagraphForSP(genInfo2, response.stadium, 'Stadium', response.stadium, 'p')
+                                createParagraphForSP(genInfo2, (response.attendance !== -1), 'Attendance',
+                                    response.attendance, 'p')
 
                                 let substitutionsArray = [];
                                 let goalsArray = [];
@@ -415,26 +369,18 @@ async function initSinglePage() {
                                             let countParam1 = cardsArray.filter((element) =>
                                                 element.club_id === response.club_id1).length
                                             let countParam2 = cardsArray.length - countParam1;
-                                            let cardsPar1 = document.createElement('p')
-                                            cardsPar1.classList.add('p', 'ms-1', 'ms-md-2');
-                                            cardsPar1.innerHTML = '<b>Cards:</b> ' + countParam1;
-                                            info1.appendChild(cardsPar1);
-                                            let cardsPar2 = document.createElement('p')
-                                            cardsPar2.classList.add('p', 'ms-1', 'ms-md-2');
-                                            cardsPar2.innerHTML = '<b>Cards:</b> ' + countParam2;
-                                            info2.appendChild(cardsPar2);
+                                            createParagraphForSP(info1, true, 'Cards', String(countParam1),
+                                                'p', 'ms-1', 'ms-md-2')
+                                            createParagraphForSP(info2, true, 'Cards', String(countParam2),
+                                                'p', 'ms-1', 'ms-md-2')
 
                                             countParam1 = substitutionsArray.filter((element) =>
                                                 element.club_id === response.club_id1).length
                                             countParam2 = substitutionsArray.length - countParam1;
-                                            let substitutionPar1 = document.createElement('p')
-                                            substitutionPar1.classList.add('p', 'ms-1', 'ms-md-2');
-                                            substitutionPar1.innerHTML = '<b>Substitutions:</b> ' + countParam1;
-                                            info1.appendChild(substitutionPar1);
-                                            let substitutionPar2 = document.createElement('p')
-                                            substitutionPar2.classList.add('p', 'ms-1', 'ms-md-2');
-                                            substitutionPar2.innerHTML = '<b>Substitutions:</b> ' + countParam2;
-                                            info2.appendChild(substitutionPar2);
+                                            createParagraphForSP(info1, true, 'Substitutions',
+                                                String(countParam1), 'p', 'ms-1', 'ms-md-2')
+                                            createParagraphForSP(info2, true, 'Substitutions',
+                                                String(countParam2), 'p', 'ms-1', 'ms-md-2')
                                         } else
                                             console.log('game_events not found for game:', response.game_id)
                                     })
@@ -450,8 +396,8 @@ async function initSinglePage() {
                                             console.log(startingLineup.data) // debug
                                             let startingLuDiv = document.createElement('div')
                                             startingLuDiv.id = 'startingLineUp'
-                                            startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p><br>' +
-                                                '<hr class="mt-0 mb-3 w-100 opacity-50">'
+                                            startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p>' +
+                                                '<hr class="mt-1 mb-3 w-100 opacity-50">'
                                             infoDiv.insertAdjacentElement('afterend', startingLuDiv)
                                             // @todo Starting Lineup
 
@@ -465,6 +411,8 @@ async function initSinglePage() {
                                     })
 
                                 // @todo add accordions
+                                await createAccordion('single_page/ga/appearances', 'accordions',
+                                    {id: 'appearances_' + idParams});
                             })
                             .catch(err => {
                                 console.error(err)
@@ -733,6 +681,55 @@ async function openAccordionClubLastGames(id) {
     }
 }
 
+
+/**
+ * Function called to generate the appearances of the `single_page/game` accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button.
+ * @throws TypeError If id is null or undefined.
+ * @throws Error If GET route fails. */
+async function openAccordionGameAppearances(id) {
+    this.disabled = true
+    if (!id) {
+        console.error(id);
+        this.disabled = false
+        throw new TypeError('Invalid argument passed to \'openAccordionGameAppearances\'!');
+    }
+
+    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+        await makeAxiosGet('/single_page/get_appearances_of_game/' + id.slice(id.indexOf('_') + 1))
+            .then(data => {
+                let dataResponse = Array(data.data)[0];
+                console.log(data.data)
+                console.log(dataResponse)
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+                let alternatorCounter = 0;
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'player', id: String(el.player_id)});
+                });
+
+                if (dataResponse.length > 20)
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                this.disabled = false
+                throw new Error('Error occurred during \'/get_appearances_of_game\' GET');
+                //TODO: check errors
+            });
+
+        showChargingSpinner(null, false);
+    }
+    this.disabled = false
+}
+
 /**
  * Function called to generate the internal info block of the Appearances accordion.
  *
@@ -740,8 +737,10 @@ async function openAccordionClubLastGames(id) {
  * @throws TypeError If id is null or undefined.
  * @throws Error If GET route fails. */
 async function openAccordionPlayerAppearances(id) {
+    this.disabled = true
     if (!id) {
         console.error(id);
+        this.disabled = false
         throw new TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
     }
 
@@ -777,6 +776,7 @@ async function openAccordionPlayerAppearances(id) {
             })
             .catch(err => {
                 console.error(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_last_appearance\' GET');
                 //TODO: check errors
             });
@@ -860,4 +860,21 @@ function drawChart(dataResponse, canvasElem) {
  * @param str {string} the string to transform. */
 function castCamelCaseToSneakCase(str) {
     return str.split(/(?=[A-Z])/).map(word => word.toLowerCase()).join('_');
+}
+
+/** It creates and appends a paragraph {@link Element} to the given spot (fatherElem).
+ * @param fatherElem {HTMLElement} the {@link Document} element to which append the paragraph created.
+ * @param condition {boolean} the condition whether to insert the value or "N/A" instead.
+ * @param labelText {string} the string text of the label, an empty string can be passed to it.
+ * @param value {any} it can be anything. MAKE SURE any "0" value number is passed as a **string**.
+ * @param classList {...string[]} the **vararg (array)** of strings representing the class list to append to the element created.
+ * @throws TypeError if fatherElem, value or classList are null or undefined. */
+function createParagraphForSP(fatherElem, condition, labelText, value, ...classList) {
+    if (!fatherElem || !value || !classList)
+        throw new TypeError('Invalid argument(s) for \'createParagraphForSP\' function!')
+    let parElem = document.createElement('p')
+    parElem.classList.add(...classList);
+    const label = (!labelText) ? '' : '<b>' + labelText + ':</b> ';
+    parElem.innerHTML = (condition) ? label + value : label + 'N/A';
+    fatherElem.appendChild(parElem);
 }

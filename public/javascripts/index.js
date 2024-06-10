@@ -118,7 +118,7 @@ async function createAccordion(visualize, fatherId, params) {
             strIdValue = String(params.competition_id)
             spanTitle.innerText = params.competition_name;
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionGames.bind(null, window, params.competition_id));
+            accordionButton.addEventListener('click', openAccordionGames.bind(accordionButton, window, params.competition_id));
             break;
         case 'club_nation':
             strIdValue = String(params.local_competition_code)
@@ -126,37 +126,43 @@ async function createAccordion(visualize, fatherId, params) {
             spanTitle.innerText = getNationNameOf(params.local_competition_code);
             accordionButton.appendChild(flagImg);
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionClubs.bind(null, params.local_competition_code));
+            accordionButton.addEventListener('click', openAccordionClubs.bind(accordionButton, params.local_competition_code));
+            break;
+        case 'single_page/ga/appearances':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Appearances';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionGameAppearances.bind(accordionButton, strIdValue));
             break;
         case 'single_page/pl/player_valuations':
             strIdValue = params.id;
             spanTitle.innerText = 'Player valuations';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPlayerValuation.bind(null, strIdValue));
+            accordionButton.addEventListener('click', openAccordionPlayerValuation.bind(accordionButton, strIdValue));
             break;
         case 'single_page/pl/last_appearances':
             strIdValue = params.id;
-            spanTitle.innerText = 'Last Appearance';
+            spanTitle.innerText = 'Last Appearances';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPlayerAppearances.bind(null, strIdValue));
+            accordionButton.addEventListener('click', openAccordionPlayerAppearances.bind(accordionButton, strIdValue));
             break;
         case 'single_page/cl/players':
             strIdValue = params.id;
             spanTitle.innerText = 'Active Squad';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionClubMember.bind(null, strIdValue));
+            accordionButton.addEventListener('click', openAccordionClubMember.bind(accordionButton, strIdValue));
             break;
         case 'single_page/cl/past_players':
             strIdValue = params.id;
             spanTitle.innerText = 'Past Players';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionPastMember.bind(null, strIdValue));
+            accordionButton.addEventListener('click', openAccordionPastMember.bind(accordionButton, strIdValue));
             break;
         case 'single_page/cl/last_games':
             strIdValue = params.id;
             spanTitle.innerText = 'Last Season Games';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionClubLastGames.bind(null, strIdValue));
+            accordionButton.addEventListener('click', openAccordionClubLastGames.bind(accordionButton, strIdValue));
             break;
         default:
             console.error('Warning! index.js:createAccordion() called with invalid field \'visualize\':', visualize)
