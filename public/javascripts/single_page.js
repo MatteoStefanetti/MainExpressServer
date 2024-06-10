@@ -237,13 +237,14 @@ async function initSinglePage() {
                                 }
                                 console.log(response) // DEB/DEV ONLY!
                                 // ----- here we put the output elements -----
+
                                 // Adding names and icon for the hosting club
                                 singlePageTitle.innerHTML = '<span class="col-sm-5">' + response.club_name1 +
                                     '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5">'
                                     + response.club_name2 + '</span>';
                                 singlePageTitle.classList.replace('h1', 'h3')
                                 singlePageTitle.classList.add('fw-bold', 'text-center', 'w-100', 'd-flex', 'flex-column',
-                                    'flex-sm-row')
+                                    'flex-sm-row', 'mb-3')
                                 titleDiv.classList.add('w-100', 'mt-4')
                                 if (response.hosting1 || response.hosting2) {
                                     let hostingIcon = document.createElement('span')
@@ -255,26 +256,19 @@ async function initSinglePage() {
                                         singlePageTitle.lastElementChild.insertAdjacentElement('beforeend',
                                             hostingIcon)
                                 }
-                                let competitionAnchor = document.createElement('a');
-                                let competitionLabel = document.createElement('p');
-                                competitionAnchor.style.textDecoration = 'underline'
-                                competitionLabel.classList.add('p', 'text-center', 'my-3');
-                                competitionLabel.innerHTML = '<b>Competition:</b> ';
-                                competitionAnchor.innerText = response.competition_id;
-                                competitionAnchor.href = getUrlForSinglePage({
-                                    type: 'competition',
-                                    id: response.competition_id
-                                })
-                                competitionLabel.appendChild(competitionAnchor)
-                                titleDiv.appendChild(competitionLabel)
 
                                 let datePar = document.createElement('p');
-                                datePar.classList.add('p', 'fs-6', 'text-center', 'my-3')
+                                datePar.classList.add('p', 'fs-6', 'text-center', 'my-1')
                                 datePar.innerText = new Date(response.game_date).toLocaleDateString()
-                                titleDiv.appendChild(datePar)
+                                singlePageTitle.insertAdjacentElement('beforebegin', datePar)
 
                                 let infoDiv = document.getElementById('info')
                                 infoDiv.classList.add('flex-column', 'flex-sm-row')
+                                infoDiv.children[1].classList.remove('d-sm-flex')
+                                info1.classList.add('col-12', 'col-sm-6', 'justify-content-center', 'align-self-stretch', 'me-1')
+                                info2.classList.add('col-12', 'col-sm-6', 'justify-content-center', 'align-self-stretch')
+                                infoDiv.style.boxSizing = 'border-box !important'
+                                infoDiv.previousElementSibling.remove()   // it removes the horizontal <hr>
                                 // "generalInfo" div cloned HERE to import the div with the <hr> but not with images and other data.
                                 let generalInfo = infoDiv.cloneNode(true)
 
@@ -301,8 +295,6 @@ async function initSinglePage() {
                                 info2.appendChild(imgContainer2)
                                 singlePageImg.classList.add('mx-auto')
                                 singlePageImg2.classList.add('mx-auto')
-                                info1.classList.add('col-12', 'col-sm-5', 'justify-content-center')
-                                info2.classList.add('col-12', 'col-sm-5', 'justify-content-center')
 
                                 let goal1 = document.createElement('p')
                                 goal1.classList.add('h2', 'fw-bold', 'text-center')
@@ -337,24 +329,34 @@ async function initSinglePage() {
                                 formation2.innerHTML = (response.formation2) ? '<b>Formation:</b> ' + response.formation2 :
                                     '<b>Formation:</b> N/A';
                                 info2.appendChild(formation2);
+                                info1.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3', 'mb-2', 'mb-sm-0')
+                                info2.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3')
 
                                 // Setting up general info about the match
                                 generalInfo.id = 'generalInfo'
+                                generalInfo.classList.add('bg-darkgreen', 'rounded-4', 'text-light',
+                                    'p-1', 'py-md-2', 'px-md-3')
                                 generalInfo.children[0].id = 'genInfo1'
-                                generalInfo.children[1].classList.add('col-2', 'invisible')
                                 generalInfo.children[2].id = 'genInfo2'
-                                infoDiv.insertAdjacentElement('afterend', generalInfo)
-                                generalInfo.insertAdjacentElement('beforebegin', document.createElement('hr'))
+                                infoDiv.insertAdjacentElement('beforebegin', generalInfo)
                                 let genInfo1 = document.getElementById('genInfo1')
-                                genInfo1.classList.add('col-12', 'col-sm-5', 'ps-2')
+                                genInfo1.classList.add('col-12', 'col-sm-6', 'ps-2')
                                 let genInfo2 = document.getElementById('genInfo2')
-                                genInfo2.classList.add('col-12', 'col-sm-5', 'ps-2')
+                                genInfo2.classList.add('col-12', 'col-sm-6', 'ps-2')
 
-                                let referee = document.createElement('p')
-                                referee.classList.add('p');
-                                referee.innerHTML = (response.referee) ? '<b>Referee:</b> ' + response.referee :
-                                    '<b>Referee:</b> N/A';
-                                genInfo1.appendChild(referee);
+                                let competitionAnchor = document.createElement('a');
+                                let competitionLabel = document.createElement('p');
+                                competitionAnchor.classList.add('pe-5')
+                                competitionAnchor.style.textDecoration = 'underline'
+                                competitionLabel.classList.add('p');
+                                competitionLabel.innerHTML = '<b>Competition:</b> ';
+                                competitionAnchor.innerText = response.competition_id;
+                                competitionAnchor.href = getUrlForSinglePage({
+                                    type: 'competition',
+                                    id: response.competition_id
+                                })
+                                competitionLabel.appendChild(competitionAnchor)
+                                genInfo1.appendChild(competitionLabel)
 
                                 let matchRound = document.createElement('p')
                                 matchRound.classList.add('p');
@@ -367,6 +369,12 @@ async function initSinglePage() {
                                 season.innerHTML = (response.season) ? '<b>Season:</b> ' + response.season :
                                     '<b>Season:</b> N/A';
                                 genInfo1.appendChild(season);
+
+                                let referee = document.createElement('p')
+                                referee.classList.add('p');
+                                referee.innerHTML = (response.referee) ? '<b>Referee:</b> ' + response.referee :
+                                    '<b>Referee:</b> N/A';
+                                genInfo2.appendChild(referee);
 
                                 let stadium = document.createElement('p')
                                 stadium.classList.add('p');
@@ -444,7 +452,7 @@ async function initSinglePage() {
                                             startingLuDiv.id = 'startingLineUp'
                                             startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p><br>' +
                                                 '<hr class="mt-0 mb-3 w-100 opacity-50">'
-                                            generalInfo.insertAdjacentElement('afterend', startingLuDiv)
+                                            infoDiv.insertAdjacentElement('afterend', startingLuDiv)
                                             // @todo Starting Lineup
 
                                         } else
