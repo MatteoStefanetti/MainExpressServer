@@ -236,7 +236,8 @@ async function initSinglePage() {
                                         response[transformedKey] = res.data[attr]
                                 }
                                 console.log(response) // DEB/DEV ONLY!
-                                // here we put the output elements
+                                // ----- here we put the output elements -----
+                                // Adding names and icon for the hosting club
                                 singlePageTitle.innerHTML = '<span class="col-sm-5">' + response.club_name1 +
                                     '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5">'
                                     + response.club_name2 + '</span>';
@@ -244,7 +245,16 @@ async function initSinglePage() {
                                 singlePageTitle.classList.add('fw-bold', 'text-center', 'w-100', 'd-flex', 'flex-column',
                                     'flex-sm-row')
                                 titleDiv.classList.add('w-100', 'mt-4')
-
+                                if (response.hosting1 || response.hosting2) {
+                                    let hostingIcon = document.createElement('span')
+                                    hostingIcon.classList.add('bi', 'bi-house-fill', 'text-darkgreen', 'ms-1')
+                                    if (response.hosting1)
+                                        singlePageTitle.firstElementChild.insertAdjacentElement('beforeend',
+                                            hostingIcon)
+                                    else
+                                        singlePageTitle.lastElementChild.insertAdjacentElement('beforeend',
+                                            hostingIcon)
+                                }
                                 let competitionAnchor = document.createElement('a');
                                 let competitionLabel = document.createElement('p');
                                 competitionAnchor.style.textDecoration = 'underline'
@@ -294,11 +304,44 @@ async function initSinglePage() {
                                 info1.classList.add('col-12', 'col-sm-5', 'justify-content-center')
                                 info2.classList.add('col-12', 'col-sm-5', 'justify-content-center')
 
+                                let goal1 = document.createElement('p')
+                                goal1.classList.add('h2', 'fw-bold', 'text-center')
+                                goal1.innerHTML = response.goal1;
+                                info1.appendChild(goal1);
+
+                                let goal2 = document.createElement('p')
+                                goal2.classList.add('h2', 'fw-bold', 'text-center')
+                                goal2.innerHTML = response.goal2;
+                                info2.appendChild(goal2);
+
+                                let manager1 = document.createElement('p')
+                                manager1.classList.add('p', 'ms-1', 'ms-md-2');
+                                manager1.innerHTML = (response.manager1) ? '<b>Manager:</b> ' + response.manager1 :
+                                    '<b>Manager:</b> N/A';
+                                info1.appendChild(manager1);
+
+                                let manager2 = document.createElement('p')
+                                manager2.classList.add('p', 'ms-1', 'ms-md-2');
+                                manager2.innerHTML = (response.manager2) ? '<b>Manager:</b> ' + response.manager2 :
+                                    '<b>Manager:</b> N/A';
+                                info2.appendChild(manager2);
+
+                                let formation1 = document.createElement('p')
+                                formation1.classList.add('p', 'ms-1', 'ms-md-2');
+                                formation1.innerHTML = (response.formation1) ? '<b>Formation:</b> ' + response.formation1 :
+                                    '<b>Formation:</b> N/A';
+                                info1.appendChild(formation1);
+
+                                let formation2 = document.createElement('p')
+                                formation2.classList.add('p', 'ms-1', 'ms-md-2');
+                                formation2.innerHTML = (response.formation2) ? '<b>Formation:</b> ' + response.formation2 :
+                                    '<b>Formation:</b> N/A';
+                                info2.appendChild(formation2);
 
                                 // Setting up general info about the match
                                 generalInfo.id = 'generalInfo'
                                 generalInfo.children[0].id = 'genInfo1'
-                                generalInfo.children[1].classList.add('col-2')
+                                generalInfo.children[1].classList.add('col-2', 'invisible')
                                 generalInfo.children[2].id = 'genInfo2'
                                 infoDiv.insertAdjacentElement('afterend', generalInfo)
                                 generalInfo.insertAdjacentElement('beforebegin', document.createElement('hr'))
@@ -337,16 +380,6 @@ async function initSinglePage() {
                                     '<b>Attendance:</b> N/A';
                                 genInfo2.appendChild(attendance);
 
-                                let goal1 = document.createElement('p')
-                                goal1.classList.add('h2', 'fw-bold', 'text-center')
-                                goal1.innerHTML = response.goal1;
-                                info1.appendChild(goal1);
-
-                                let goal2 = document.createElement('p')
-                                goal2.classList.add('h2', 'fw-bold', 'text-center')
-                                goal2.innerHTML = response.goal2;
-                                info2.appendChild(goal2);
-
                                 let substitutionsArray = [];
                                 let goalsArray = [];
                                 let cardsArray = [];
@@ -368,24 +401,32 @@ async function initSinglePage() {
                                                     default:
                                                         console.log('default case for event:', elem)
                                                 }
+                                            console.log('goals:', goalsArray, '\ncards:', cardsArray)
 
-                                            console.log('arrays:', goalsArray, '\n2\n\n', cardsArray)
-                                            let countSub1 = 0, countSub2 = 0;
-                                            for (let i = 0; i < substitutionsArray.length; i++) {
-                                                if (substitutionsArray[i].club_id === response.club_id1) countSub1++
-                                                else if (substitutionsArray[i].club_id === response.club_id2) countSub2++
-                                            }
+                                            // Counting cards & substitutions of the clubs
+                                            let countParam1 = cardsArray.filter((element) =>
+                                                element.club_id === response.club_id1).length
+                                            let countParam2 = cardsArray.length - countParam1;
+                                            let cardsPar1 = document.createElement('p')
+                                            cardsPar1.classList.add('p', 'ms-1', 'ms-md-2');
+                                            cardsPar1.innerHTML = '<b>Cards:</b> ' + countParam1;
+                                            info1.appendChild(cardsPar1);
+                                            let cardsPar2 = document.createElement('p')
+                                            cardsPar2.classList.add('p', 'ms-1', 'ms-md-2');
+                                            cardsPar2.innerHTML = '<b>Cards:</b> ' + countParam2;
+                                            info2.appendChild(cardsPar2);
+
+                                            countParam1 = substitutionsArray.filter((element) =>
+                                                element.club_id === response.club_id1).length
+                                            countParam2 = substitutionsArray.length - countParam1;
                                             let substitutionPar1 = document.createElement('p')
                                             substitutionPar1.classList.add('p', 'ms-1', 'ms-md-2');
-                                            substitutionPar1.innerHTML = '<b>Substitutions:</b> ' + countSub1;
+                                            substitutionPar1.innerHTML = '<b>Substitutions:</b> ' + countParam1;
                                             info1.appendChild(substitutionPar1);
                                             let substitutionPar2 = document.createElement('p')
                                             substitutionPar2.classList.add('p', 'ms-1', 'ms-md-2');
-                                            substitutionPar2.innerHTML = '<b>Substitutions:</b> ' + countSub2;
+                                            substitutionPar2.innerHTML = '<b>Substitutions:</b> ' + countParam2;
                                             info2.appendChild(substitutionPar2);
-
-
-
                                         } else
                                             console.log('game_events not found for game:', response.game_id)
                                     })
@@ -398,7 +439,7 @@ async function initSinglePage() {
                                 await makeAxiosGet('/single_page/get_starting_lineups/' + String(response.game_id))
                                     .then(startingLineup => {
                                         if (startingLineup.data.length) {
-                                            console.log(startingLineup) // debug
+                                            console.log(startingLineup.data) // debug
                                             let startingLuDiv = document.createElement('div')
                                             startingLuDiv.id = 'startingLineUp'
                                             startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p><br>' +
