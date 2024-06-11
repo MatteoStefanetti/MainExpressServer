@@ -237,8 +237,8 @@ async function initSinglePage() {
                                 }
                                 // ----- here we put the output elements -----
                                 // - Adding names and icon for the hosting club
-                                singlePageTitle.innerHTML = '<span class="col-sm-5">' + response.club_name1 +
-                                    '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5">'
+                                singlePageTitle.innerHTML = '<span class="col-sm-5 club-name-span">' + response.club_name1 +
+                                    '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5 club-name-span">'
                                     + response.club_name2 + '</span>';
                                 singlePageTitle.classList.replace('h1', 'h3')
                                 singlePageTitle.classList.add('fw-bold', 'text-center', 'w-100', 'd-flex', 'flex-column',
@@ -246,12 +246,14 @@ async function initSinglePage() {
                                 titleDiv.classList.add('w-100', 'mt-4')
                                 if (response.hosting1 || response.hosting2) {
                                     let hostingIcon = document.createElement('span')
-                                    hostingIcon.classList.add('bi', 'bi-house-fill', 'text-darkgreen', 'ms-1')
+                                    hostingIcon.classList.add('bi', 'bi-house-fill', 'text-darkgreen', 'mx-1')
                                     if (response.hosting1)
-                                        singlePageTitle.firstElementChild.insertAdjacentElement('beforeend', hostingIcon)
+                                        singlePageTitle.firstElementChild.insertAdjacentElement('afterbegin', hostingIcon)
                                     else
-                                        singlePageTitle.lastElementChild.insertAdjacentElement('beforeend', hostingIcon)
+                                        singlePageTitle.lastElementChild.insertAdjacentElement('afterbegin', hostingIcon)
                                 }
+                                for (let title of document.getElementsByClassName('club-name-span'))
+                                    title.style.textWrap = 'balance';
 
                                 let datePar = document.createElement('p');
                                 datePar.classList.add('p', 'fs-6', 'text-center', 'my-1')
@@ -278,7 +280,7 @@ async function initSinglePage() {
                                 imgContainer1.href = getUrlForSinglePage({type: 'club', id: response.club_id1})
                                 singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                                     response.club_id1 + '.png';
-                                singlePageImg.classList.replace('player-img-size', 'club-img-size')
+                                singlePageImg.classList.remove('player-img-size')
                                 imgContainer1.appendChild(singlePageImg)
                                 info1.appendChild(imgContainer1)
 
@@ -286,7 +288,7 @@ async function initSinglePage() {
                                 imgContainer2.classList.add('m-2', 'mx-auto')
                                 imgContainer2.href = getUrlForSinglePage({type: 'club', id: response.club_id2})
                                 let singlePageImg2 = document.createElement('img')
-                                singlePageImg2.classList.add('img-fluid', 'd-block', 'club-img-size')
+                                singlePageImg2.classList.add('img-fluid', 'd-block')
                                 singlePageImg2.alt = 'image not found';
                                 singlePageImg2.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                                     response.club_id2 + '.png';
