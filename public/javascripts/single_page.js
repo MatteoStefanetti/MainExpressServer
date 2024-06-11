@@ -47,72 +47,23 @@ async function initSinglePage() {
                                 playerClubString.appendChild(playerClub);
                             })
                             .catch(err => console.error(err));
-                        let dobString = document.createElement('p');
-                        dobString.classList.add('p');
-                        dobString.innerHTML = '<b>Birth:</b> ' + new Date(data.data.date_of_birth).toLocaleDateString() + ' - ' + data.data.city_of_birth + ', ' + data.data.country_of_birth;
-                        titleDiv.appendChild(dobString);
 
-                        let lastSeason = document.createElement('p');
-                        lastSeason.classList.add('p');
-                        lastSeason.innerHTML = '<b>Last Season:</b> ' + data.data.last_season;
-                        info1.appendChild(lastSeason);
+                        let dateAndLocationOfBirth = data.data.date_of_birth ? new Date(data.data.date_of_birth).toLocaleDateString() : 'N/A';
+                        dateAndLocationOfBirth += ' - ' + ((data.data.city_of_birth) ?? 'No city') + ', ' + ((data.data.country_of_birth) ?? 'No country');
+                        createParagraphForSP(titleDiv, true, 'Birth', dateAndLocationOfBirth, 'p');
 
-                        let countryOfCitizenship = document.createElement('p');
-                        countryOfCitizenship.classList.add('p');
-                        countryOfCitizenship.innerHTML = '<b>Country of citizenship:</b> ' + data.data.country_of_citizenship;
-                        info1.appendChild(countryOfCitizenship);
+                        createParagraphForSP(info1, data.data.last_season, 'Last Season', data.data.last_season, 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info1, data.data.country_of_citizenship, 'Country of citizenship', data.data.country_of_citizenship, 'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info1, data.data.position, 'Position', data.data.position, 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info1, data.data.foot, 'Foot', data.data.foot, 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info1, data.data.height_in_cm, 'Height', data.data.height_in_cm + ' cm', 'p', 'ms-1', 'ms-md-3')
 
-                        let position = document.createElement('p');
-                        position.classList.add('p');
-                        position.innerHTML = '<b>Position:</b> ' + data.data.position;
-                        info1.appendChild(position);
+                        createParagraphForSP(info2, data.data.value_eur > 0, 'Market Value', data.data.value_eur + ' €', 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info2, data.data.top_value_eur > 0, 'Highest Market Value', data.data.top_value_eur + ' €', 'p', 'ms-1', 'ms-md-3')
 
-                        let foot = document.createElement('p');
-                        foot.classList.add('p');
-                        foot.innerHTML = '<b>Foot:</b> ' + data.data.foot;
-                        info1.appendChild(foot);
-
-                        let height = document.createElement('p');
-                        height.classList.add('p');
-                        height.innerHTML = '<b>Height:</b> ' + data.data.height_in_cm + ' cm';
-                        info1.appendChild(height);
-
-                        let marketValue = document.createElement('p');
-                        marketValue.classList.add('p');
-                        if (data.data.value_eur < 0) {
-                            marketValue.innerHTML = '<b>Market Value:</b> N/A';
-                        } else {
-                            marketValue.innerHTML = '<b>Market Value:</b> ' + data.data.value_eur + ' €';
-                        }
-                        info2.appendChild(marketValue);
-
-                        let highestMarketValue = document.createElement('p');
-                        highestMarketValue.classList.add('p');
-                        if (data.data.top_value_eur < 0) {
-                            highestMarketValue.innerHTML = '<b>Highest Market Value:</b> N/A';
-                        } else {
-                            highestMarketValue.innerHTML = '<b>Highest Market Value:</b> ' + data.data.top_value_eur + ' €';
-                        }
-                        info2.appendChild(highestMarketValue);
-
-                        let contractExpirationDate = document.createElement('p');
-                        contractExpirationDate.classList.add('p');
-                        if (new Date(data.data.contract_expiration_date).getTime() === new Date(0).getTime()) {
-                            contractExpirationDate.innerHTML = '<b>Contract Expiration Date:</b> ---';
-                        } else {
-                            contractExpirationDate.innerHTML = '<b>Contract Expiration Date:</b> ' + new Date(data.data.contract_expiration_date).toLocaleDateString();
-                        }
-                        info2.appendChild(contractExpirationDate);
-
-                        let agentName = document.createElement('p');
-                        agentName.classList.add('p');
-                        if (data.data.agent_name) {
-                            agentName.innerHTML = '<b>Agent Name:</b> ' + data.data.agent_name;
-                        } else {
-                            agentName.innerHTML = '<b>Agent Name:</b> N/A';
-                        }
-
-                        info2.appendChild(agentName);
+                        const conditionExpirationDate = new Date(data.data.contract_expiration_date).getTime() === new Date(0).getTime();
+                        createParagraphForSP(info2, conditionExpirationDate, 'Contract Expiration Date', new Date(data.data.contract_expiration_date).toLocaleDateString(), 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info2, data.data.agent_name, 'Agent Name', data.data.agent_name, 'p', 'ms-1', 'ms-md-3');
 
                         // The following line creates the valuation button:
                         await createAccordion('single_page/pl/player_valuations', 'accordions',
@@ -289,7 +240,7 @@ async function initSinglePage() {
                                 info2.appendChild(imgContainer2)
                                 singlePageImg.classList.add('mx-auto')
                                 singlePageImg2.classList.add('mx-auto')
-                                console.log(info1,'\n', response.goal1)
+                                console.log(info1, '\n', response.goal1)
                                 createParagraphForSP(info1, true, '', String(response.goal1), 'h2', 'fw-bold', 'text-center')
                                 createParagraphForSP(info1, response.manager1, 'Manager', response.manager1,
                                     'p', 'ms-1', 'ms-md-2')
@@ -348,7 +299,7 @@ async function initSinglePage() {
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
                                         if (events.data.length) {
-                                            for(let elem of events.data)
+                                            for (let elem of events.data)
                                                 switch (String(elem.event_type)) {
                                                     case 'Substitutions':
                                                         substitutionsArray.push(elem)
