@@ -150,56 +150,28 @@ async function initSinglePage() {
                                 nationalityLabel.appendChild(nationFlag)
                             })
                             .catch(err => console.error(err))
-
                         titleDiv.appendChild(nationalityLabel);
 
-                        let last_season = document.createElement('p');
-                        last_season.classList.add('p');
-                        last_season.innerHTML = '<b>Last Season:</b> ' + data.data.last_season;
-                        info1.appendChild(last_season);
+                        createParagraphForSP(info1, true, 'Last Season', data.data.last_season,
+                            'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info1, data.data.stadium_name, 'Stadium', data.data.stadium_name,
+                            'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info1, data.data.stadium_seats > 0, 'Stadium Seats',
+                            data.data.stadium_seats, 'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info1, true, 'Net Transfer Record',
+                            data.data.net_transfer_record + ' (€)', 'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info1, data.data.average_age !== -1, 'Average Age',
+                            data.data.average_age, 'p', 'ms-1', 'ms-md-3')
 
-                        let stadiumName = document.createElement('p');
-                        stadiumName.classList.add('p');
-                        stadiumName.innerHTML = '<b>Stadium:</b> ' + data.data.stadium_name;
-                        info1.appendChild(stadiumName);
-
-                        let stadiumSeats = document.createElement('p');
-                        stadiumSeats.classList.add('p');
-                        stadiumSeats.innerHTML = '<b>Stadium Seats:</b> ' + data.data.stadium_seats;
-                        info1.appendChild(stadiumSeats);
-
-                        let transferRecord = document.createElement('p');
-                        transferRecord.classList.add('p');
-                        transferRecord.innerHTML =
-                            '<b>Net Transfer Record:</b> ' + data.data.net_transfer_record + ' (€)';
-                        info1.appendChild(transferRecord);
-
-                        let averAge = document.createElement('p');
-                        averAge.classList.add('p');
-                        averAge.innerHTML = '<b>Average Age:</b> ' + data.data.average_age;
-                        info1.appendChild(averAge);
-
-                        let squadSize = document.createElement('p');
-                        squadSize.classList.add('p');
-                        squadSize.innerHTML = '<b>Squad Size:</b> ' + data.data.squad_size;
-                        info2.appendChild(squadSize);
-
-                        let nationalTeamPlayers = document.createElement('p');
-                        nationalTeamPlayers.classList.add('p');
-                        nationalTeamPlayers.innerHTML =
-                            '<b>National Team Players:</b> ' + data.data.national_team_players;
-                        info2.appendChild(nationalTeamPlayers);
-
-                        let foreignersNumber = document.createElement('p');
-                        foreignersNumber.classList.add('p');
-                        foreignersNumber.innerHTML = '<b>Foreigner Number:</b> ' + data.data.foreigners_number;
-                        info2.appendChild(foreignersNumber);
-
-                        let foreignersPerc = document.createElement('p');
-                        foreignersPerc.classList.add('p');
-                        foreignersPerc.innerHTML =
-                            '<b>Foreigners Percentage:</b> ' + data.data.foreigners_percentage + '%';
-                        info2.appendChild(foreignersPerc);
+                        createParagraphForSP(info2, true, 'Squad Size', data.data.squad_size,
+                            'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info2, data.data.national_team_players !== -1, 'National Team Players',
+                            data.data.national_team_players, 'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info2, data.data.foreigners_number !== -1, 'Foreigners Number',
+                            data.data.foreigners_number, 'p', 'ms-1', 'ms-md-3')
+                        createParagraphForSP(info2, data.data.foreigners_percentage !== -1,
+                            'Foreigners Percentage', data.data.foreigners_percentage + '%',
+                            'p', 'ms-1', 'ms-md-3')
 
                         await createAccordion('single_page/cl/last_games', 'accordions',
                             {id: 'lastGames_' + idParams});
