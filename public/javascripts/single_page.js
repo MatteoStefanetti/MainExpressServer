@@ -619,7 +619,7 @@ async function openAccordionCompetitionLastGames(id, season) {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'games', id: String(el.game_id)});
+                    }, {type: 'game', id: String(el.gameId)});
                 });
 
                 if (dataResponse.length > 20) {
@@ -1068,7 +1068,7 @@ function castCamelCaseToSneakCase(str) {
  * @param classList {...string[]} the **vararg (array)** of strings representing the class list to append to the element created.
  * @throws TypeError if fatherElem, value or classList are null or undefined. */
 function createParagraphForSP(fatherElem, condition, labelText, value, ...classList) {
-    if (!fatherElem || !value || !classList)
+    if (!fatherElem || !classList)
         throw new TypeError('Invalid argument(s) for \'createParagraphForSP\' function!')
     let parElem = document.createElement('p')
     parElem.classList.add(...classList);

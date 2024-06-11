@@ -441,6 +441,8 @@ router.get('/get_competition_placing/:id/:season', async (req, res) => {
     */
     if (req.params.id && req.params.season) {
         fetch('http://localhost:8081/games/competition_placing/' + String(req.params.id) + '/' + String(req.params.season), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
             .catch(err => res.status(404).json(err));

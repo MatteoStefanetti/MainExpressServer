@@ -559,7 +559,124 @@
         }
       }
     },
+    "/single_page/get_starting_lineups/{game_id}": {
       "get": {
         "tags": [
           "Single Page"
         ],
+        "description": "GET route that retrieves starting lineups data in base of a \\'game_id\\'.",
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The game_id of the game we want to analyse."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'game_id' passed as input!"
+          }
+        }
+      }
+    },
+    "/single_page/get_events_of/{game_id}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves game events data in base of a \\'game_id\\'.",
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The game_id of the game we want to analyse."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'game_id' passed as input!"
+          }
+        }
+      }
+    },
+    "/single_page/get_appearances_of_game/{game_id}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves appearances data in base of a \\'game_id\\'.",
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The game_id of which we queried the appearances."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'game_id' passed as input!"
+          }
+        }
+      }
+    },
+    "/single_page/get_competition_placing/{id}/{season}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves competition placing in base of an \\'id\\' and a \\'season\\'.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The competition_id of the competition we want the placing."
+          },
+          {
+            "name": "season",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "The year of the competition we want the placing."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'id' passed as input!"
+          }
+        }
+      }
+    }
+  }
+}
