@@ -164,6 +164,12 @@ async function createAccordion(visualize, fatherId, params) {
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionClubLastGames.bind(accordionButton, strIdValue));
             break;
+        case 'single_page/co/last_season_games':
+            strIdValue = params.id;
+            spanTitle.innerText = String(params.season) + ' Games';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionCompetitionLastGames.bind(null, strIdValue, params.season));
+            break;
         default:
             console.error('Warning! index.js:createAccordion() called with invalid field \'visualize\':', visualize)
             break;
@@ -367,7 +373,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         '<div>' +
                         '<b>competition: </b><a href="' + getUrlForSinglePage({
                             type: 'competition',
-                            id: item.data.competition_id
+                            id: item.data.competition_id,
+                            season: visGame.data.season
                         }) + '">' + item.data.competition_id + '</a>' +
                         '<br><b>goals:</b> ' + item.data.goals +
                         '<br><b>assists: </b>' + item.data.assists +
