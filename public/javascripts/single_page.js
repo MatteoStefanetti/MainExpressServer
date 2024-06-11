@@ -29,7 +29,9 @@ async function initSinglePage() {
                 await makeAxiosGet(`/single_page/get_player_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
-                        //TODO: build the rest of the page using the data retrieved
+                        let infoDiv = document.getElementById('info')
+                        infoDiv.classList.add('bg-darkgreen', 'rounded-4', 'text-light', 'py-md-2', 'px-3')
+                        infoDiv.previousElementSibling.remove()
                         singlePageImg.classList.add('border', 'border-5', 'border-darkgreen', 'rounded-4')
                         singlePageImg.src = data.data.image_url;
                         singlePageTitle.innerText = data.data.player_name;
@@ -80,6 +82,9 @@ async function initSinglePage() {
                 await makeAxiosGet(`/single_page/get_club_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
+                        let infoDiv = document.getElementById('info')
+                        infoDiv.classList.add('bg-darkgreen', 'rounded-4', 'text-light', 'py-md-2', 'px-3')
+                        infoDiv.previousElementSibling.remove()
 
                         singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
                             data.data.club_id + '.png';
@@ -160,6 +165,7 @@ async function initSinglePage() {
                                 singlePageTitle.classList.add('fw-bold', 'text-center', 'w-100', 'd-flex', 'flex-column',
                                     'flex-sm-row', 'mb-3')
                                 titleDiv.classList.add('w-100', 'mt-4')
+                                infoTitle.nextElementSibling.remove()
                                 if (response.hosting1 || response.hosting2) {
                                     let hostingIcon = document.createElement('span')
                                     hostingIcon.classList.add('bi', 'bi-house-fill', 'text-darkgreen', 'mx-1')
@@ -178,12 +184,10 @@ async function initSinglePage() {
 
                                 let infoDiv = document.getElementById('info')
                                 infoDiv.classList.add('flex-column', 'flex-sm-row')
-                                infoDiv.children[1].classList.remove('d-sm-flex')
-                                info1.classList.add('col-12', 'col-sm-6', 'justify-content-center', 'align-self-stretch', 'me-1')
-                                info2.classList.add('col-12', 'col-sm-6', 'justify-content-center', 'align-self-stretch')
+                                info1.classList.add('col-sm-6', 'justify-content-center', 'align-self-stretch', 'me-1')
+                                info2.classList.add('col-sm-6', 'justify-content-center', 'align-self-stretch')
                                 infoDiv.style.boxSizing = 'border-box !important'
-                                infoDiv.previousElementSibling.remove()   // it removes the horizontal <hr>
-                                // "generalInfo" div cloned HERE to import the div with the <hr> but not with images and other data.
+                                // "generalInfo" div cloned HERE
                                 let generalInfo = infoDiv.cloneNode(true)
                                 // we modify the elements after the clone, so we have different styles
                                 info1.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3', 'mb-2', 'mb-sm-0')
@@ -212,13 +216,12 @@ async function initSinglePage() {
                                 info2.appendChild(imgContainer2)
                                 singlePageImg.classList.add('mx-auto')
                                 singlePageImg2.classList.add('mx-auto')
-                                console.log(info1, '\n', response.goal1)
+
                                 createParagraphForSP(info1, true, '', String(response.goal1), 'h2', 'fw-bold', 'text-center')
                                 createParagraphForSP(info1, response.manager1, 'Manager', response.manager1,
                                     'p', 'ms-1', 'ms-md-2')
                                 createParagraphForSP(info1, response.formation1, 'Formation', response.formation1,
                                     'p', 'ms-1', 'ms-md-2')
-
 
                                 createParagraphForSP(info2, true, '', String(response.goal2), 'h2', 'fw-bold', 'text-center')
                                 createParagraphForSP(info2, response.manager2, 'Manager', response.manager2,
@@ -228,10 +231,9 @@ async function initSinglePage() {
 
                                 // Setting up general info about the match
                                 generalInfo.id = 'generalInfo'
-                                generalInfo.classList.add('bg-darkgreen', 'rounded-4', 'text-light',
-                                    'p-1', 'py-md-2', 'px-md-3')
+                                generalInfo.classList.add('bg-darkgreen', 'rounded-4', 'text-light', 'py-md-2', 'px-3')
                                 generalInfo.children[0].id = 'genInfo1'
-                                generalInfo.children[2].id = 'genInfo2'
+                                generalInfo.children[1].id = 'genInfo2'
                                 infoDiv.insertAdjacentElement('beforebegin', generalInfo)
                                 let genInfo1 = document.getElementById('genInfo1')
                                 let genInfo2 = document.getElementById('genInfo2')
@@ -271,21 +273,10 @@ async function initSinglePage() {
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
                                         if (events.data.length) {
-                                            for (let elem of events.data)
-                                                switch (String(elem.event_type)) {
-                                                    case 'Substitutions':
-                                                        substitutionsArray.push(elem)
-                                                        break;
-                                                    case 'Goals':
-                                                        goalsArray.push(elem)
-                                                        break;
-                                                    case 'Cards':
-                                                        cardsArray.push(elem)
-                                                        break;
-                                                    default:
-                                                        console.log('default case for event:', elem)
-                                                }
-                                            console.log('goals:', goalsArray, '\ncards:', cardsArray)
+                                            substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
+                                            goalsArray = events.data.filter(element => String(element.event_type) === 'Goals')
+                                            cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
+                                            console.log('cards:', cardsArray)       // debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -349,7 +340,6 @@ async function initSinglePage() {
             break;
         case 'competition':
             const seasonParams = urlParams.get('season');
-
             if (idParams) {
                 let nationalityLabel = document.createElement('p');
                 nationalityLabel.classList.add('p');
@@ -383,7 +373,6 @@ async function initSinglePage() {
                         });
                     })
                     .catch(err => console.error(err));
-
 
                 seasonSelect.addEventListener('change', (event) => {
                     window.location.replace(getUrlForSinglePage({
@@ -419,19 +408,9 @@ async function initSinglePage() {
                             })
                         titleDiv.appendChild(nationalityLabel);
 
-                        /*let lastSeasonValue;
-
-                        await makeAxiosGet('/retrieve_last_season/' + String(data.data.competition_id))
-                            .then(lastSeasonYear => {
-                                lastSeasonValue = lastSeasonYear;
-                                //seasonLabel.innerHTML += lastSeasonYear.data;
-                            })
-                            .catch(err => {
-                                console.error(err);
-                            })*/
-
                         titleDiv.appendChild(seasonForm);
-                        document.getElementById('info').classList.add('d-none');
+
+                        document.getElementById('info').remove();
 
                         let placingDiv = document.createElement('div');
                         let accordionDiv = document.getElementById('accordions');
@@ -502,16 +481,7 @@ async function initSinglePage() {
             //TODO: error type not supported
             break;
     }
-    for (let elem of document.getElementsByClassName('info-separator')) {
-        adjustHRHeight(elem)
-        window.addEventListener('resize', adjustHRHeight.bind(window, elem))
-    }
     showChargingSpinner(null, false)
-}
-
-/** This function is called inside the `single_page.html` to vertically adjust the `<hr>` element. */
-function adjustHRHeight(hrElem) {
-    hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
 }
 
 async function openAccordionCompetitionLastGames(id, season) {
