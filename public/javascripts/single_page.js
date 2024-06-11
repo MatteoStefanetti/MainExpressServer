@@ -219,8 +219,8 @@ async function initSinglePage() {
                 await makeAxiosGet('/single_page/get_game_by_id/' + String(idParams))
                     .then(async data => {
                         delete data.data.date
-                        makeAxiosGet(`/single_page/get_visualize_game_by_id/${idParams}`)
-                            .then(res => {
+                        await makeAxiosGet(`/single_page/get_visualize_game_by_id/${idParams}`)
+                            .then(async res => {
                                 let response = data.data
                                 let resKeys = Object.keys(res.data)
                                 for (let attr of resKeys) {
@@ -228,20 +228,98 @@ async function initSinglePage() {
                                     if (!response[transformedKey])
                                         response[transformedKey] = res.data[attr]
                                 }
-                                console.log(response) // DEB/DEV ONLY!
-                                // here we put the output elements
-                                singlePageTitle.innerHTML = '<span class="col-sm-5">' + response.club_name1 +
-                                    '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5">'
+                                // ----- here we put the output elements -----
+                                // - Adding names and icon for the hosting club
+                                singlePageTitle.innerHTML = '<span class="col-sm-5 club-name-span">' + response.club_name1 +
+                                    '</span> <span class="col-sm-2 align-self-center text-darkgreen">vs</span> <span class="col-sm-5 club-name-span">'
                                     + response.club_name2 + '</span>';
                                 singlePageTitle.classList.replace('h1', 'h3')
                                 singlePageTitle.classList.add('fw-bold', 'text-center', 'w-100', 'd-flex', 'flex-column',
-                                    'flex-sm-row')
+                                    'flex-sm-row', 'mb-3')
                                 titleDiv.classList.add('w-100', 'mt-4')
+                                if (response.hosting1 || response.hosting2) {
+                                    let hostingIcon = document.createElement('span')
+                                    hostingIcon.classList.add('bi', 'bi-house-fill', 'text-darkgreen', 'mx-1')
+                                    if (response.hosting1)
+                                        singlePageTitle.firstElementChild.insertAdjacentElement('afterbegin', hostingIcon)
+                                    else
+                                        singlePageTitle.lastElementChild.insertAdjacentElement('afterbegin', hostingIcon)
+                                }
+                                for (let title of document.getElementsByClassName('club-name-span'))
+                                    title.style.textWrap = 'balance';
+
+                                let datePar = document.createElement('p');
+                                datePar.classList.add('p', 'fs-6', 'text-center', 'my-1')
+                                datePar.innerText = new Date(response.game_date).toLocaleDateString()
+                                singlePageTitle.insertAdjacentElement('beforebegin', datePar)
+
+                                let infoDiv = document.getElementById('info')
+                                infoDiv.classList.add('flex-column', 'flex-sm-row')
+                                infoDiv.children[1].classList.remove('d-sm-flex')
+                                info1.classList.add('col-12', 'col-sm-6', 'justify-content-center', 'align-self-stretch', 'me-1')
+                                info2.classList.add('col-12', 'col-sm-6', 'justify-content-center', 'align-self-stretch')
+                                infoDiv.style.boxSizing = 'border-box !important'
+                                infoDiv.previousElementSibling.remove()   // it removes the horizontal <hr>
+                                // "generalInfo" div cloned HERE to import the div with the <hr> but not with images and other data.
+                                let generalInfo = infoDiv.cloneNode(true)
+                                // we modify the elements after the clone, so we have different styles
+                                info1.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3', 'mb-2', 'mb-sm-0')
+                                info2.classList.add('bg-light', 'border', 'rounded-4', 'p-1', 'py-md-2', 'px-md-3')
+
+                                // Setting the images and their containers
+                                imgContainer.remove()
+                                let imgContainer1 = document.createElement('a')
+                                imgContainer1.classList.add('m-2', 'mx-auto')
+                                imgContainer1.href = getUrlForSinglePage({type: 'club', id: response.club_id1})
+                                singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
+                                    response.club_id1 + '.png';
+                                singlePageImg.classList.remove('player-img-size')
+                                imgContainer1.appendChild(singlePageImg)
+                                info1.appendChild(imgContainer1)
+
+                                let imgContainer2 = document.createElement('a')
+                                imgContainer2.classList.add('m-2', 'mx-auto')
+                                imgContainer2.href = getUrlForSinglePage({type: 'club', id: response.club_id2})
+                                let singlePageImg2 = document.createElement('img')
+                                singlePageImg2.classList.add('img-fluid', 'd-block')
+                                singlePageImg2.alt = 'image not found';
+                                singlePageImg2.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
+                                    response.club_id2 + '.png';
+                                imgContainer2.appendChild(singlePageImg2);
+                                info2.appendChild(imgContainer2)
+                                singlePageImg.classList.add('mx-auto')
+                                singlePageImg2.classList.add('mx-auto')
+                                console.log(info1,'\n', response.goal1)
+                                createParagraphForSP(info1, true, '', String(response.goal1), 'h2', 'fw-bold', 'text-center')
+                                createParagraphForSP(info1, response.manager1, 'Manager', response.manager1,
+                                    'p', 'ms-1', 'ms-md-2')
+                                createParagraphForSP(info1, response.formation1, 'Formation', response.formation1,
+                                    'p', 'ms-1', 'ms-md-2')
+
+
+                                createParagraphForSP(info2, true, '', String(response.goal2), 'h2', 'fw-bold', 'text-center')
+                                createParagraphForSP(info2, response.manager2, 'Manager', response.manager2,
+                                    'p', 'ms-1', 'ms-md-2')
+                                createParagraphForSP(info2, response.formation2, 'Formation', response.formation2,
+                                    'p', 'ms-1', 'ms-md-2')
+
+                                // Setting up general info about the match
+                                generalInfo.id = 'generalInfo'
+                                generalInfo.classList.add('bg-darkgreen', 'rounded-4', 'text-light',
+                                    'p-1', 'py-md-2', 'px-md-3')
+                                generalInfo.children[0].id = 'genInfo1'
+                                generalInfo.children[2].id = 'genInfo2'
+                                infoDiv.insertAdjacentElement('beforebegin', generalInfo)
+                                let genInfo1 = document.getElementById('genInfo1')
+                                let genInfo2 = document.getElementById('genInfo2')
+                                genInfo1.classList.add('col-12', 'col-sm-6', 'ps-2')
+                                genInfo2.classList.add('col-12', 'col-sm-6', 'ps-2')
 
                                 let competitionAnchor = document.createElement('a');
                                 let competitionLabel = document.createElement('p');
+                                competitionAnchor.classList.add('pe-5')
                                 competitionAnchor.style.textDecoration = 'underline'
-                                competitionLabel.classList.add('p', 'text-center', 'my-3');
+                                competitionLabel.classList.add('p', 'ms-1', 'ms-md-3');
                                 competitionLabel.innerHTML = '<b>Competition:</b> ';
                                 competitionAnchor.innerText = response.competition_id;
                                 competitionAnchor.href = getUrlForSinglePage({
@@ -249,23 +327,91 @@ async function initSinglePage() {
                                     id: response.competition_id
                                 })
                                 competitionLabel.appendChild(competitionAnchor)
-                                titleDiv.appendChild(competitionLabel)
+                                genInfo1.appendChild(competitionLabel)
 
-                                singlePageImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
-                                    response.club_id1 + '.png';
-                                imgContainer.remove()
-                                info1.appendChild(imgContainer)
-                                let imgContainer2 = document.createElement('div')
-                                let singlePageImg2 = document.createElement('img')
-                                singlePageImg2.classList.add('img-fluid', 'd-block', 'player-img-size');
-                                singlePageImg2.alt = 'image not found';
-                                imgContainer2.classList.add('m-2', 'mx-md-5')
-                                singlePageImg2.src = 'https://tmssl.akamaized.net/images/wappen/head/' +
-                                    response.club_id2 + '.png';
-                                imgContainer2.appendChild(singlePageImg2);
-                                info2.appendChild(imgContainer2)
+                                createParagraphForSP(genInfo1, response.round, 'Match Round', response.round, 'p',
+                                    'ms-1', 'ms-md-3')
+                                createParagraphForSP(genInfo1, response.season, 'Season', response.season, 'p',
+                                    'ms-1', 'ms-md-3')
 
+                                createParagraphForSP(genInfo2, response.referee, 'Referee', response.referee, 'p',
+                                    'ms-1', 'ms-md-3')
+                                createParagraphForSP(genInfo2, response.stadium, 'Stadium', response.stadium, 'p',
+                                    'ms-1', 'ms-md-3')
+                                createParagraphForSP(genInfo2, (response.attendance !== -1), 'Attendance',
+                                    response.attendance, 'p', 'ms-1', 'ms-md-3')
 
+                                let substitutionsArray = [];
+                                let goalsArray = [];
+                                let cardsArray = [];
+                                // Querying game_events
+                                await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
+                                    .then(events => {
+                                        if (events.data.length) {
+                                            for(let elem of events.data)
+                                                switch (String(elem.event_type)) {
+                                                    case 'Substitutions':
+                                                        substitutionsArray.push(elem)
+                                                        break;
+                                                    case 'Goals':
+                                                        goalsArray.push(elem)
+                                                        break;
+                                                    case 'Cards':
+                                                        cardsArray.push(elem)
+                                                        break;
+                                                    default:
+                                                        console.log('default case for event:', elem)
+                                                }
+                                            console.log('goals:', goalsArray, '\ncards:', cardsArray)
+
+                                            // Counting cards & substitutions of the clubs
+                                            let countParam1 = cardsArray.filter((element) =>
+                                                element.club_id === response.club_id1).length
+                                            let countParam2 = cardsArray.length - countParam1;
+                                            createParagraphForSP(info1, true, 'Cards', String(countParam1),
+                                                'p', 'ms-1', 'ms-md-2')
+                                            createParagraphForSP(info2, true, 'Cards', String(countParam2),
+                                                'p', 'ms-1', 'ms-md-2')
+
+                                            countParam1 = substitutionsArray.filter((element) =>
+                                                element.club_id === response.club_id1).length
+                                            countParam2 = substitutionsArray.length - countParam1;
+                                            createParagraphForSP(info1, true, 'Substitutions',
+                                                String(countParam1), 'p', 'ms-1', 'ms-md-2')
+                                            createParagraphForSP(info2, true, 'Substitutions',
+                                                String(countParam2), 'p', 'ms-1', 'ms-md-2')
+                                        } else
+                                            console.log('game_events not found for game:', response.game_id)
+                                    })
+                                    .catch(err => {
+                                        if (err.status === 404)
+                                            console.log('game_events not found for game:', response.game_id)
+                                    })
+
+                                // Starting Lineups
+                                await makeAxiosGet('/single_page/get_starting_lineups/' + String(response.game_id))
+                                    .then(startingLineup => {
+                                        if (startingLineup.data.length) {
+                                            console.log(startingLineup.data) // debug
+                                            let startingLuDiv = document.createElement('div')
+                                            startingLuDiv.id = 'startingLineUp'
+                                            startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p>' +
+                                                '<hr class="mt-1 mb-3 w-100 opacity-50">'
+                                            infoDiv.insertAdjacentElement('afterend', startingLuDiv)
+                                            // @todo Starting Lineup
+
+                                        } else
+                                            console.log('Starting Lineups not found for game:', response.game_id);
+                                    })
+                                    .catch(err => {
+                                        if (err.status === 404)
+                                            console.log('Starting Lineups not found for game:', response.game_id);
+                                        else console.error(err)
+                                    })
+
+                                // @todo add accordions
+                                await createAccordion('single_page/ga/appearances', 'accordions',
+                                    {id: 'appearances_' + idParams});
                             })
                             .catch(err => {
                                 console.error(err)
@@ -433,14 +579,15 @@ async function initSinglePage() {
             //TODO: error type not supported
             break;
     }
-    adjustHRHeight()
-    window.addEventListener('resize', adjustHRHeight)
+    for (let elem of document.getElementsByClassName('info-separator')) {
+        adjustHRHeight(elem)
+        window.addEventListener('resize', adjustHRHeight.bind(window, elem))
+    }
     showChargingSpinner(null, false)
 }
 
 /** This function is called inside the `single_page.html` to vertically adjust the `<hr>` element. */
-function adjustHRHeight() {
-    let hrElem = (document.getElementById('info').children)[1]
+function adjustHRHeight(hrElem) {
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
 }
 
@@ -713,7 +860,7 @@ async function openAccordionClubLastGames(id) {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'games', id: String(el.game_id)});
+                    }, {type: 'game', id: String(el.game_id)});
                 })
 
                 if (dataResponse.length > 20) {
@@ -732,6 +879,55 @@ async function openAccordionClubLastGames(id) {
     }
 }
 
+
+/**
+ * Function called to generate the appearances of the `single_page/game` accordion.
+ *
+ * @param id {string} The **id** used as id of the accordion button.
+ * @throws TypeError If id is null or undefined.
+ * @throws Error If GET route fails. */
+async function openAccordionGameAppearances(id) {
+    this.disabled = true
+    if (!id) {
+        console.error(id);
+        this.disabled = false
+        throw new TypeError('Invalid argument passed to \'openAccordionGameAppearances\'!');
+    }
+
+    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+        await makeAxiosGet('/single_page/get_appearances_of_game/' + id.slice(id.indexOf('_') + 1))
+            .then(data => {
+                let dataResponse = Array(data.data)[0];
+                console.log(data.data)
+                console.log(dataResponse)
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+                let alternatorCounter = 0;
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'player', id: String(el.player_id)});
+                });
+
+                if (dataResponse.length > 20)
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                this.disabled = false
+                throw new Error('Error occurred during \'/get_appearances_of_game\' GET');
+                //TODO: check errors
+            });
+
+        showChargingSpinner(null, false);
+    }
+    this.disabled = false
+}
+
 /**
  * Function called to generate the internal info block of the Appearances accordion.
  *
@@ -739,8 +935,10 @@ async function openAccordionClubLastGames(id) {
  * @throws TypeError If id is null or undefined.
  * @throws Error If GET route fails. */
 async function openAccordionPlayerAppearances(id) {
+    this.disabled = true
     if (!id) {
         console.error(id);
+        this.disabled = false
         throw new TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
     }
 
@@ -765,7 +963,7 @@ async function openAccordionPlayerAppearances(id) {
                     createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'games', id: String(el.game_id)});
+                    }, {type: 'game', id: String(el.game_id)});
                 });
 
                 if (dataResponse.length > 20) {
@@ -776,6 +974,7 @@ async function openAccordionPlayerAppearances(id) {
             })
             .catch(err => {
                 console.error(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_last_appearance\' GET');
                 //TODO: check errors
             });
@@ -859,4 +1058,21 @@ function drawChart(dataResponse, canvasElem) {
  * @param str {string} the string to transform. */
 function castCamelCaseToSneakCase(str) {
     return str.split(/(?=[A-Z])/).map(word => word.toLowerCase()).join('_');
+}
+
+/** It creates and appends a paragraph {@link Element} to the given spot (fatherElem).
+ * @param fatherElem {HTMLElement} the {@link Document} element to which append the paragraph created.
+ * @param condition {boolean} the condition whether to insert the value or "N/A" instead.
+ * @param labelText {string} the string text of the label, an empty string can be passed to it.
+ * @param value {any} it can be anything. MAKE SURE any "0" value number is passed as a **string**.
+ * @param classList {...string[]} the **vararg (array)** of strings representing the class list to append to the element created.
+ * @throws TypeError if fatherElem, value or classList are null or undefined. */
+function createParagraphForSP(fatherElem, condition, labelText, value, ...classList) {
+    if (!fatherElem || !value || !classList)
+        throw new TypeError('Invalid argument(s) for \'createParagraphForSP\' function!')
+    let parElem = document.createElement('p')
+    parElem.classList.add(...classList);
+    const label = (!labelText) ? '' : '<b>' + labelText + ':</b> ';
+    parElem.innerHTML = (condition) ? label + value : label + 'N/A';
+    fatherElem.appendChild(parElem);
 }

@@ -559,40 +559,7 @@
         }
       }
     },
-    "/single_page/get_competition_placing/{id}/{season}": {
       "get": {
         "tags": [
           "Single Page"
         ],
-        "description": "GET route that retrieves competition placing in base of an \\'id\\' and a \\'season\\'.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "The competition_id of the competition we want the placing."
-          },
-          {
-            "name": "season",
-            "in": "path",
-            "required": true,
-            "type": "number",
-            "description": "The year of the competition we want the placing."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Invalid 'id' passed as input!"
-          }
-        }
-      }
-    }
-  }
-}

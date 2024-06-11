@@ -338,7 +338,7 @@ router.get('/get_visualize_game_by_id/:id', function (req, res) {
     }
     */
     if (req.params.id) {
-        fetch('http://localhost:8081/games/visualize_game_by_id/' + String(req.params.id), {
+        fetch('http://localhost:8081/games/get_game_details_by_id/' + String(req.params.id), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         })
             .then(res => res.json())
@@ -348,6 +348,78 @@ router.get('/get_visualize_game_by_id/:id', function (req, res) {
         res.status(500).json(JSON.stringify('Invalid \'id\' passed as input!'))
 })
 
+router.get('/get_starting_lineups/:game_id', (req, res) => {
+    /* #swagger.tags = ['Single Page']
+     #swagger.description = 'GET route that retrieves starting lineups data in base of a \'game_id\'.'
+     #swagger.parameters['game_id'] = {
+        in: 'path',
+        description: 'The game_id of the game we want to analyse.',
+        type: 'string',
+        required: 'true'
+    }
+    #swagger.responses[500] = {
+        description: 'Invalid \'game_id\' passed as input!'
+    }
+    */
+    if (req.params.game_id) {
+        fetch('http://localhost:3002/game_lineups/get_starting_lineups/' + String(req.params.game_id), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'game_id\' passed as input!'))
+})
+
+router.get('/get_events_of/:game_id', (req, res) => {
+    /* #swagger.tags = ['Single Page']
+     #swagger.description = 'GET route that retrieves game events data in base of a \'game_id\'.'
+     #swagger.parameters['game_id'] = {
+        in: 'path',
+        description: 'The game_id of the game we want to analyse.',
+        type: 'string',
+        required: 'true'
+    }
+    #swagger.responses[500] = {
+        description: 'Invalid \'game_id\' passed as input!'
+    }
+    */
+    if (req.params.game_id) {
+        fetch('http://localhost:8081/game_events/get_game_events_by_game_id/' + String(req.params.game_id), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'game_id\' passed as input!'))
+})
+
+router.get('/get_appearances_of_game/:game_id', async (req, res) => {
+    /* #swagger.tags = ['Single Page']
+     #swagger.description = 'GET route that retrieves appearances data in base of a \'game_id\'.'
+     #swagger.parameters['game_id'] = {
+        in: 'path',
+        description: 'The game_id of which we queried the appearances.',
+        type: 'string',
+        required: 'true'
+    }
+    #swagger.responses[500] = {
+        description: 'Invalid \'game_id\' passed as input!'
+    }
+    */
+    if (req.params.game_id) {
+        fetch('http://localhost:3002/appearances/get_game_appearances/' + String(req.params.game_id), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'game_id\' passed as input!'))
+})
+          
 router.get('/get_competition_placing/:id/:season', async (req, res) => {
     /* #swagger.tags = ['Single Page']
      #swagger.description = 'GET route that retrieves competition placing in base of an \'id\' and a \'season\'.'
@@ -369,8 +441,6 @@ router.get('/get_competition_placing/:id/:season', async (req, res) => {
     */
     if (req.params.id && req.params.season) {
         fetch('http://localhost:8081/games/competition_placing/' + String(req.params.id) + '/' + String(req.params.season), {
-            headers: {'Content-Type': 'application/json'}, method: 'get'
-        })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
             .catch(err => res.status(404).json(err));
