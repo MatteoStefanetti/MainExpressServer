@@ -16,7 +16,7 @@ async function initSinglePage() {
 
     singlePageImg.classList.add('img-fluid', 'd-block', 'player-img-size');
     singlePageImg.alt = 'image not found';
-    titleDiv.classList.add('align-self-center');
+    titleDiv.classList.add('align-self-center', 'flex-grow-1');
     infoTitle.appendChild(imgContainer);
     imgContainer.appendChild(singlePageImg);
     imgContainer.classList.add('m-2', 'mx-md-5')
@@ -279,13 +279,50 @@ async function initSinglePage() {
             }
             break;
         case 'competition':
+            const seasonParams = urlParams.get('season');
+
             if (idParams) {
                 let nationalityLabel = document.createElement('p');
                 nationalityLabel.classList.add('p');
                 nationalityLabel.innerHTML = '<b>Nationality:</b> ';
-                let lastSeason = document.createElement('p');
-                lastSeason.classList.add('p');
-                lastSeason.innerHTML = '<b>Last Season:</b> ';
+                let seasonForm = document.createElement('form');
+                let seasonLabel = document.createElement('label');
+                seasonLabel.classList.add('form-label');
+                seasonLabel.innerText = 'Select Season:';
+                seasonLabel.setAttribute('for', 'seasonSelect');
+                seasonForm.appendChild(seasonLabel);
+                let selectDiv = document.createElement('div');
+                selectDiv.style.width = '95px';
+                let seasonSelect = document.createElement('select');
+                seasonSelect.id = 'seasonSelect';
+                seasonSelect.name = 'seasonSelect';
+                seasonSelect.classList.add('form-select');
+                selectDiv.appendChild(seasonSelect);
+                seasonForm.appendChild(selectDiv);
+
+                await makeAxiosGet('/single_page/get_all_season/' + String(idParams))
+                    .then(async seasons => {
+                        console.log(seasons.data);
+                        seasons.data.forEach(season => {
+                            let optionSeason = document.createElement('option');
+                            optionSeason.value = season;
+                            optionSeason.innerText = season;
+                            seasonSelect.appendChild(optionSeason);
+                            if (seasonParams === String(season)) {
+                                optionSeason.selected = true;
+                            }
+                        });
+                    })
+                    .catch(err => console.error(err));
+
+
+                seasonSelect.addEventListener('change', (event) => {
+                    window.location.replace(getUrlForSinglePage({
+                        type: 'competition',
+                        id: idParams,
+                        season: event.target.value
+                    }));
+                });
 
                 await makeAxiosGet('/single_page/get_competition_by_id/' + String(idParams))
                     .then(async data => {
@@ -313,15 +350,78 @@ async function initSinglePage() {
                             })
                         titleDiv.appendChild(nationalityLabel);
 
+                        /*let lastSeasonValue;
+
                         await makeAxiosGet('/retrieve_last_season/' + String(data.data.competition_id))
                             .then(lastSeasonYear => {
-                                lastSeason.innerHTML += lastSeasonYear.data;
+                                lastSeasonValue = lastSeasonYear;
+                                //seasonLabel.innerHTML += lastSeasonYear.data;
                             })
                             .catch(err => {
                                 console.error(err);
-                            })
-                        titleDiv.appendChild(lastSeason);
+                            })*/
+
+                        titleDiv.appendChild(seasonForm);
                         document.getElementById('info').classList.add('d-none');
+
+                        let placingDiv = document.createElement('div');
+                        let accordionDiv = document.getElementById('accordions');
+                        accordionDiv.appendChild(placingDiv);
+
+                        placingDiv.classList.add('row', 'w-100', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
+
+                        await makeAxiosGet('/single_page/get_competition_placing/' + String(idParams) + '/' + String(seasonParams))
+                            .then(placing => {
+                                console.log(placing);
+                                placing.data.forEach(el => {
+                                    let clubContainer = document.createElement('div');
+                                    clubContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'my-4', 'px-1');
+
+                                    let clubLink = document.createElement('a');
+                                    clubLink.href = getUrlForSinglePage({type: 'club', id: String(el.clubId)});
+                                    clubContainer.appendChild(clubLink);
+
+                                    let clubImg = document.createElement('img');
+                                    clubImg.src = 'https://tmssl.akamaized.net/images/wappen/head/' + el.clubId + '.png';
+                                    clubImg.classList.add('img-fluid', 'd-block', 'club-img-size');
+                                    clubImg.alt = el.clubName + ' logo';
+                                    clubLink.appendChild(clubImg);
+
+                                    let clubNameDiv = document.createElement('div');
+                                    clubNameDiv.classList.add('d-flex', 'justify-content-center', 'align-items-center', 'w-100', 'my-2', 'p-0');
+                                    clubLink.appendChild(clubNameDiv);
+
+                                    let clubNameSpan = document.createElement('span');
+                                    clubNameSpan.classList.add('h6', 'text-center', 'p-0');
+                                    let icon = document.createElement('span');
+                                    switch (el.clubPosition) {
+                                        case 1:
+                                            icon.classList.add('bi', 'bi-1-circle-fill', 'mx-1', 'text-warning');
+                                            clubNameDiv.appendChild(icon);
+                                            break;
+                                        case 2:
+                                            icon.classList.add('bi', 'bi-2-circle-fill', 'mx-1', 'text-silver');
+                                            clubNameDiv.appendChild(icon);
+                                            break;
+                                        case 3:
+                                            icon.classList.add('bi', 'bi-3-circle-fill', 'mx-1', 'text-bronze');
+                                            clubNameDiv.appendChild(icon);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    clubNameSpan.innerText = el.clubName;
+                                    clubNameDiv.appendChild(clubNameSpan);
+
+                                    placingDiv.appendChild(clubContainer);
+                                })
+                            })
+                            .catch(err => console.error(err));
+
+                        await createAccordion('single_page/co/last_season_games', 'accordions', {
+                            id: 'lastSeasonGames_' + idParams,
+                            season: seasonParams
+                        });
                     })
                     .catch(err => {
                         console.log(err);
@@ -344,6 +444,53 @@ function adjustHRHeight() {
     hrElem.style.width = (hrElem.parentElement.scrollHeight - 30) + 'px';
 }
 
+async function openAccordionCompetitionLastGames(id, season) {
+    if (!id || !season) {
+        console.log(id, '   ', season);
+        throw new Error('Invalid argument to \'openAccordionCompetitionLastGames\' for \'' + id + '\' or \'' + season + '\'.');
+    }
+
+    console.log('id', id);
+    console.log('season', season);
+
+    const competition_id = id.slice(id.indexOf('_') + 1);
+    if (document.getElementById(id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true);
+
+        let dataResponse;
+
+        await makeAxiosGet('/competitions/get_games_by_league/' + String(competition_id) + '/' + String(season))
+            .then(data => {
+                dataResponse = Array(data.data)[0];
+
+                let unList = document.createElement('ul');
+                unList.classList.add('nav', 'flex-column');
+
+                let alternatorCounter = 0;
+
+                dataResponse.forEach(el => {
+                    createDynamicListItem(window, 'game', dataResponse.length, unList, {
+                        counter: alternatorCounter++,
+                        data: el
+                    }, {type: 'games', id: String(el.game_id)});
+                });
+
+                if (dataResponse.length > 20) {
+                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
+                }
+
+                document.getElementById(id).firstElementChild.appendChild(unList);
+            })
+            .catch(err => {
+                console.error(err);
+                throw new Error('Error occurred during \'/get_last_appearance\' GET');
+                //TODO: check errors
+            })
+
+        showChargingSpinner(null, false);
+    }
+    this.disabled = false;
+}
 
 /** openAccordion for the past members of a club.
  * @param id {string} the id of the club of which we are querying data.

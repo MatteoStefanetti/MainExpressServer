@@ -6,3 +6,17 @@
         width: auto !important;
     }
 }
+
+.text-bronze {
+    color: rgb(165, 98, 54);
+}
+
+.text-silver {
+    color: #a3a4aa;
+}
+
+.club-img-size {
+    max-width: 45%;
+    aspect-ratio: ratio(5/4);
+    margin: 0 auto !important;
+}

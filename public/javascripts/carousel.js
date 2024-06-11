@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (anchorTarget && anchorTarget.href) {
             event.preventDefault()
             window.parent.location.href = anchorTarget.href
-        }});
+        }
+    });
 });
 
 /** Init function called by the carousel documents inside the <iframe>s. */
@@ -77,7 +78,7 @@ async function initCarousel() {
     function slideCarouselNext(otherBtn) {
         let wrapper = document.getElementById('slider-wrapper');
         const elementsNum = getShownElementsNumber(wrapper);
-        if ((state + 1) * elementsNum  < wrapper.children.length) {
+        if ((state + 1) * elementsNum < wrapper.children.length) {
             if (otherBtn.disabled)
                 toggleButton(otherBtn, false);
             state++;
@@ -153,7 +154,7 @@ function adjustIframeHeight(iframe) {
  * @throws TypeError if button is */
 function toggleButton(button, toDisable) {
     button.disabled = Boolean(toDisable);
-    if(toDisable)
+    if (toDisable)
         button.style.visibility = 'hidden';
     else
         button.style.visibility = 'visible';
@@ -162,8 +163,8 @@ function toggleButton(button, toDisable) {
 /** This function **should be called by the init() of the carousel**.
  * It will take the `window.name` as the header of the carousel. */
 function setHeader() {
-    if(window.name){
-        let stringName = window.name.substring((window.name.indexOf('_')+1));
+    if (window.name) {
+        let stringName = window.name.substring((window.name.indexOf('_') + 1));
         document.getElementById('headerPar').innerText =
             stringName.replace(/([a-z])([A-Z])/g, '$1 $2')
                 .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
@@ -186,7 +187,7 @@ function getShownElementsNumber(wrapper) {
  * ```
  * @param wrapperElement {HTMLElement} The wrapper of the carousel. */
 function createDefaultCarouselElements(wrapperElement) {
-    for(let i = 0; i < DEFAULT_ELEMENTS_NUMBER; i++) {
+    for (let i = 0; i < DEFAULT_ELEMENTS_NUMBER; i++) {
         let containerDiv = document.createElement('div');
         containerDiv.classList.add('d-flex', 'justify-content-center', 'col-12', 'col-xs-6', 'col-sm-4', 'col-md-3', 'col-lg-2', 'px-1', 'py-0');
         containerDiv.innerHTML = '<div class="mx-auto border rounded-4 ' +
@@ -200,7 +201,7 @@ function createDefaultCarouselElements(wrapperElement) {
  * @param carouselWrapper {HTMLElement} The container _(wrapper)_ inside which the elements will be put.
  * @param styleString {string} the style string used to define which style is going to be set for the carousel.
  * @throws TypeError if any argument is _null_ or _undefined_.*/
-function modifyCarouselElements(carouselWrapper, styleString) {
+async function modifyCarouselElements(carouselWrapper, styleString) {
     if (!elementList || !carouselWrapper || !styleString) {
         console.error('Elements: ', elementList, '\nWrapper: ', carouselWrapper, '\nStyle: ', styleString)
         throw new TypeError('Called creation of elements with invalid argument(s).');
@@ -267,8 +268,17 @@ function modifyCarouselElements(carouselWrapper, styleString) {
                     cardImg.src = "https://tmssl.akamaized.net/images/wappen/head/" +
                         String(elementList[i].clubId) + ".png";
                 } else {
-                    internalDiv.firstElementChild.href =
-                        getUrlForSinglePage({type: 'competition', id: String(elementList[i].competition_id)})
+                    await makeAxiosGet('/retrieve_last_season/' + String(elementList[i].competition_id))
+                        .then(lastSeason => {
+                            internalDiv.firstElementChild.href =
+                                getUrlForSinglePage({
+                                    type: 'competition',
+                                    id: String(elementList[i].competition_id),
+                                    season: String(lastSeason.data)
+                                })
+                        })
+                        .catch(err => console.error(err));
+
                     internalDiv.firstElementChild.title = retrieveCompetitionName(elementList[i].competition_name)
                     cardImg.src = "https://tmssl.akamaized.net/images/logo/header/" +
                         String(elementList[i].competition_id).toLowerCase() + ".png";
@@ -337,7 +347,7 @@ async function loadNationalCompetition(domestic_league_code) {
         collapseBtn.click()
 
         this.classList.remove('current-nation')
-        for(let iframe of parentWin.document.getElementsByTagName('iframe'))
+        for (let iframe of parentWin.document.getElementsByTagName('iframe'))
             if (iframe.classList.contains('collapse-toggler'))
                 setTimeout(adjustIframeHeight.bind(null, iframe), 400)
     } else {
@@ -347,7 +357,7 @@ async function loadNationalCompetition(domestic_league_code) {
             // The div is shown, must recreate the content and modify the selected nation
             nationalSection.name = domestic_league_code
 
-            for ( let elem of document.getElementsByClassName('current-nation'))
+            for (let elem of document.getElementsByClassName('current-nation'))
                 elem.classList.remove('current-nation')
             this.classList.add('current-nation')
 

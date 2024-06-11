@@ -232,6 +232,62 @@
         }
       }
     },
+    "/single_page/get_competition_by_id/{id}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve data about a competition.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "the 'competition_id' of the competition to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Request content was not found."
+          },
+          "500": {
+            "description": "Error in '/get_competition_by_id/' GET: id passed was null!"
+          }
+        }
+      }
+    },
+    "/single_page/get_all_season/{id}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route to retrieve all the seasons years.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "the 'competition_id' of the competition for which we want to obtain the seasons"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Request content was not found."
+          },
+          "500": {
+            "description": "Error in '/get_all_season/:id' GET: id passed was null"
+          }
+        }
+      }
+    },
     "/single_page/get_club_by_id/{id}": {
       "get": {
         "tags": [
@@ -488,6 +544,41 @@
             "required": true,
             "type": "string",
             "description": "The game_id of the game we want to analyse."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'id' passed as input!"
+          }
+        }
+      }
+    },
+    "/single_page/get_competition_placing/{id}/{season}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves competition placing in base of an \\'id\\' and a \\'season\\'.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The competition_id of the competition we want the placing."
+          },
+          {
+            "name": "season",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "The year of the competition we want the placing."
           }
         ],
         "responses": {
