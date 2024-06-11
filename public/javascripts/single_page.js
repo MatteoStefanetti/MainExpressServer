@@ -420,7 +420,7 @@ async function initSinglePage() {
 
                         await makeAxiosGet('/single_page/get_competition_placing/' + String(idParams) + '/' + String(seasonParams))
                             .then(placing => {
-                                console.log(placing);
+                                console.log(placing.data);
                                 placing.data.forEach(el => {
                                     let clubContainer = document.createElement('div');
                                     clubContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'my-4', 'px-1');
