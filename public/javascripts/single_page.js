@@ -326,7 +326,7 @@ async function initSinglePage() {
                                 let competitionLabel = document.createElement('p');
                                 competitionAnchor.classList.add('pe-5')
                                 competitionAnchor.style.textDecoration = 'underline'
-                                competitionLabel.classList.add('p');
+                                competitionLabel.classList.add('p', 'ms-1', 'ms-md-3');
                                 competitionLabel.innerHTML = '<b>Competition:</b> ';
                                 competitionAnchor.innerText = response.competition_id;
                                 competitionAnchor.href = getUrlForSinglePage({
@@ -336,13 +336,17 @@ async function initSinglePage() {
                                 competitionLabel.appendChild(competitionAnchor)
                                 genInfo1.appendChild(competitionLabel)
 
-                                createParagraphForSP(genInfo1, response.round, 'Match Round', response.round, 'p')
-                                createParagraphForSP(genInfo1, response.season, 'Season', response.season, 'p')
+                                createParagraphForSP(genInfo1, response.round, 'Match Round', response.round, 'p',
+                                    'ms-1', 'ms-md-3')
+                                createParagraphForSP(genInfo1, response.season, 'Season', response.season, 'p',
+                                    'ms-1', 'ms-md-3')
 
-                                createParagraphForSP(genInfo2, response.referee, 'Referee', response.referee, 'p')
-                                createParagraphForSP(genInfo2, response.stadium, 'Stadium', response.stadium, 'p')
+                                createParagraphForSP(genInfo2, response.referee, 'Referee', response.referee, 'p',
+                                    'ms-1', 'ms-md-3')
+                                createParagraphForSP(genInfo2, response.stadium, 'Stadium', response.stadium, 'p',
+                                    'ms-1', 'ms-md-3')
                                 createParagraphForSP(genInfo2, (response.attendance !== -1), 'Attendance',
-                                    response.attendance, 'p')
+                                    response.attendance, 'p', 'ms-1', 'ms-md-3')
 
                                 let substitutionsArray = [];
                                 let goalsArray = [];
