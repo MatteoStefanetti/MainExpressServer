@@ -264,6 +264,16 @@ a:active .tuple-btn , .nav-item:active .tuple-btn  {
   color: var(--darkgreen);
 }
 
+.custom-chat-icon {
+  font-size: calc(1.375rem + 1.5vw) !important;
+}
+
+@media(min-width: 576px) {
+  .custom-chat-icon {
+    font-size: calc(1.3rem + 0.6vw) !important;
+  }
+}
+
 /* ----------- Forms ----------- */
 
 .vertical-separator {
