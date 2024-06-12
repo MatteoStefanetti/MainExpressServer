@@ -254,16 +254,14 @@ async function initSinglePage() {
                                     response.attendance, 'p', 'ms-1', 'ms-md-3')
 
                                 let substitutionsArray = [];
-                                let goalsArray = [];
                                 let cardsArray = [];
                                 // Querying game_events
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
                                         if (events.data.length) {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
-                                            goalsArray = events.data.filter(element => String(element.event_type) === 'Goals')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
-                                            console.log('cards:', cardsArray)       // debug only
+                                            console.log('cards:', cardsArray)       // @todo remove: debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -552,9 +550,7 @@ async function openAccordionPastMember(id) {
         throw new TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
     }
 
-    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
     const club_id = id.slice(id.indexOf('_') + 1);
-
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
