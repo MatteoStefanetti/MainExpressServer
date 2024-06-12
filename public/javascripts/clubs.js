@@ -81,7 +81,7 @@ async function openAccordionClubs(id) {
         showChargingSpinner(null, true)
         await makeAxiosGet(`/clubs/get_clubs_by_local_competition_code/${id}`)
             .then(data => {
-                let dataResponse = Array(data.data)[0];
+                let dataResponse = data.data;
                 dataResponse.sort((st, nd) => {
                     return String(st.clubName).localeCompare(String(nd.clubName))
                 });
@@ -122,7 +122,7 @@ function searchClubs(event) {
             method: 'get'
         })
             .then(data => {
-                let dataResponse = Array(data.data)[0];
+                let dataResponse = data.data;
                 dataResponse.sort((st, nd) => {
                     return String(st.clubName).localeCompare(String(nd.clubName))
                 });

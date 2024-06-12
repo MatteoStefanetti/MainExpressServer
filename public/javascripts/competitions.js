@@ -66,7 +66,7 @@ function startCompetitionClassesObserver() {
                 const domestic_league_code = document.getElementById('nationalSection').name
                 await makeAxiosGet('/competitions/get_competitions/' + String(domestic_league_code))
                     .then(data => {
-                        let competitionList = Array(data.data)[0]
+                        let competitionList = data.data
                         if(!competitionList || competitionList.length === 0)
                             console.error('Error! Invalid competitions list returned:', competitionList)
                         try {

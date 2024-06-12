@@ -39,7 +39,7 @@ async function initCarousel() {
         .then(async data => {
             if (elementList)
                 console.error('not null: ', elementList)
-            elementList = Array(data.data)[0];
+            elementList = data.data;
             if (!elementList[0])
                 console.error('Error: response of', retrieveStr, 'is:', elementList)
             else

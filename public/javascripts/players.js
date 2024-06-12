@@ -18,7 +18,7 @@ function searchPlayer(event) {
             method: 'get'
         })
             .then(data => {
-                let dataResponse = Array(data.data)[0];
+                let dataResponse = data.data
                 let playerList = document.getElementById('playersList')
                 if (playerList.parentElement.classList.contains('d-none')) {
                     document.body.classList.remove('body-bg');

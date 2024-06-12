@@ -32,7 +32,7 @@ async function makeAxiosGet(url) {
 async function getAllFlags() {
     return axios.get('/get_flags')
         .then(data => {
-            const dataR = Array(data.data)[0];
+            const dataR = data.data;
             let flagList = new Map();
             for (let i in dataR) {
                 flagList.set(dataR[i].domestic_league_code, {
@@ -202,7 +202,7 @@ async function openAccordionGames(window, id) {
             })
         await makeAxiosGet(`/competitions/get_games_by_league/${id}/` + currentSeason)
             .then(data => {
-                let dataResponse = Array(data.data)[0];
+                let dataResponse = data.data;
                 let unList = window.document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
                 window.document.getElementById('gamesAccordion').appendChild(unList)
