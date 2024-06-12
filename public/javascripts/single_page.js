@@ -310,9 +310,49 @@ async function initSinglePage() {
                                         else console.error(err)
                                     })
 
-                                // @todo add accordions
-                                await createAccordion('single_page/ga/appearances', 'accordions',
-                                    {id: 'appearances_' + idParams});
+                                // @todo add players ref and game_events accordion
+                                // players section
+                                let playersDivTitle = document.createElement('div')
+                                playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3')
+                                playersDivTitle.innerText = 'Players'
+                                let playersDiv = document.createElement('div')
+                                playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'py-1', 'px-sm-2')
+                                document.getElementById('accordions').insertAdjacentElement('afterend', playersDivTitle)
+                                playersDivTitle.insertAdjacentElement('afterend', playersDiv)
+                                await makeAxiosGet(`/single_page/get_appearances_of_game/${response.game_id}`)
+                                    .then(async appearances => {
+                                        const idsArray = appearances.data.map(el => el.player_id).join(',')
+                                        // creating player cards
+                                        await makeAxiosGet(`/single_page/get_players_by_ids/${idsArray}`)
+                                            .then(cards => {
+                                                cards.data.forEach(elem => {
+                                                    const playerContainer = document.createElement('div');
+                                                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
+                                                    let clickableContent = document.createElement('a');
+                                                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
+                                                    clickableContent.classList.add('text-dark');
+                                                    clickableContent.innerHTML =
+                                                        '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                                                        'border-darkgreen rounded-4 player-img-size w-75" alt=" "/>' +
+                                                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
+                                                        '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
+                                                        '</span></div>';
+                                                    playerContainer.appendChild(clickableContent);
+                                                    playersDiv.appendChild(playerContainer)
+                                                })
+                                            })
+                                            .catch(err => {
+                                                if (err.status === 404)
+                                                    playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
+                                                else console.error(err)
+                                            })
+                                    })
+                                    .catch(err => {
+                                        if (err.status === 404)
+                                            playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
+                                        else console.error(err)
+                                    })
                             })
                             .catch(err => {
                                 console.error(err)
