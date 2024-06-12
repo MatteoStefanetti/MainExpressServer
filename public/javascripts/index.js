@@ -473,7 +473,7 @@ function createStatsBtn(window, statsBtn, fatherElement) {
  * @throws Typeerror if one or more arguments are _null_ or _undefined_. */
 function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     if (!parentList || !partialId || !loadMoreFunction) {
-        console.error('', parentList, '\n', partialId, '\n', loadMoreFunction);
+        console.error('Arguments:', parentList, '\n', partialId, '\n', loadMoreFunction);
         throw new TypeError('Invalid argument(s) passed to \'createLoadMoreElement()\'!');
     }
     let loadMoreContainer, innerLoadMore;
@@ -485,7 +485,7 @@ function createLoadMoreElement(parentList, partialId, loadMoreFunction) {
     } else {
         /* Assertion: inside these brackets, the parentList is a <div> having the 'row' class. */
         loadMoreContainer = document.createElement('div');
-        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4', 'loadMoreElement');
+        loadMoreContainer.classList.add('col-12', 'd-flex', 'justify-content-center', 'mb-4', 'load-more-element');
         innerLoadMore = document.createElement('a');
         innerLoadMore.classList.add('py-1', 'px-5');
     }
