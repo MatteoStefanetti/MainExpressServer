@@ -783,7 +783,7 @@ async function openAccordionClubLastGames(id) {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {
                         counter: alternatorCounter++,
                         data: el
-                    }, {type: 'game', id: String(el.game_id)});
+                    }, {type: 'game', id: String(el.gameId)});
                 })
 
                 if (dataResponse.length > 20) {
