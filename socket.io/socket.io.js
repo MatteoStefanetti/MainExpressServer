@@ -44,7 +44,6 @@ module.exports = function(io) {
                 });
 
                 socket.on('disconnect', () => {
-                    console.log('A user disconnected.');// @todo: this could fill with trash the console
                     if(socket.roomName != null)
                         removeUserFromRoom(socket.roomName)
                 });

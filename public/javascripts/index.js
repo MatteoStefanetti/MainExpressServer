@@ -132,7 +132,7 @@ async function createAccordion(visualize, fatherId, params) {
             strIdValue = params.id;
             spanTitle.innerText = 'Appearances';
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionGameAppearances.bind(accordionButton, strIdValue));
+            // @todo fix: accordionButton.addEventListener('click', openAccordionGameEvents.bind(accordionButton, strIdValue));
             break;
         case 'single_page/pl/player_valuations':
             strIdValue = params.id;
@@ -146,6 +146,12 @@ async function createAccordion(visualize, fatherId, params) {
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionPlayerAppearances.bind(accordionButton, strIdValue));
             break;
+        case 'single_page/cl/last_games':
+            strIdValue = params.id;
+            spanTitle.innerText = 'Last Season Games';
+            accordionButton.appendChild(spanTitle);
+            accordionButton.addEventListener('click', openAccordionClubLastGames.bind(accordionButton, strIdValue));
+            break;
         case 'single_page/cl/players':
             strIdValue = params.id;
             spanTitle.innerText = 'Active Squad';
@@ -157,12 +163,6 @@ async function createAccordion(visualize, fatherId, params) {
             spanTitle.innerText = 'Past Players';
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionPastMember.bind(accordionButton, strIdValue));
-            break;
-        case 'single_page/cl/last_games':
-            strIdValue = params.id;
-            spanTitle.innerText = 'Last Season Games';
-            accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionClubLastGames.bind(accordionButton, strIdValue));
             break;
         case 'single_page/co/last_season_games':
             strIdValue = params.id;

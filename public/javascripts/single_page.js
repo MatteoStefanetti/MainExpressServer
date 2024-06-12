@@ -254,16 +254,14 @@ async function initSinglePage() {
                                     response.attendance, 'p', 'ms-1', 'ms-md-3')
 
                                 let substitutionsArray = [];
-                                let goalsArray = [];
                                 let cardsArray = [];
                                 // Querying game_events
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
                                         if (events.data.length) {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
-                                            goalsArray = events.data.filter(element => String(element.event_type) === 'Goals')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
-                                            console.log('cards:', cardsArray)       // debug only
+                                            console.log('cards:', cardsArray)       // @todo remove: debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -310,9 +308,49 @@ async function initSinglePage() {
                                         else console.error(err)
                                     })
 
-                                // @todo add accordions
-                                await createAccordion('single_page/ga/appearances', 'accordions',
-                                    {id: 'appearances_' + idParams});
+                                // @todo add players ref and game_events accordion
+                                // players section
+                                let playersDivTitle = document.createElement('div')
+                                playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3', 'fs-5')
+                                playersDivTitle.innerText = 'Players'
+                                let playersDiv = document.createElement('div')
+                                playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'py-1', 'px-sm-2')
+                                document.getElementById('accordions').insertAdjacentElement('afterend', playersDivTitle)
+                                playersDivTitle.insertAdjacentElement('afterend', playersDiv)
+                                await makeAxiosGet(`/single_page/get_appearances_of_game/${response.game_id}`)
+                                    .then(async appearances => {
+                                        const idsArray = appearances.data.map(el => el.player_id).join(',')
+                                        // creating player cards
+                                        await makeAxiosGet(`/single_page/get_players_by_ids/${idsArray}`)
+                                            .then(cards => {
+                                                cards.data.forEach(elem => {
+                                                    const playerContainer = document.createElement('div');
+                                                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
+                                                    let clickableContent = document.createElement('a');
+                                                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
+                                                    clickableContent.classList.add('text-dark');
+                                                    clickableContent.innerHTML =
+                                                        '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-5 ' +
+                                                        'border-darkgreen rounded-4 player-img-size w-75" alt=" "/>' +
+                                                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
+                                                        '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
+                                                        '</span></div>';
+                                                    playerContainer.appendChild(clickableContent);
+                                                    playersDiv.appendChild(playerContainer)
+                                                })
+                                            })
+                                            .catch(err => {
+                                                if (err.status === 404)
+                                                    playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
+                                                else console.error(err)
+                                            })
+                                    })
+                                    .catch(err => {
+                                        if (err.status === 404)
+                                            playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
+                                        else console.error(err)
+                                    })
                             })
                             .catch(err => {
                                 console.error(err)
@@ -329,6 +367,7 @@ async function initSinglePage() {
             const seasonParams = urlParams.get('season');
             if (idParams) {
                 let seasonForm = document.createElement('form');
+                seasonForm.classList.add('mt-1');
                 let seasonLabel = document.createElement('label');
                 seasonLabel.classList.add('form-label');
                 seasonLabel.innerText = 'Select Season:';
@@ -512,9 +551,7 @@ async function openAccordionPastMember(id) {
         throw new TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
     }
 
-    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
     const club_id = id.slice(id.indexOf('_') + 1);
-
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
@@ -539,7 +576,6 @@ async function openAccordionPastMember(id) {
                         '</div>';
 
                     playerContainer.appendChild(clickableContent);
-
                     if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW)
                         playerContainer.classList.add('d-none');
                     playerList.appendChild(playerContainer);
@@ -556,9 +592,9 @@ async function openAccordionPastMember(id) {
             });
 
         document.getElementById(id).firstElementChild.appendChild(playerList);
-        this.disabled = false
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 /**
@@ -619,9 +655,9 @@ async function openAccordionClubMember(id) {
                 //TODO: check errors
             });
         document.getElementById(id).firstElementChild.appendChild(playerList);
-        this.disabled = false
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 /**
@@ -639,11 +675,8 @@ async function openAccordionPlayerValuation(id) {
         throw new TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
     }
 
-    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
     const player_id = id.slice(id.indexOf('_') + 1);
-
     if (document.getElementById(id).firstElementChild.children.length === 0) {
-
         showChargingSpinner(null, true);
 
         let canvasContainer = document.createElement('div')
@@ -658,7 +691,6 @@ async function openAccordionPlayerValuation(id) {
 
         await makeAxiosGet('/single_page/get_valuations_of_player/' + player_id)
             .then(data => {
-
                 let dataResponse = data.data;
                 dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB', {
                     day: 'numeric',
@@ -669,15 +701,16 @@ async function openAccordionPlayerValuation(id) {
             })
             .catch(err => {
                 console.error(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_valuations_of_player\' GET');
                 //TODO: check errors
             });
 
         canvasContainer.appendChild(canvasElem);
         document.getElementById(id).firstElementChild.appendChild(canvasContainer);
-
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 /**

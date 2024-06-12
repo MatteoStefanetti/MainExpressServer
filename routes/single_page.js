@@ -451,4 +451,29 @@ router.get('/get_competition_placing/:id/:season', async (req, res) => {
     }
 })
 
+router.get('/get_players_by_ids/:list', async (req, res) => {
+    /* #swagger.tags = ['Single Page']
+     #swagger.description = 'GET route that retrieves PlayerCard, given a list of \'id\'s.'
+     #swagger.parameters['list'] = {
+        in: 'path',
+        description: 'The list of player_id of the playerCards to retrieve.',
+        type: 'array',
+        required: 'true'
+    }
+    #swagger.responses[500] = {
+        description: 'Invalid \'list\' of ids passed as input!'
+    }
+    */
+    if (req.params.list && req.params.list.length) {
+        fetch('http://localhost:8081/players/query_players_by_ids/' + String(req.params.list), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err));
+    } else {
+        res.status(500).json(JSON.stringify('Invalid \'list\' of ids passed as input!'));
+    }
+})
+
 module.exports = router;

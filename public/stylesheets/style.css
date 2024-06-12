@@ -264,6 +264,11 @@ a:active .tuple-btn , .nav-item:active .tuple-btn  {
   color: var(--darkgreen);
 }
 
+.custom-section {
+  border: 1px solid var(--darkgrey);
+  background-color: var(--custom-accordion-lightgrey);
+}
+
 .custom-chat-icon {
   font-size: calc(1.375rem + 1.5vw) !important;
 }
