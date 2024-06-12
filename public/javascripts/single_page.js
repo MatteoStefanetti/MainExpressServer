@@ -311,7 +311,7 @@ async function initSinglePage() {
                                 // @todo add players ref and game_events accordion
                                 // players section
                                 let playersDivTitle = document.createElement('div')
-                                playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3')
+                                playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3', 'fs-5')
                                 playersDivTitle.innerText = 'Players'
                                 let playersDiv = document.createElement('div')
                                 playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'py-1', 'px-sm-2')
@@ -367,6 +367,7 @@ async function initSinglePage() {
             const seasonParams = urlParams.get('season');
             if (idParams) {
                 let seasonForm = document.createElement('form');
+                seasonForm.classList.add('mt-1');
                 let seasonLabel = document.createElement('label');
                 seasonLabel.classList.add('form-label');
                 seasonLabel.innerText = 'Select Season:';
@@ -575,7 +576,6 @@ async function openAccordionPastMember(id) {
                         '</div>';
 
                     playerContainer.appendChild(clickableContent);
-
                     if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW)
                         playerContainer.classList.add('d-none');
                     playerList.appendChild(playerContainer);
@@ -592,9 +592,9 @@ async function openAccordionPastMember(id) {
             });
 
         document.getElementById(id).firstElementChild.appendChild(playerList);
-        this.disabled = false
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 /**
@@ -655,9 +655,9 @@ async function openAccordionClubMember(id) {
                 //TODO: check errors
             });
         document.getElementById(id).firstElementChild.appendChild(playerList);
-        this.disabled = false
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 /**
@@ -675,11 +675,8 @@ async function openAccordionPlayerValuation(id) {
         throw new TypeError('Invalid argument passed to \'openAccordionPlayerValuation\'!');
     }
 
-    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
     const player_id = id.slice(id.indexOf('_') + 1);
-
     if (document.getElementById(id).firstElementChild.children.length === 0) {
-
         showChargingSpinner(null, true);
 
         let canvasContainer = document.createElement('div')
@@ -694,7 +691,6 @@ async function openAccordionPlayerValuation(id) {
 
         await makeAxiosGet('/single_page/get_valuations_of_player/' + player_id)
             .then(data => {
-
                 let dataResponse = data.data;
                 dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB', {
                     day: 'numeric',
@@ -705,15 +701,16 @@ async function openAccordionPlayerValuation(id) {
             })
             .catch(err => {
                 console.error(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_valuations_of_player\' GET');
                 //TODO: check errors
             });
 
         canvasContainer.appendChild(canvasElem);
         document.getElementById(id).firstElementChild.appendChild(canvasContainer);
-
         showChargingSpinner(null, false);
     }
+    this.disabled = false
 }
 
 /**
