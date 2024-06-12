@@ -542,7 +542,6 @@ async function openAccordionPastMember(id) {
 
                     if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW)
                         playerContainer.classList.add('d-none');
-
                     playerList.appendChild(playerContainer);
                 });
 
@@ -604,9 +603,9 @@ async function openAccordionClubMember(id) {
 
                     playerContainer.appendChild(clickableContent);
 
-                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
+                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW)
                         playerContainer.classList.add('d-none');
-                    }
+
                     playerList.appendChild(playerContainer);
                 });
 
