@@ -38,15 +38,9 @@ async function initSinglePage() {
 
                         await makeAxiosGet(`/single_page/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
-                                let playerClub = document.createElement('a');
-                                let playerClubString = document.createElement('p');
-                                playerClubString.classList.add('p');
-                                playerClubString.innerHTML = '<b>Current Club:</b> ';
-                                playerClub.innerText = dataClub.data.clubName;
-
-                                playerClub.href = getUrlForSinglePage({type: 'club', id: data.data.current_club_id});
-                                titleDiv.appendChild(playerClubString);
-                                playerClubString.appendChild(playerClub);
+                                const playerClubValue = '<a class="text-decoration-underline" href="' + getUrlForSinglePage({type: 'club', id: data.data.current_club_id})
+                                    +'">'+dataClub.data.clubName+'</a>'
+                                createParagraphForSP(titleDiv, true, 'Current Club', playerClubValue, 'p')
                             })
                             .catch(err => console.error(err));
 
@@ -90,23 +84,16 @@ async function initSinglePage() {
                             data.data.club_id + '.png';
                         singlePageTitle.innerText = data.data.club_name;
 
-                        let nationalityLabel = document.createElement('p');
-                        nationalityLabel.classList.add('p');
-                        nationalityLabel.innerHTML = '<b>Nationality:</b> ';
                         await makeAxiosGet('/single_page/get_nation_name_by_code/' + data.data.local_competition_code)
                             .then(nation => {
                                 nation.data = nation.data[0]
-                                nationalityLabel.innerHTML += nation.data.country_name;
 
-                                let nationFlag = document.createElement('img')
-                                nationFlag.classList.add('img-fluid', 'mx-1', 'rounded-1')
-                                nationFlag.style.width = '1.6rem'
-                                nationFlag.style.height = '1rem'
-                                nationFlag.src = nation.data.flag_url
-                                nationalityLabel.appendChild(nationFlag)
+                                const nationalityValue = nation.data.country_name +
+                                    '<img class="img-fluid mx-1 rounded-1" src="' + nation.data.flag_url +
+                                    '" alt=" " style="width: 1.6rem; height: 1rem">'
+                                createParagraphForSP(titleDiv, true, 'Nationality', nationalityValue, 'p')
                             })
-                            .catch(err => console.error(err))
-                        titleDiv.appendChild(nationalityLabel);
+                            .catch(err => console.log(err, ': No flag or name have been found for the nationality.'))
 
                         createParagraphForSP(info1, true, 'Last Season', data.data.last_season,
                             'p', 'ms-1', 'ms-md-3')
@@ -329,7 +316,7 @@ async function initSinglePage() {
                             })
                             .catch(err => {
                                 console.error(err)
-                                // @todo handle error
+                                // @todo handle error of game not found
                             })
                     })
                     .catch(err => {
@@ -341,9 +328,6 @@ async function initSinglePage() {
         case 'competition':
             const seasonParams = urlParams.get('season');
             if (idParams) {
-                let nationalityLabel = document.createElement('p');
-                nationalityLabel.classList.add('p');
-                nationalityLabel.innerHTML = '<b>Nationality:</b> ';
                 let seasonForm = document.createElement('form');
                 let seasonLabel = document.createElement('label');
                 seasonLabel.classList.add('form-label');
@@ -361,7 +345,6 @@ async function initSinglePage() {
 
                 await makeAxiosGet('/single_page/get_all_season/' + String(idParams))
                     .then(async seasons => {
-                        console.log(seasons.data);
                         seasons.data.forEach(season => {
                             let optionSeason = document.createElement('option');
                             optionSeason.value = season;
@@ -384,32 +367,24 @@ async function initSinglePage() {
 
                 await makeAxiosGet('/single_page/get_competition_by_id/' + String(idParams))
                     .then(async data => {
-                        console.log(data.data);
                         singlePageImg.src = 'https://tmssl.akamaized.net/images/logo/header/' + String(data.data.competition_id).toLowerCase() + '.png';
                         singlePageTitle.innerHTML = retrieveCompetitionName(data.data.competition_name);
 
-                        let nationalityLabel = document.createElement('p');
-                        nationalityLabel.classList.add('p');
-                        nationalityLabel.innerHTML = '<b>Nationality:</b> ';
-
+                        let nationalityValue = null;
                         await makeAxiosGet('/single_page/get_nation_name_by_code/' + String(data.data.domestic_league_code))
                             .then(async nation => {
-                                nation.data = nation.data[0];
-                                let nationFlag = document.createElement('img');
-                                nationFlag.classList.add('img-fluid', 'mx-1', 'rounded-1');
-                                nationFlag.style.width = '1.6rem';
-                                nationFlag.style.height = '1rem';
-                                nationFlag.src = nation.data.flag_url;
-                                nationalityLabel.innerHTML += data.data.country_name;
-                                nationalityLabel.appendChild(nationFlag);
+                                if (nation.data.length) {
+                                    nation.data = nation.data[0];   // only element that has to be here!
+                                    nationalityValue = nation.data.country_name +
+                                        '<img class="img-fluid mx-1 rounded-1" src="' + nation.data.flag_url +
+                                        '" alt=" " style="width: 1.6rem; height: 1rem">'
+                                }
                             })
-                            .catch(err => {
-                                nationalityLabel.innerHTML = nationalityLabel.innerHTML + 'International <span class="bi bi-globe-americas"></span>';
-                            })
-                        titleDiv.appendChild(nationalityLabel);
+                            .catch(ignored => {})
+                        nationalityValue = nationalityValue ?? 'International <span class="bi bi-globe-americas"></span>';
+                        createParagraphForSP(titleDiv, true, 'Nationality', nationalityValue, 'p')
 
                         titleDiv.appendChild(seasonForm);
-
                         document.getElementById('info').remove();
 
                         let placingDiv = document.createElement('div');
@@ -485,29 +460,23 @@ async function initSinglePage() {
 }
 
 async function openAccordionCompetitionLastGames(id, season) {
+    this.disabled = true
     if (!id || !season) {
-        console.log(id, '   ', season);
+        this.disabled = false
         throw new Error('Invalid argument to \'openAccordionCompetitionLastGames\' for \'' + id + '\' or \'' + season + '\'.');
     }
-
-    console.log('id', id);
-    console.log('season', season);
 
     const competition_id = id.slice(id.indexOf('_') + 1);
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
-        let dataResponse;
-
         await makeAxiosGet('/competitions/get_games_by_league/' + String(competition_id) + '/' + String(season))
             .then(data => {
-                dataResponse = Array(data.data)[0];
-
+                let dataResponse = data.data;
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
 
                 let alternatorCounter = 0;
-
                 dataResponse.forEach(el => {
                     createDynamicListItem(window, 'game', dataResponse.length, unList, {
                         counter: alternatorCounter++,
@@ -515,18 +484,17 @@ async function openAccordionCompetitionLastGames(id, season) {
                     }, {type: 'game', id: String(el.gameId)});
                 });
 
-                if (dataResponse.length > 20) {
+                if (dataResponse.length > 20)
                     createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
-                }
 
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
                 console.error(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_last_appearance\' GET');
                 //TODO: check errors
             })
-
         showChargingSpinner(null, false);
     }
     this.disabled = false;
@@ -537,8 +505,10 @@ async function openAccordionCompetitionLastGames(id, season) {
  * @throws TypeError If 'id' is null or undefined.
  * @throws Error If GET route fails. */
 async function openAccordionPastMember(id) {
+    this.disabled = true
     if (!id) {
         console.log(id);
+        this.disabled = false
         throw new TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
     }
 
@@ -550,15 +520,10 @@ async function openAccordionPastMember(id) {
 
         let playerList = document.createElement('div');
         playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
-
-        let dataResponse;
-
         await makeAxiosGet('/single_page/get_past_players/' + club_id)
             .then(data => {
-                dataResponse = Array(data.data)[0];
-
+                let dataResponse = data.data;
                 playerList.replaceChildren();
-
                 dataResponse.forEach((player) => {
                     const playerContainer = document.createElement('div');
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
@@ -575,9 +540,8 @@ async function openAccordionPastMember(id) {
 
                     playerContainer.appendChild(clickableContent);
 
-                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
+                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW)
                         playerContainer.classList.add('d-none');
-                    }
 
                     playerList.appendChild(playerContainer);
                 });
@@ -587,11 +551,13 @@ async function openAccordionPastMember(id) {
             })
             .catch(err => {
                 console.log(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_past_players\' GET');
                 //TODO: check errors
             });
 
         document.getElementById(id).firstElementChild.appendChild(playerList);
+        this.disabled = false
         showChargingSpinner(null, false);
     }
 }
@@ -604,27 +570,22 @@ async function openAccordionPastMember(id) {
  * @throws Error If GET route fails.
  * */
 async function openAccordionClubMember(id) {
+    this.disabled = true
     if (!id) {
-        console.log(id);
+        this.disabled = false
         throw new TypeError('Invalid argument passed to \'openAccordionClubMember(\'' + id + '\')');
     }
 
-    console.log('id', id); //FOR DEBUG ONLY -> @TODO: remember to remove;
     const club_id = id.slice(id.indexOf('_') + 1);
-
     if (document.getElementById(id).firstElementChild.children.length === 0) {
-
         showChargingSpinner(null, true);
 
         let playerList = document.createElement('div');
         playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
 
-        let dataResponse;
-
         await makeAxiosGet('/single_page/get_current_players/' + club_id)
             .then(data => {
-                dataResponse = Array(data.data)[0];
-
+                let dataResponse = data.data;
                 playerList.replaceChildren();
 
                 dataResponse.forEach((player) => {
@@ -646,7 +607,6 @@ async function openAccordionClubMember(id) {
                     if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW) {
                         playerContainer.classList.add('d-none');
                     }
-
                     playerList.appendChild(playerContainer);
                 });
 
@@ -655,11 +615,12 @@ async function openAccordionClubMember(id) {
             })
             .catch(err => {
                 console.log(err);
+                this.disabled = false
                 throw new Error('Error occurred during \'/get_current_players\' GET');
                 //TODO: check errors
             });
-
         document.getElementById(id).firstElementChild.appendChild(playerList);
+        this.disabled = false
         showChargingSpinner(null, false);
     }
 }
@@ -699,7 +660,7 @@ async function openAccordionPlayerValuation(id) {
         await makeAxiosGet('/single_page/get_valuations_of_player/' + player_id)
             .then(data => {
 
-                let dataResponse = Array(data.data)[0];
+                let dataResponse = data.data;
                 dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB', {
                     day: 'numeric',
                     year: '2-digit',
@@ -742,7 +703,7 @@ async function openAccordionClubLastGames(id) {
 
         await makeAxiosGet('/single_page/get_last_games_by_club/' + club_id)
             .then(data => {
-                dataResponse = Array(data.data)[0];
+                dataResponse = data.data;
 
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
@@ -772,55 +733,6 @@ async function openAccordionClubLastGames(id) {
     }
 }
 
-
-/**
- * Function called to generate the appearances of the `single_page/game` accordion.
- *
- * @param id {string} The **id** used as id of the accordion button.
- * @throws TypeError If id is null or undefined.
- * @throws Error If GET route fails. */
-async function openAccordionGameAppearances(id) {
-    this.disabled = true
-    if (!id) {
-        console.error(id);
-        this.disabled = false
-        throw new TypeError('Invalid argument passed to \'openAccordionGameAppearances\'!');
-    }
-
-    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
-    if (document.getElementById(id).firstElementChild.children.length === 0) {
-        showChargingSpinner(null, true);
-        await makeAxiosGet('/single_page/get_appearances_of_game/' + id.slice(id.indexOf('_') + 1))
-            .then(data => {
-                let dataResponse = Array(data.data)[0];
-                console.log(data.data)
-                console.log(dataResponse)
-                let unList = document.createElement('ul');
-                unList.classList.add('nav', 'flex-column');
-                let alternatorCounter = 0;
-                dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
-                        counter: alternatorCounter++,
-                        data: el
-                    }, {type: 'player', id: String(el.player_id)});
-                });
-
-                if (dataResponse.length > 20)
-                    createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
-                document.getElementById(id).firstElementChild.appendChild(unList);
-            })
-            .catch(err => {
-                console.error(err);
-                this.disabled = false
-                throw new Error('Error occurred during \'/get_appearances_of_game\' GET');
-                //TODO: check errors
-            });
-
-        showChargingSpinner(null, false);
-    }
-    this.disabled = false
-}
-
 /**
  * Function called to generate the internal info block of the Appearances accordion.
  *
@@ -835,23 +747,18 @@ async function openAccordionPlayerAppearances(id) {
         throw new TypeError('Invalid argument passed to \'openAccordionPlayerAppearances\'!');
     }
 
-    console.log('id', id) // FOR DEBUG ONLY -> @todo remove it!
     const player_id = id.slice(id.indexOf('_') + 1);
 
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
-        let dataResponse;
-
         await makeAxiosGet('/single_page/get_last_appearances/' + player_id)
             .then(data => {
-                dataResponse = Array(data.data)[0];
-
+                let dataResponse = data.data;
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
 
                 let alternatorCounter = 0;
-
                 dataResponse.forEach(el => {
                     createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
                         counter: alternatorCounter++,
@@ -859,9 +766,8 @@ async function openAccordionPlayerAppearances(id) {
                     }, {type: 'game', id: String(el.game_id)});
                 });
 
-                if (dataResponse.length > 20) {
+                if (dataResponse.length > 20)
                     createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
-                }
 
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
