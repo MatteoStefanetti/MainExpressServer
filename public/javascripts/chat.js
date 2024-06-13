@@ -152,7 +152,7 @@ function initChatSocket() {
     })
 
     chatSocket.on('chat', function (userId, chatText) {
-        if(userId !== null && userId !== chatUserName)
+        if(userId !== null)
             writeOnChat(userId, chatText)
     })
 
@@ -227,7 +227,6 @@ function sendMessage(event){
         event.preventDefault();
         return; // @todo end this case (what to do ?)
     }
-    writeOnChat(chatUserName, text);
     chatSocket.emit("chat", roomName, chatUserName, text);
     event.preventDefault();
 }
@@ -247,7 +246,7 @@ function writeOnChat(userId, text) {
             msgNode.innerHTML = '<i>' + text + '</i>'
         } else {
             msgNode.classList.add('rounded-4')
-            const sender = userId===chatUserName ? "You" : userId
+            const sender = userId === chatUserName ? "You" : userId
             if(sender === "You")
                 msgNode.classList.add('me-2', 'border', 'self-message', 'text-end')
             else
