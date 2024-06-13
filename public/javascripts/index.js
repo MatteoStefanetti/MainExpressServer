@@ -1,6 +1,15 @@
 /** Called by the index.html page. */
-function initHome() {
+async function initHome() {
     setCarouselPageHeight();
+    await makeAxiosGet('/chat.html')
+        .then(res => {
+            const begin = res.data.indexOf('<body')
+            const end = res.data.indexOf('</body>') + 7
+            document.getElementById("defaultChatPosition").innerHTML =
+                res.data.slice(begin, end).replaceAll('body', 'div')
+            initChat()
+        })
+        .catch(err => console.error('unable to retrieve chat page\n', err));
 }
 
 /** Function called by the `init()` of the **pages that are using the _iframe_ tags**.

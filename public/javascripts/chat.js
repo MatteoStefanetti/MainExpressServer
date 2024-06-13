@@ -2,7 +2,6 @@ let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
 let roomName = 'global';
 const chatSocket = io();
 let chat_messages = {}
-
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
 if(!localStorage.getItem('isChatOpened'))
     localStorage.setItem('isChatOpened', 'false')
@@ -43,8 +42,11 @@ function toggleChatElements() {
 }
 
 function hideNode( node ) {
-    if(node instanceof HTMLElement)
-        node.classList.add('d-none');
+    if(node instanceof HTMLElement) {
+            console.log('inside hideNode', node)
+            node.classList.add('d-none');
+            console.log('inside hideNode after', node)
+    }
     else
         console.error("wrong element:", node, "is not a HTMLElement")
 }
