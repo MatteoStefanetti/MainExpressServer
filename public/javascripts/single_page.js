@@ -617,13 +617,10 @@ async function openAccordionClubMember(id) {
 
         let playerList = document.createElement('div');
         playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
-
         await makeAxiosGet('/single_page/get_current_players/' + club_id)
             .then(data => {
-                let dataResponse = data.data;
                 playerList.replaceChildren();
-
-                dataResponse.forEach((player) => {
+                data.data.forEach((player) => {
                     const playerContainer = document.createElement('div');
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
 
@@ -638,15 +635,8 @@ async function openAccordionClubMember(id) {
                         '</div>';
 
                     playerContainer.appendChild(clickableContent);
-
-                    if (playerList.children.length >= MAX_ELEMENTS_TO_SHOW)
-                        playerContainer.classList.add('d-none');
-
                     playerList.appendChild(playerContainer);
                 });
-
-                if (dataResponse.length > MAX_ELEMENTS_TO_SHOW)
-                    createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
             })
             .catch(err => {
                 console.log(err);

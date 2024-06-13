@@ -30,10 +30,9 @@ function searchPlayer(event) {
                 dataResponse.forEach((player) => {
                     const playerContainer = document.createElement('div');
                     playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
+
                     let clickableContent = document.createElement('a');
-
                     clickableContent.href = getUrlForSinglePage({type: 'player', id: String(player.playerId)});
-
                     clickableContent.classList.add('text-dark');
                     clickableContent.innerHTML =
                         '<img src="' + player.imageUrl + '" class="img-fluid d-block border border-5 ' +
