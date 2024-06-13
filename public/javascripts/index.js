@@ -280,22 +280,72 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     dateDiv.classList.add('mx-3', 'd-flex', 'justify-content-center')
     switch (type) {
         case 'game':
-            listItem.id = item.data.gameId
-            listItemLink.classList.add('d-flex', 'align-items-center', 'py-1', 'mx-2');
-            let gamesDiv = window.document.createElement('div')
-            gamesDiv.classList.add('w-75', 'row', 'align-content-between')
-            gamesDiv.innerHTML = '<div class="col-12 my-2 not-hoverable">' +
-                '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + item.data.goal1 +
-                '</span><span class="ms-2 fs-6 p-1">' + item.data.clubName1 +
-                '</span></div><div class="col-12 my-2 not-hoverable">' +
-                '<span class="bg-secondary bg-opacity-25 p-2 rounded-2 not-hoverable">' + item.data.goal2 +
-                '</span><span class="ms-2 fs-6 p-1">' + item.data.clubName2 + '</span>'
-            listItemLink.appendChild(gamesDiv)
+            listItem.id = item.data.gameId;
+            listItem.classList.add('d-flex', 'align-items-center');
+            listItemLink.classList.add('flex-grow-1');
 
-            dateDiv.innerText = new Date(item.data.gameDate).toLocaleDateString()
-            rightDiv.appendChild(dateDiv)
-            createStatsBtn(window, desktopBtn, rightDiv)
-            listItemLink.appendChild(rightDiv)
+            let containerDiv = document.createElement('div');
+            containerDiv.classList.add('d-flex', 'flex-column', 'flex-sm-row', 'justify-content-between');
+
+            let leftDiv = document.createElement('div');
+            leftDiv.classList.add('d-flex', 'justify-content-center', 'align-items-center', 'w-100', 'p-2', 'flex-column', 'h5', 'text-center');
+
+            let centerDiv = document.createElement('div');
+            centerDiv.classList.add('d-flex', 'align-self-center', 'flex-column', 'p-1');
+
+            let rightDiv = leftDiv.cloneNode(true);
+
+            let dateSmDiv = document.createElement('div');
+            dateSmDiv.classList.add('d-flex', 'd-sm-none', 'justify-content-center', 'align-items-center', 'w-100', 'pt-2');
+
+            containerDiv.appendChild(dateSmDiv);
+            containerDiv.appendChild(leftDiv);
+            containerDiv.appendChild(centerDiv);
+            containerDiv.appendChild(rightDiv);
+
+            let goal1Span = document.createElement('span');
+            goal1Span.classList.add('d-none', 'd-sm-block', 'bg-secondary', 'bg-opacity-25', 'p-1', 'mb-1', 'rounded-2')
+            goal1Span.innerText = item.data.goal1;
+            leftDiv.appendChild(goal1Span);
+
+            let clubSpanContainer1 = document.createElement('div');
+            clubSpanContainer1.classList.add('flex-grow-1', 'd-flex', 'align-items-center');
+            leftDiv.appendChild(clubSpanContainer1);
+
+            let club1Span = document.createElement('span');
+            club1Span.classList.add( 'fw-bold');
+            club1Span.style.textWrap = 'balance';
+            club1Span.innerText = item.data.clubName1;
+            clubSpanContainer1.appendChild(club1Span);
+
+            let dateSpan = document.createElement('span');
+            dateSpan.innerText = new Date(item.data.gameDate).toLocaleDateString();
+
+            let vsSpan = document.createElement('span');
+            vsSpan.classList.add('d-flex', 'justify-content-center', 'text-darkgreen', 'h4', 'fw-bold');
+            vsSpan.innerText = 'vs';
+
+            centerDiv.appendChild(dateSpan);
+            centerDiv.appendChild(vsSpan);
+
+            let dateSpan2 = dateSpan.cloneNode(true);
+            dateSpan.classList.add('d-none', 'd-sm-block');
+            dateSmDiv.appendChild(dateSpan2);
+
+            let goal2Span = goal1Span.cloneNode(true);
+            goal2Span.innerText = item.data.goal2;
+            rightDiv.appendChild(goal2Span);
+
+            let clubSpanContainer2 = document.createElement('div');
+            clubSpanContainer2.classList.add('flex-grow-1', 'd-flex', 'align-items-center');
+            rightDiv.appendChild(clubSpanContainer2);
+
+            let club2Span = club1Span.cloneNode(true);
+            club2Span.innerText = item.data.clubName2;
+            clubSpanContainer2.appendChild(club2Span);
+
+            listItemLink.appendChild(containerDiv);
+
             if (size > 20 && item.counter > 20)
                 listItem.classList.add('d-none')
             break;
