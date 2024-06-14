@@ -237,7 +237,8 @@ async function initSinglePage() {
                                 competitionAnchor.innerText = response.competition_id;
                                 competitionAnchor.href = getUrlForSinglePage({
                                     type: 'competition',
-                                    id: response.competition_id
+                                    id: response.competition_id,
+                                    season: response.season
                                 })
                                 competitionLabel.appendChild(competitionAnchor)
                                 genInfo1.appendChild(competitionLabel)
