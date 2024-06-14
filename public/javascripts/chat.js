@@ -170,7 +170,7 @@ function initChatSocket() {
  *  calls connectToRoom, which connects to socket
  */
 function submitChatForm(event) {//connect button function
-    let formData = extractFormData("chatLoginForm");
+    let formData = extractFormData("chatLoginForm", false);
     const room = !formData.customRoom ? roomName : formData.customRoom
     const name = !formData.customName ? chatUserName : formData.customName
     connectToRoom( room, name, formData.makePublic)
@@ -220,7 +220,7 @@ function leaveRoom(event) {
  * write on chat and emit msg to the socket
  * */
 function sendMessage(event){
-    let text = String(extractFormData('textField').textInput).trim();
+    let text = String(extractFormData('textField', false).textInput).trim();
     document.getElementById('textInput').value = '';
     if(!text || text.length < 1) {
         console.error("Error on text string");

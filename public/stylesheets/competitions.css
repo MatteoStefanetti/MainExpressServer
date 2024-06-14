@@ -3,30 +3,53 @@
     min-width: 80px;
 }
 
-#searchGames input[type = text] {
-    width: 40%
+#gameSearchClub1 , #gameSearchClub2 {
+    min-width: 180px;
+    width: 45%
 }
 
-#dateSearchBar {
+#gameSearchDate {
+    min-width: 132px;
     width: 100%;
 }
 
-@media (min-width: 576px) {
-    #searchGames input[type = text] {
+.flex-grow-md-1 {
+    flex-grow: 1;
+}
+
+@media (max-width: 575px) {
+    .flex-grow-md-1 {
+        flex-grow: 0;
+    }
+}
+
+@media (max-width: 689px) {
+    #gameSearchClub1 , #gameSearchClub2 {
+        min-width: 180px;
+        width: 100%
+    }
+}
+
+@media (min-width: 689px) {
+    #gameSearchClub1 , #gameSearchClub2 {
         width: 180px
     }
 
-    #dateSearchBar {
+    #gameSearchDate {
         width: 135px;
     }
 
     #selectionByClubsBtn , #selectionByDateBtn {
         max-width: 80px;
     }
+
+    .custom-flex-xmd-row {
+        flex-direction: row !important;
+    }
 }
 
 .top-form-container {   /* class override */
-    top: 0;
+    align-items: start !important;
 }
 
 *:has(.not-hoverable):hover {

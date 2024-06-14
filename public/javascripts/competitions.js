@@ -10,7 +10,9 @@ function initCompetitions() {
 function setButtonsListener() {
     let clubsBtn = document.getElementById('selectionByClubsBtn')
     let dateBtn = document.getElementById('selectionByDateBtn')
-    document.getElementById('searchGames').addEventListener('submit', sendCompetitionQuery.bind(this))
+    document.getElementById('searchGameBy').addEventListener('submit', (ev) => ev.preventDefault())
+    document.getElementById('submitGameForm_Club').addEventListener('click', sendCompetitionQuery.bind(this))
+    document.getElementById('submitGameForm_Date').addEventListener('click', sendCompetitionQuery.bind(this))
     clubsBtn.addEventListener('click', changeBtnColors.bind(clubsBtn, dateBtn))
     dateBtn.addEventListener('click', changeBtnColors.bind(dateBtn, clubsBtn))
 }
@@ -22,36 +24,31 @@ function changeBtnColors(otherBtn) {
     if(!this.classList.contains('btn-darkgreen')) {
         this.classList.replace('btn-light', 'btn-darkgreen')
         otherBtn.classList.replace('btn-darkgreen', 'btn-light')
-        for (let child of document.getElementById('searchGames').children)
-            if (child.tagName === 'INPUT' || (child.getAttribute('for') === 'club2SearchBar')) {
-                if(child.classList.contains('d-none'))
-                    child.classList.remove('d-none')
-                else
-                    child.classList.add('d-none')
-            }
-        const formElem = document.getElementById('searchGames')
-        if (this.id === 'selectionByClubsBtn') {
-            formElem.classList.remove('col-sm-6', 'justify-content-sm-end')
-            formElem.classList.add('px-1', 'px-md-3')
-        } else {
-            formElem.classList.add('col-sm-6', 'justify-content-sm-end')
-            formElem.classList.remove('px-1', 'px-md-3')
+        for (let elem of document.getElementsByClassName('game-search-elements')) {
+            if (elem.classList.contains('d-none'))
+                elem.classList.remove('d-none')
+            else
+                elem.classList.add('d-none')
         }
     }
 }
 
 async function sendCompetitionQuery(ev) {
-    let formData = extractFormData('searchGames')
-    const dateSearchBar = document.getElementById('dateSearchBar')
-    if(formData.dateSearch && !dateSearchBar.classList.contains('d-none')) {
-        // @todo await makeAxiosGet()
-        ev.preventDefault();
-    } else if ((formData.club1Search || formData.club2Search) && dateSearchBar.classList.contains('d-none')) {
-        // @todo await makeAxiosGet()
-        ev.preventDefault();
+    let formData = extractFormData('searchGameBy', true)
+    if (this.id === 'submitGameForm_Club') {
+        if (formData.gameSearchClub1 || formData.gameSearchClub2) {
+            // @todo await makeAxiosGet()
+
+        } else
+            showModalMessage(false, 'game')
     } else {
-        // Reload the page
+        if (formData.gameSearchDate) {
+            // @todo await makeAxiosGet()
+
+        } else
+            showModalMessage(false, 'game')
     }
+    ev.preventDefault();
 }
 
 /** This method sets an observer to the button used to trigger the data of the national Section.
