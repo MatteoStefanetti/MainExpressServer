@@ -50,6 +50,7 @@
 
 .top-form-container {   /* class override */
     align-items: start !important;
+    top: calc(var(--header-height) - 55px);
 }
 
 *:has(.not-hoverable):hover {
