@@ -283,8 +283,10 @@ async function initSinglePage() {
                                             console.log('game_events not found for game:', response.game_id)
                                     })
                                     .catch(err => {
-                                        if (err.response.status === 404)
+                                        if (err.response.status === 404) {
                                             console.log('game_events not found for game:', response.game_id)
+                                        } else
+                                            console.error(err)
                                     })
 
                                 // Starting Lineups
@@ -304,7 +306,7 @@ async function initSinglePage() {
                                     })
                                     .catch(err => {
                                         if (err.response.status === 404)
-                                            console.log('Starting Lineups not found for game:', response.game_id);
+                                            console.log('Starting Lineups not found for game:', response.game_id);  // SIGNALING
                                         else console.error(err)
                                     })
 
