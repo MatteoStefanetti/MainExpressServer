@@ -3,6 +3,7 @@ const MAX_ELEMENTS_DISPLAYABLE = 24;
 
 /** Called by the players.html page. */
 function initPlayers() {
+    initChat()
     document.getElementById('submitPlayerForm').onclick = searchPlayer;
 }
 
@@ -24,7 +25,7 @@ function searchPlayer(event) {
                     document.body.classList.remove('body-bg');
                     playerList.parentElement.classList.remove('d-none');
                     changePlayersFormPosition();
-                    document.getElementById('chatPage').classList.add('d-lg-flex');
+                    document.getElementById('defaultChatPosition').classList.add('d-lg-flex');
                 }
                 playerList.replaceChildren();
                 dataResponse.forEach((player) => {

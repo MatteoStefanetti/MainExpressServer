@@ -9,27 +9,37 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
-    document.getElementById('chatIconBtn').onclick = clickChatBtn;
-    document.getElementById('closeChat').onclick = closeChat;
-    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
-    document.getElementById('declineTermsBtn').onclick = closeChat;
-    document.getElementById("submitForm").onclick =  submitChatForm;
-    document.getElementById("leaveButton").onclick =  leaveRoom;
-    document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
-    document.getElementById('textField').addEventListener('submit', sendMessage)
-    if(localStorage.getItem('acceptedChatTerms')) {
-        closeChatTerms();
-        if(localStorage.getItem('connectedRoom')) {
-            if(localStorage.getItem('connectedRoom') !== 'false') {
-                const room = !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom')
-                const name = !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName')
-                connectToRoom( room, name, false)
+    makeAxiosGet('/chat.html')
+        .then(res => {
+            const begin = res.data.indexOf('<body')
+            const end = res.data.indexOf('</body>') + 7
+            document.getElementById("defaultChatPosition").innerHTML =
+                res.data.slice(begin, end).replaceAll('body', 'div')
+
+
+            document.getElementById('chatIconBtn').onclick = clickChatBtn;
+            document.getElementById('closeChat').onclick = closeChat;
+            document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+            document.getElementById('declineTermsBtn').onclick = closeChat;
+            document.getElementById("submitForm").onclick =  submitChatForm;
+            document.getElementById("leaveButton").onclick =  leaveRoom;
+            document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
+            document.getElementById('textField').addEventListener('submit', sendMessage)
+            if(localStorage.getItem('acceptedChatTerms')) {
+                closeChatTerms();
+                if(localStorage.getItem('connectedRoom')) {
+                    if(localStorage.getItem('connectedRoom') !== 'false') {
+                        const room = !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom')
+                        const name = !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName')
+                        connectToRoom( room, name, false)
+                    }
+                }
             }
-        }
-    }
-    initChatSocket()
-    if(localStorage.getItem('isChatOpened') === 'true')
-        openChat()
+            initChatSocket()
+            if(localStorage.getItem('isChatOpened') === 'true')
+                openChat()
+        })
+        .catch(err => console.error('unable to retrieve chat page\n', err));
 }
 
 /** Function used to set the initial chat divs and buttons at every page-load.

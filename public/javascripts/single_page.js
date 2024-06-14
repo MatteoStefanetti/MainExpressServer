@@ -4,6 +4,7 @@ const idParams = urlParams.get('id');
 const MAX_ELEMENTS_TO_SHOW = 12;
 
 async function initSinglePage() {
+    initChat()
     let infoTitle = document.getElementById('infoTitle');
     let info1 = document.getElementById('info1');
     let info2 = document.getElementById('info2');

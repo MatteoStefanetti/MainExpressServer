@@ -2,6 +2,7 @@ let flags;
 
 /** Called by the clubs.html page. */
 async function initClubs() {
+    initChat()
     await getAllFlags()
         .then(res => {
             flags = res;
