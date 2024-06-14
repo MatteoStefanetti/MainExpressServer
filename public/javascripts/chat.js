@@ -65,6 +65,9 @@ function openChat() {
     localStorage.setItem('isChatOpened', 'true');
     hideNode(hideForChat)
     hideNode(btnDiv)
+    if(!chatDiv.classList.contains('d-lg-flex')) {
+        chatDiv.classList.add('d-lg-flex')
+    }
     showNode(chatDiv)
 }
 
@@ -75,6 +78,9 @@ function closeChat() {
     localStorage.setItem('isChatOpened', 'false');
     showNode(hideForChat)
     showNode(btnDiv)
+    if(chatDiv.classList.contains('d-lg-flex')) {
+        chatDiv.classList.remove('d-lg-flex')
+    }
     hideNode(chatDiv)
 }
 
