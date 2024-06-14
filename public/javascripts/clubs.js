@@ -115,7 +115,7 @@ async function openAccordionClubs(id) {
  * @param event - event fired when the form is submitted. */
 function searchClubs(event) {
     document.getElementById('submitClubForm').disabled = true;
-    let formData = extractFormData('searchClub');
+    let formData = extractFormData('searchClub', false);
     let club = formData.searchBar;
     if (club && club.length > 2) {
         axios.get(`/clubs/get_clubs_by_string/${club}`, {

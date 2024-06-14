@@ -11,7 +11,7 @@ function initPlayers() {
  * triggered when the **searchBar** is used in the _player.html_ page. */
 function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = true;
-    let formData = extractFormData("searchPlayer");
+    let formData = extractFormData("searchPlayer", false);
     let player = formData.searchBar;
     if (player && player.length > 2) {
         axios.get(`/get_players_by_name/${player}`, {

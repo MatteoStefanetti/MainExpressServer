@@ -284,8 +284,10 @@ async function initSinglePage() {
                                             console.log('game_events not found for game:', response.game_id)
                                     })
                                     .catch(err => {
-                                        if (err.status === 404)
+                                        if (err.response.status === 404) {
                                             console.log('game_events not found for game:', response.game_id)
+                                        } else
+                                            console.error(err)
                                     })
 
                                 // Starting Lineups
@@ -304,8 +306,8 @@ async function initSinglePage() {
                                             console.log('Starting Lineups not found for game:', response.game_id);
                                     })
                                     .catch(err => {
-                                        if (err.status === 404)
-                                            console.log('Starting Lineups not found for game:', response.game_id);
+                                        if (err.response.status === 404)
+                                            console.log('Starting Lineups not found for game:', response.game_id);  // SIGNALING
                                         else console.error(err)
                                     })
 
@@ -342,13 +344,13 @@ async function initSinglePage() {
                                                 })
                                             })
                                             .catch(err => {
-                                                if (err.status === 404)
+                                                if (err.response.status === 404)
                                                     playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
                                                 else console.error(err)
                                             })
                                     })
                                     .catch(err => {
-                                        if (err.status === 404)
+                                        if (err.response.status === 404)
                                             playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
                                         else console.error(err)
                                     })
@@ -557,9 +559,9 @@ async function openAccordionPastMember(id) {
         showChargingSpinner(null, true);
 
         let playerList = document.createElement('div');
-        playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
         await makeAxiosGet('/single_page/get_past_players/' + club_id)
             .then(data => {
+                playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
                 let dataResponse = data.data;
                 playerList.replaceChildren();
                 dataResponse.forEach((player) => {
@@ -586,10 +588,12 @@ async function openAccordionPastMember(id) {
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
             })
             .catch(err => {
-                console.log(err);
-                this.disabled = false
-                throw new Error('Error occurred during \'/get_past_players\' GET');
-                //TODO: check errors
+                if (err.response.status === 404) {
+                    console.log('No past players found.');  // SIGNALING
+                    playerList.classList.add('d-flex', 'w-100', 'justify-content-center', 'align-items-center')
+                    playerList.innerHTML = '<span class="text-center">No past players found.</span>'
+                } else
+                    console.error(err)
             });
 
         document.getElementById(id).firstElementChild.appendChild(playerList);

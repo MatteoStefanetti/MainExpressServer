@@ -555,13 +555,19 @@ function showMore(listContainer, MAX_ELEMENTS_DISPLAYABLE) {
 /* --------------------- Support Functions --------------------- */
 
 /** It returns an {@link object} with many fields as *`{name: value}`* as much are the valid `<input>`s in the form.
- * @param formId {string} The id of the form to check. */
-function extractFormData(formId) {
+ * @param formId {string} The id of the form to check.
+ * @param deep {boolean} If `true`, the form will be mapped in children and in its nephews (just 1 level below).
+ * In this way, a `<div>` with an input inside is scanned. */
+function extractFormData(formId, deep) {
     let formElements = document.getElementById(formId).children;
     let formData = {};
     for (let ix = 0; ix < formElements.length; ix++) {
         if (formElements[ix].name) {
             formData[formElements[ix].name] = formElements[ix].type === 'checkbox' ? formElements[ix].checked : formElements[ix].value;
+        } else if (deep) {
+            for (let nephew of formElements[ix].children)
+                if (nephew.name)
+                    formData[nephew.name] = nephew.value;
         }
     }
     return formData;
@@ -585,16 +591,14 @@ function showChargingSpinner(window, toDisplay) {
  * otherwise it will display a message of _**too few letters**_ in the input string. */
 function showModalMessage(unfounded, type) {
     if (unfounded) {
-        if (type === 'player')
-            document.getElementById('unfoundedModalLabel').innerText = 'No Player Found';
-        else if (type === 'club')
-            document.getElementById('unfoundedModalLabel').innerText = 'No Club Found';
+        const name = type[0].toUpperCase() + type.slice(1)
+        document.getElementById('unfoundedModalLabel').innerText = 'No ' + name + ' Found';
         document.getElementById('modal-body').innerHTML =
             'The search has found <b>0 ' + type + 's</b>. Please, check the syntax and retry.';
     } else {
         document.getElementById('unfoundedModalLabel').innerText = 'Invalid Input';
-        document.getElementById('modal-body').innerHTML =
-            'At least <b>3 letters</b> are required for a search.';
+        document.getElementById('modal-body').innerHTML = type !== 'game' ?
+            'At least <b>3 letters</b> are required for a search.' : '<b>Empty</b> input cannot be used for a search.'
     }
     document.getElementById('unfoundedModalTrigger').click();
 }
