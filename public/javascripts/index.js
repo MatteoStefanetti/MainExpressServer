@@ -226,17 +226,6 @@ async function openAccordionGames(window, id) {
     }
 }
 
-/** Function that loads the remaining elements of the `<ul>` list.
- * @param loader {HTMLElement} the _'loadMore'_ {@link HTMLElement}*/
-function loadRemainingElements(loader) {
-    if (loader) {
-        const unList = loader.parentElement;
-        loader.remove();
-        for (let i = Math.floor(unList.children.length / 2) + 1; i < unList.children.length; i++)
-            unList.children.item(i).classList.remove('d-none');
-    }
-}
-
 /** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
  * @param window {Window} it is the window parameter to avoid iframes problem.
  * @param type {string} a string representing the type of the listItem:
