@@ -1,6 +1,7 @@
 /** Called by the index.html page. */
 function initHome() {
     setCarouselPageHeight();
+    initChat()
 }
 
 /** Function called by the `init()` of the **pages that are using the _iframe_ tags**.

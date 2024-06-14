@@ -2,7 +2,6 @@ let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
 let roomName = 'global';
 const chatSocket = io();
 let chat_messages = {}
-
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
 if(!localStorage.getItem('isChatOpened'))
     localStorage.setItem('isChatOpened', 'false')
@@ -10,27 +9,37 @@ if(!localStorage.getItem('isChatOpened'))
 
 /** Function called by the main *"init"* functions to properly set attributes of the **chat** elements. */
 function initChat() {
-    document.getElementById('chatIconBtn').onclick = clickChatBtn;
-    document.getElementById('closeChat').onclick = closeChat;
-    document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
-    document.getElementById('declineTermsBtn').onclick = closeChat;
-    document.getElementById("submitForm").onclick =  submitChatForm;
-    document.getElementById("leaveButton").onclick =  leaveRoom;
-    document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
-    document.getElementById('textField').addEventListener('submit', sendMessage)
-    if(localStorage.getItem('acceptedChatTerms')) {
-        closeChatTerms();
-        if(localStorage.getItem('connectedRoom')) {
-            if(localStorage.getItem('connectedRoom') !== 'false') {
-                const room = !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom')
-                const name = !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName')
-                connectToRoom( room, name, false)
+    makeAxiosGet('/chat.html')
+        .then(res => {
+            const begin = res.data.indexOf('<body')
+            const end = res.data.indexOf('</body>') + 7
+            document.getElementById("defaultChatPosition").innerHTML =
+                res.data.slice(begin, end).replaceAll('body', 'div')
+
+
+            document.getElementById('chatIconBtn').onclick = clickChatBtn;
+            document.getElementById('closeChat').onclick = closeChat;
+            document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
+            document.getElementById('declineTermsBtn').onclick = closeChat;
+            document.getElementById("submitForm").onclick =  submitChatForm;
+            document.getElementById("leaveButton").onclick =  leaveRoom;
+            document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
+            document.getElementById('textField').addEventListener('submit', sendMessage)
+            if(localStorage.getItem('acceptedChatTerms')) {
+                closeChatTerms();
+                if(localStorage.getItem('connectedRoom')) {
+                    if(localStorage.getItem('connectedRoom') !== 'false') {
+                        const room = !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom')
+                        const name = !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName')
+                        connectToRoom( room, name, false)
+                    }
+                }
             }
-        }
-    }
-    initChatSocket()
-    if(localStorage.getItem('isChatOpened') === 'true')
-        openChat()
+            initChatSocket()
+            if(localStorage.getItem('isChatOpened') === 'true')
+                openChat()
+        })
+        .catch(err => console.error('unable to retrieve chat page\n', err));
 }
 
 /** Function used to set the initial chat divs and buttons at every page-load.
@@ -43,8 +52,11 @@ function toggleChatElements() {
 }
 
 function hideNode( node ) {
-    if(node instanceof HTMLElement)
-        node.classList.add('d-none');
+    if(node instanceof HTMLElement) {
+            console.log('inside hideNode', node)
+            node.classList.add('d-none');
+            console.log('inside hideNode after', node)
+    }
     else
         console.error("wrong element:", node, "is not a HTMLElement")
 }
@@ -63,6 +75,9 @@ function openChat() {
     localStorage.setItem('isChatOpened', 'true');
     hideNode(hideForChat)
     hideNode(btnDiv)
+    if(!chatDiv.classList.contains('d-lg-flex')) {
+        chatDiv.classList.add('d-lg-flex')
+    }
     showNode(chatDiv)
 }
 
@@ -73,6 +88,9 @@ function closeChat() {
     localStorage.setItem('isChatOpened', 'false');
     showNode(hideForChat)
     showNode(btnDiv)
+    if(chatDiv.classList.contains('d-lg-flex')) {
+        chatDiv.classList.remove('d-lg-flex')
+    }
     hideNode(chatDiv)
 }
 

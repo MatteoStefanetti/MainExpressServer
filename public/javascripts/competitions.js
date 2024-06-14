@@ -1,6 +1,7 @@
 
 /** Called by the competitions.html page. */
 function initCompetitions() {
+    initChat()
     setButtonsListener()
     setCarouselPageHeight()
     startCompetitionClassesObserver()
