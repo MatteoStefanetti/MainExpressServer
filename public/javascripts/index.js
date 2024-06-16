@@ -286,7 +286,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             let rightDiv = leftDiv.cloneNode(true);
 
             let dateSmDiv = document.createElement('div');
-            dateSmDiv.classList.add('d-flex', 'd-sm-none', 'justify-content-center', 'align-items-center', 'w-100', 'pt-2');
+            dateSmDiv.classList.add('d-flex', 'flex-column', 'd-sm-none', 'justify-content-center', 'align-items-center', 'w-100', 'pt-2');
 
             containerDiv.appendChild(dateSmDiv);
             containerDiv.appendChild(leftDiv);
@@ -315,8 +315,19 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             vsSpan.classList.add('d-flex', 'justify-content-center', 'text-darkgreen', 'h4', 'fw-bold');
             vsSpan.innerText = 'vs';
 
+            let competitionSpan = document.createElement('span');
+            competitionSpan.classList.add('text-uppercase', 'fs-5', 'fw-bold', 'text-center');
+            competitionSpan.innerText = item.data.competitionId;
+
+            let competitionSpan2 = competitionSpan.cloneNode(true);
+            competitionSpan.classList.add('d-none', 'd-sm-block');
+            competitionSpan2.classList.add('d-block', 'd-sm-none');
+
             centerDiv.appendChild(dateSpan);
             centerDiv.appendChild(vsSpan);
+            centerDiv.appendChild(competitionSpan);
+
+            dateSmDiv.appendChild(competitionSpan2);
 
             let dateSpan2 = dateSpan.cloneNode(true);
             dateSpan.classList.add('d-none', 'd-sm-block');
