@@ -118,8 +118,22 @@ async function createAccordion(visualize, fatherId, params) {
         case 'competition_nation':
             strIdValue = String(params.competition_id)
             spanTitle.innerText = params.competition_name;
+            spanTitle.classList.add('flex-grow-1')
+            accordionButton.classList.add('d-md-flex', 'p-md-1', 'px-md-3')
+            const urlParams = {type: 'competition', id: params.competition_id, season: params.competition_season};
+            // Adding the button to see the competition, shown only on "medium+" screens
+            let goCompetitionBtn = document.createElement('button')
+            goCompetitionBtn.classList.add('btn', 'btn-lightgreen', 'p-0', 'me-2', 'd-none', 'd-md-flex', 'align-items-center')
+            goCompetitionBtn.type = 'button'
+            goCompetitionBtn.tabIndex = 1
+            goCompetitionBtn.innerHTML = '<img src="../images/stats_btn_img.svg" class="img p-1 mx-auto" alt=">">'
+            goCompetitionBtn.firstElementChild.style.width = '2.2rem';
+            // Setting the Event-Listener functions
+            goCompetitionBtn.addEventListener('click', () => {
+                window.location.href = getUrlForSinglePage(urlParams)})
+            accordionButton.addEventListener('click', actionWrapper.bind(accordionButton, urlParams));
             accordionButton.appendChild(spanTitle);
-            accordionButton.addEventListener('click', openAccordionGames.bind(accordionButton, window, params.competition_id));
+            accordionButton.appendChild(goCompetitionBtn);
             break;
         case 'club_nation':
             strIdValue = String(params.local_competition_code)
@@ -179,6 +193,15 @@ async function createAccordion(visualize, fatherId, params) {
     accordionButton.setAttribute('aria-controls', strIdValue);
     accordionButton.setAttribute('data-bs-target', '#' + strIdValue);
     collapseDiv.id = strIdValue;
+}
+
+/** Wrapper function called by the games/competition accordion that triggers the games or the competition page
+ * @param params {object} the object with the params whether to call the `single_page` or to open the `games` */
+function actionWrapper(params) {
+    if (window.innerWidth < 768)
+        window.location.href = getUrlForSinglePage(params);
+    else
+        openAccordionGames(window, params.id);
 }
 
 /**
@@ -480,11 +503,12 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
 /**
  *  Function to define the url {@link string} of the single_page.
- *
  * @param params {object} It is a `{type: <string>, key: <value>, ...}` object element,
  * that defines how the *single_page.html* page shall load.
- * @throws TypeError if the argument `params` is not defined.
- * */
+ * - **type**: can be one of the following: *'club'*, *'competition'*, *'game'*, *'player'*.
+ * - **id**: the id of the entity to retrieve
+ * - **season**: if `type` is 'competition', you must select a valid season.
+ * @throws TypeError if the argument `params` is not defined. */
 function getUrlForSinglePage(params) {
     if (!params)
         throw new TypeError('\'single_page.html\' badly called.')

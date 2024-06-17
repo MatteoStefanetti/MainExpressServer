@@ -69,8 +69,16 @@ function startCompetitionClassesObserver() {
                             console.error('Error! Invalid competitions list returned:', competitionList)
                         try {
                             competitionList.forEach(val => {
-                                createAccordion('competition_nation', 'gamesAccordion', {
-                                    competition_id: val.competition_id, competition_name: retrieveCompetitionName(val.competition_name)})
+                                getLastSeasonYear(val.competition_id)
+                                    .then(season => {
+                                        createAccordion('competition_nation', 'gamesAccordion', {
+                                            competition_id: val.competition_id,
+                                            competition_name: retrieveCompetitionName(val.competition_name),
+                                            competition_season: season.data})
+                                    })
+                                    .catch(err => {
+                                        console.error('Error occurred retrieving last season of competition:', val.competition_id, '\n', err)
+                                    })
                             })
                         } catch (err) {
                             console.error(err)
