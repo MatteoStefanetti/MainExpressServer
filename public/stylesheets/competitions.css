@@ -57,3 +57,10 @@
     color: black !important;
     text-decoration: none !important;
 }
+
+@media (min-width: 768px) {
+    .col-md-11 {    /* Overriding Bootstrap class */
+        flex: 0 0 auto;
+        width: 91.66666667% !important;
+    }
+}
