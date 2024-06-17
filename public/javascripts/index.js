@@ -316,7 +316,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             vsSpan.innerText = 'vs';
 
             let competitionSpan = document.createElement('span');
-            competitionSpan.classList.add('text-uppercase', 'fs-5', 'fw-bold', 'text-center');
+            competitionSpan.classList.add('text-uppercase', 'fs-7', 'text-center');
             competitionSpan.innerText = item.data.competitionId;
 
             let competitionSpan2 = competitionSpan.cloneNode(true);

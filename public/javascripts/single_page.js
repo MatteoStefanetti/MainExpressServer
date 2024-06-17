@@ -726,12 +726,9 @@ async function openAccordionClubLastGames(id) {
 
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
-
-        let dataResponse;
-
         await makeAxiosGet('/single_page/get_last_games_by_club/' + club_id)
             .then(data => {
-                dataResponse = data.data;
+                let dataResponse = data.data;
 
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
