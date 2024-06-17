@@ -25,8 +25,8 @@
     <!-- Header -->
     <div class="container-fluid position-sticky top-0 d-sm-flex d-lg-block adjust-content-center" id="customHeader">
         <!-- Navbar -->
-        <nav class="navbar navbar-dark navbar-expand-sm mh-100">
-            <button class="navbar-toggler ms-4" type="button" data-bs-toggle="collapse"
+        <nav class="navbar navbar-dark navbar-expand-sm mh-100 justify-content-between justify-content-sm-start">
+            <button class="navbar-toggler " type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -34,6 +34,9 @@
             <a href="/" class="navbar-brand ms-2 me-0 ms-md-4">
                 <img class="img" src="images/football_lens_logo.svg" alt="Football Lens">
             </a>
+            <button class="btn bg-transparent p-0 text-white ms-1 ms-sm-3 ms-md-5 d-lg-none order-sm-last" type="button" id="chatButtonSmall" data-bs-toggle="offcanvas" data-bs-target="#chatOffCanvas" aria-controls="chatOffCanvas">
+                <i class="bi bi-chat-dots-fill custom-chat-icon"></i>
+            </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-sm-0">
                     <li class="nav-item ms-3 ms-md-5"><a href="competitions.html" class="nav-link text-light fw-bold">Competitions</a></li>
@@ -41,9 +44,6 @@
                     <li class="nav-item ms-3 ms-md-5"><a href="players.html" class="nav-link text-light fw-bold">Players</a></li>
                 </ul>
             </div>
-            <button class="btn bg-transparent p-0 text-white ms-1 ms-sm-3 ms-md-5 d-lg-none" type="button" id="chatButtonSmall" data-bs-toggle="offcanvas" data-bs-target="#chatOffCanvas" aria-controls="chatOffCanvas">
-                <i class="bi bi-chat-dots-fill custom-chat-icon"></i>
-            </button>
 
         </nav>
     </div>
