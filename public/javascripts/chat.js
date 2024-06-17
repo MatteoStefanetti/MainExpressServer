@@ -2,6 +2,7 @@ let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
 let roomName = 'global';
 const chatSocket = io();
 let chat_messages = {}
+
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
 if(!localStorage.getItem('isChatOpened'))
     localStorage.setItem('isChatOpened', 'false')
@@ -16,14 +17,14 @@ function initChat() {
             document.getElementById("defaultChatPosition").innerHTML =
                 res.data.slice(begin, end).replaceAll('body', 'div')
 
-
             document.getElementById('chatIconBtn').onclick = clickChatBtn;
+            document.getElementById('chatButtonSmall').onclick = clickNavbarBtn
             document.getElementById('closeChat').onclick = closeChat;
             document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
             document.getElementById('declineTermsBtn').onclick = closeChat;
             document.getElementById("submitForm").onclick =  submitChatForm;
             document.getElementById("leaveButton").onclick =  leaveRoom;
-            document.getElementById('sendMsgBtn').addEventListener('click', sendMessage);
+            document.getElementById('sendMsgBtn').addEventListener('click', sendMessage)
             document.getElementById('textField').addEventListener('submit', sendMessage)
             if(localStorage.getItem('acceptedChatTerms')) {
                 closeChatTerms();
@@ -53,9 +54,7 @@ function toggleChatElements() {
 
 function hideNode( node ) {
     if(node instanceof HTMLElement) {
-            console.log('inside hideNode', node)
-            node.classList.add('d-none');
-            console.log('inside hideNode after', node)
+        node.classList.add('d-none')
     }
     else
         console.error("wrong element:", node, "is not a HTMLElement")
@@ -68,35 +67,89 @@ function showNode( node ) {
         console.error("wrong element:", node, "is not a HTMLElement")
 }
 
-function openChat() {
+/**
+ *
+ **/
+function openChat(hideBigAdv=true, hideChatAdv = false) {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
     const btnDiv = document.getElementById('btnDiv');
     localStorage.setItem('isChatOpened', 'true');
-    hideNode(hideForChat)
-    hideNode(btnDiv)
+    if(hideBigAdv) {
+        hideNode(hideForChat)
+        hideNode(btnDiv)
+    }
+
     if(!chatDiv.classList.contains('d-lg-flex')) {
         chatDiv.classList.add('d-lg-flex')
     }
     showNode(chatDiv)
+    if(hideChatAdv) {
+        hideNode(document.getElementById('chatAdv'))
+    } else {
+        showNode(document.getElementById('chatAdv'))
+    }
 }
 
-function closeChat() {
+function closeChat(hideChat=true) {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
     const btnDiv = document.getElementById('btnDiv');
-    localStorage.setItem('isChatOpened', 'false');
+
     showNode(hideForChat)
     showNode(btnDiv)
-    if(chatDiv.classList.contains('d-lg-flex')) {
-        chatDiv.classList.remove('d-lg-flex')
+
+    if(hideChat) {
+        if(chatDiv.classList.contains('d-lg-flex')) {
+            localStorage.setItem('isChatOpened', 'false');
+            chatDiv.classList.remove('d-lg-flex')
+        }
+        hideNode(chatDiv)
     }
-    hideNode(chatDiv)
 }
 
 /** Function called whenever the chat button is clicked. */
 function clickChatBtn () {
+    if(window.innerWidth >= 992) { //set chat on side
+        let chatHeader = document.getElementById('chatHeader')
+        if(chatHeader.parentElement.id !== 'chatLandingElement') {  //chat was inside offcanvas, needs to be moved on the side
+            let chatBody = document.getElementById('chatBody')
+            let chatTerms = document.getElementById('chatTerms')
+            let chatLandingElements = document.getElementById("chatLandingElems") //where to append chatHeader and chatBody
+            let chatDiv = document.getElementById('chatDiv') //where to append terms
+            let closeChatBtn = document.getElementById('closeChat')
+
+            chatLandingElements.appendChild(chatHeader)
+            chatLandingElements.appendChild(chatBody)
+            chatDiv.appendChild(chatTerms)
+            closeChatBtn.removeAttribute('data-bs-dismiss')
+            closeChat()
+        }
+    }
     toggleChatElements();
+    if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
+        showChatTerms();
+}
+
+function clickNavbarBtn(attr) {
+    if(window.innerWidth < 992) { //set chat in offcanvas
+        let chatHeader = document.getElementById('chatHeader')
+        if(chatHeader.parentElement.id !== 'chatOffCanvas') {
+            closeChat()
+            let chatBody = document.getElementById('chatBody')
+            let chatTerms = document.getElementById('chatTerms')
+            let chatOffCanvas = document.getElementById('chatOffCanvas') //where to append chatHeader and chatBody and Terms
+            let closeChatBtn = document.getElementById('closeChat')
+
+            chatOffCanvas.appendChild(chatHeader)
+            chatOffCanvas.appendChild(chatBody)
+            chatOffCanvas.appendChild(chatTerms)
+
+            closeChatBtn.setAttribute('data-bs-dismiss', 'offcanvas')
+            showNode(chatHeader)
+            showNode(chatBody)
+        }
+    }
     if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
         showChatTerms();
 }
