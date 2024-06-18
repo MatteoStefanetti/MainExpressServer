@@ -265,6 +265,7 @@ async function initSinglePage() {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
                                             console.log('cards:', cardsArray)       // @todo remove: debug only
+                                            console.log('substitutions:', substitutionsArray)       // @todo remove: debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -293,29 +294,6 @@ async function initSinglePage() {
                                         } else
                                             console.error(err)
                                     })
-
-                                // Starting Lineups
-                                await makeAxiosGet('/single_page/get_starting_lineups/' + String(response.game_id))
-                                    .then(startingLineup => {
-                                        if (startingLineup.data.length) {
-                                            console.log(startingLineup.data) // debug
-                                            let startingLuDiv = document.createElement('div')
-                                            startingLuDiv.id = 'startingLineUp'
-                                            startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p>' +
-                                                '<hr class="mt-1 mb-3 w-100 opacity-50">'
-                                            infoDiv.insertAdjacentElement('afterend', startingLuDiv)
-                                            // @todo Starting Lineup
-
-                                        } else
-                                            console.log('Starting Lineups not found for game:', response.game_id);
-                                    })
-                                    .catch(err => {
-                                        if (err.response.status === 404)
-                                            console.log('Starting Lineups not found for game:', response.game_id);  // SIGNALING
-                                        else console.error(err)
-                                    })
-
-                                // @todo add players ref and game_events accordion
                                 // players section
                                 let playersDivTitle = document.createElement('div')
                                 playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3', 'fs-5')
