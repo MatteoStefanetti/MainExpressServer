@@ -44,12 +44,12 @@
 <div class="d-none p-0 border-start h-100 bg-light align-self-stretch w-100" id="chatDiv">
     <div class="d-block w-100 h-100">
         <div class="d-flex flex-column w-100 h-100" id="chatLandingElems">
-            <div class="p-3 bg-dark">
+            <div class="p-3 bg-dark" id="chatAdv">
                 <p class="h5 text-light text-center fw-bold">This space can be yours!<br>Call +44 391 3004242
                 </p>
             </div>
             <!-- Chat header -->
-            <div class="row my-2 align-items-center border-bottom-1 border-dark" id="chatHeader">
+            <div class="offcanvas-header row my-2 align-items-center border-bottom-1 border-dark" id="chatHeader">
                 <button type="button" class="btn-close fs-5 col-2 ms-1 p-2" aria-label="Close" id="closeChat"></button>
                 <p class="text-lightgreen text-wrap col-5 flex-grow-1 text-sm-start px-1" id="chatLoginHeader"><i>This section allows you to chat with other fans. Select a room and chat:</i></p>
                 <p class="d-flex text-lightgreen text-wrap col-5 flex-grow-1 text-sm-start px-1 fs-3 h-75 d-none align-items-center" id="chatName"></p>
@@ -57,34 +57,37 @@
                     <button class="btn btn-lightgreen rounded-5 px-2 px-lg-3 py-0 text-light text-end" id="leaveButton">Leave</button>
                 </div>
             </div>
-            <!-- Chat LogIn Form -->
-            <div class="mx-auto d-block w-75" id="loginForm">
-                <form class="form" id="chatLoginForm">
-                    <label for="customName" class="form-label"><b>Choose your username:</b></label>
-                    <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customName" id="customName" maxlength="10" placeholder="Guest">
-                    <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary">(or create one)</i></label>
-                    <input class="mb-1 form-control rounded-4 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" maxlength="10" placeholder="global">
-                    <datalist id="roomsList"></datalist>
-                    <input class="form-check-input border-lightgreen ms-1 mt-1 mb-4 me-1" type="checkbox" name="makePublic" id="makePublic">
-                    <label for="makePublic" class="form-check-label" style="font-size: 0.9rem">Make it public</label>
+            <!-- Chat body -->
+            <div class="offcanvas-body d-flex flex-column w-100 h-100" id="chatBody">
+                <!-- Chat LogIn Form -->
+                <div class="mx-auto d-block w-75" id="loginForm">
+                    <form class="form" id="chatLoginForm">
+                        <label for="customName" class="form-label"><b>Choose your username:</b></label>
+                        <input class="form-control rounded-4 mb-3 w-75 fst-italic" type="text" name="customName" id="customName" maxlength="10" placeholder="Guest">
+                        <label for="customRoom" class="form-label"><b>Select Room:</b> <i class="text-secondary">(or create one)</i></label>
+                        <input class="mb-1 form-control rounded-4 w-75 fst-italic" list="roomsList" type="text" name="customRoom" id="customRoom" maxlength="10" placeholder="global">
+                        <datalist id="roomsList"></datalist>
+                        <input class="form-check-input border-lightgreen ms-1 mt-1 mb-4 me-1" type="checkbox" name="makePublic" id="makePublic">
+                        <label for="makePublic" class="form-check-label" style="font-size: 0.9rem">Make it public</label>
 
-                    <div class="col-12">
-                        <button class=" btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
-                    </div>
-                </form>
-            </div>
-            <!-- Chat -->
-            <div class="d-none w-100 bg-white border-top d-flex flex-column flex-grow-1 overflow-hidden" id="chat">
-                <div class="px-1 flex-grow-1 d-flex flex-column-reverse overflow-auto" id="messages">
+                        <div class="col-12">
+                            <button class=" btn btn-lightgreen rounded-5 px-3 py-0 mb-1 text-light fw-bold" type="submit" id="submitForm">Connect</button>
+                        </div>
+                    </form>
                 </div>
-
-                <form class="form bg-light p-2 border-top d-flex align-content-start align-items-center" id="textField">
-                    <label for="textInput" class="form-label d-none">TextField for the Chat</label>
-                    <input class="form-control rounded-4 fst-italic" type="text" name="textInput" id="textInput" placeholder="Write here" autocomplete="off">
-                    <div class="bg-transparent btn-sm ms-1" id="sendMsgBtn" role="button" type="submit">
-                        <img src="images/send_msg_btn.svg" alt="Chat_Icon" class="img-fluid">
+                <!-- Chat -->
+                <div class="d-none w-100 bg-white border-top d-flex flex-column flex-grow-1 overflow-hidden" id="chat">
+                    <div class="px-1 flex-grow-1 d-flex flex-column-reverse overflow-auto" id="messages">
                     </div>
-                </form>
+
+                    <form class="form bg-light p-2 border-top d-flex align-content-start align-items-center" id="textField">
+                        <label for="textInput" class="form-label d-none">TextField for the Chat</label>
+                        <input class="form-control rounded-4 fst-italic" type="text" name="textInput" id="textInput" placeholder="Write here" autocomplete="off">
+                        <div class="bg-transparent btn-sm ms-1" id="sendMsgBtn" role="button" type="submit">
+                            <img src="images/send_msg_btn.svg" alt="Chat_Icon" class="img-fluid">
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <!-- Chat Terms Div -->
