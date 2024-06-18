@@ -891,18 +891,33 @@ async function openAccordionPlayerAppearances(id) {
         showChargingSpinner(null, true);
 
         await makeAxiosGet('/single_page/get_last_appearances/' + player_id)
-            .then(data => {
+            .then(async data => {
                 let dataResponse = data.data;
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
 
                 let alternatorCounter = 0;
-                dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
-                        counter: alternatorCounter++,
-                        data: el
-                    }, {type: 'game', id: String(el.game_id)});
-                });
+                for (const el of dataResponse) {
+                    await makeAxiosGet(`/single_page/get_visualize_game_by_id/${el.game_id}`)
+                        .then(visGame => {
+                            let response = visGame.data;
+                            let resKey = Object.keys(el);
+
+                            for (let key of resKey) {
+                                const transformedKey = castCamelCaseToSneakCase(key)
+                                if (!response[transformedKey])
+                                    response[transformedKey] = el[key];
+                            }
+
+                            createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
+                                counter: alternatorCounter++,
+                                data: response
+                            }, {type: 'game', id: String(el.game_id)});
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                }
 
                 if (dataResponse.length > 20)
                     createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
