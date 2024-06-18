@@ -40,19 +40,20 @@ async function sendCompetitionQuery(ev) {
     let formData = extractFormData('searchGameBy', true)
     if (this.id === 'submitGameForm_Club') {
         if (formData.gameSearchClub1 || formData.gameSearchClub2) {
-            let route = 'competitions/query_games_by_name/'
-            route += (formData.gameSearchClub1 ?
-                formData.gameSearchClub1 + '/' + (formData.gameSearchClub2 ?? 'null') :
-                (formData.gameSearchClub2 ? formData.gameSearchClub2 + '/' : '/') )
+            let route = (formData.gameSearchClub1 !== '' && formData.gameSearchClub2 !== '') ?
+                'competitions/query_games_by_double_name' : 'competitions/query_games_by_name'
+            route += formData.gameSearchClub1 ? '/' + formData.gameSearchClub1 : ''
+            route += formData.gameSearchClub2 ? '/' + formData.gameSearchClub2 : ''
             console.log(route)
             await makeAxiosGet(''+route)
                 .then(data => {
-                    if(!data.data.length) {
+                    if(!data.data) {
+                        console.log(data)
                         throw Error("games not found")
                     }
                     let dataList = data.data;
 
-                    // hide elements
+                    // @todo: hide elements
                     document.getElementById('clubAccordion').classList.add('d-none');
 
                     // fill ul

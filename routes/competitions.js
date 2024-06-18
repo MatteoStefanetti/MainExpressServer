@@ -53,14 +53,34 @@ router.get('games/query_games_by_name/:clubName', function (req, res) {
  * @param clubName2 The name of the second club
  * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
  */
-router.get('/query_games_by_name/:clubName1/:clubName2', function (req, res) {
+router.get('/query_games_by_name/:clubName', function (req, res) {
     console.log('found route req')
-    if (req.params.clubName1) {
+    if (req.params.clubName) {
+        console.log(req.params.clubName)
+        fetch('http://localhost:8081/games/query_games_by_name/' + String(req.params.clubName), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(500).json(err))
+    } else {
+        console.log(req.params.clubName, 'in err')
+        res.status(500).end('erroneous param')
+    }
+})
+
+/**
+ * Endpoint for retrieving games involving two specific clubs.
+ *
+ * @param clubName1 The name of the first club
+ * @param clubName2 The name of the second club
+ * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
+ */
+router.get('/query_games_by_double_name/:clubName1/:clubName2', function (req, res) {
+    console.log('found route req')
+    if (req.params.clubName1 && req.params.clubName2) {
         console.log(req.params.clubName1, req.params.clubName2)
-        let route = 'http://localhost:8081/games/query_games_by_name/' + String(req.params.clubName1);
-            route += req.params.clubName2 === 'null' ? '/' + String(req.params.clubName2) : ""
-        console.log(route)
-        fetch(route, {
+        fetch('http://localhost:8081/games/query_games_by_double_name/' + String(req.params.clubName1) + '/' + String(req.params.clubName2), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         })
             .then(res => res.json())
