@@ -257,6 +257,7 @@ async function initSinglePage() {
 
                                 let substitutionsArray = [];
                                 let cardsArray = [];
+
                                 // Querying game_events
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
@@ -281,6 +282,8 @@ async function initSinglePage() {
                                                 String(countParam1), 'p', 'ms-1', 'ms-md-2')
                                             createParagraphForSP(info2, true, 'Substitutions',
                                                 String(countParam2), 'p', 'ms-1', 'ms-md-2')
+                                            // @todo put info about game events
+
                                         } else
                                             console.log('game_events not found for game:', response.game_id)
                                     })
@@ -318,7 +321,7 @@ async function initSinglePage() {
                                 playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3', 'fs-5')
                                 playersDivTitle.innerText = 'Players'
                                 let playersDiv = document.createElement('div')
-                                playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'py-1', 'px-sm-2')
+                                playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-center', 'align-items-start', 'py-2', 'px-2', 'px-lg-2', 'mb-3')
                                 document.getElementById('accordions').insertAdjacentElement('afterend', playersDivTitle)
                                 playersDivTitle.insertAdjacentElement('afterend', playersDiv)
                                 await makeAxiosGet(`/single_page/get_appearances_of_game/${response.game_id}`)
@@ -326,23 +329,47 @@ async function initSinglePage() {
                                         const idsArray = appearances.data.map(el => el.player_id).join(',')
                                         // creating player cards
                                         await makeAxiosGet(`/single_page/get_players_by_ids/${idsArray}`)
-                                            .then(cards => {
-                                                cards.data.forEach(elem => {
-                                                    const playerContainer = document.createElement('div');
-                                                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
-
-                                                    let clickableContent = document.createElement('a');
-                                                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
-                                                    clickableContent.classList.add('text-dark');
-                                                    clickableContent.innerHTML =
-                                                        '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-5 ' +
-                                                        'border-darkgreen rounded-4 player-img-size w-75" alt=" "/>' +
-                                                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
-                                                        '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
-                                                        '</span></div>';
-                                                    playerContainer.appendChild(clickableContent);
-                                                    playersDiv.appendChild(playerContainer)
-                                                })
+                                            .then(player_cards => {
+                                                if (player_cards.data.length && Array.isArray(player_cards.data)) {
+                                                    // We create 2 containers for the squad players
+                                                    playersDiv.classList.add('justify-content-sm-evenly', 'flex-column', 'flex-sm-row')
+                                                    const playerCardsContainer1 = document.createElement('div')
+                                                    const playerCardsContainer2 = document.createElement('div')
+                                                    playerCardsContainer1.classList.add('d-flex', 'justify-content-center', 'align-items-start', 'flex-wrap', 'bg-light', 'border-start', 'border-4', 'border-darkgreen', 'rounded-3', 'col-12', 'col-sm-5', 'p-1', 'pt-3', 'm-0', 'mb-4', 'mb-sm-0')
+                                                    playerCardsContainer2.classList.add('d-flex', 'justify-content-center', 'align-items-start', 'flex-wrap', 'bg-light', 'border-start', 'border-4', 'border-danger', 'rounded-3', 'col-12', 'col-sm-5', 'p-1', 'pt-3', 'm-0', 'ms-mb-2')
+                                                    playersDiv.style.boxSizing = 'border-box !important';
+                                                    const playerCardsSquad1 = document.createElement('div')
+                                                    const playerCardsSquad2 = document.createElement('div')
+                                                    playerCardsSquad1.classList.add('d-flex', 'flex-wrap', 'w-100', 'p-1', 'pt-3', 'px-md-3')
+                                                    playerCardsSquad2.classList.add('d-flex', 'flex-wrap', 'w-100', 'p-1', 'pt-3', 'px-md-3')
+                                                    playersDiv.append(playerCardsContainer1, playerCardsContainer2)
+                                                    playerCardsContainer1.appendChild(playerCardsSquad1)
+                                                    playerCardsContainer2.appendChild(playerCardsSquad2)
+                                                    player_cards.data.forEach(elem => {
+                                                        const playerContainer = document.createElement('div');
+                                                        const playerClubId = appearances.data.filter(el => el.player_id === elem.playerId)[0].player_club_id
+                                                        if (playerClubId === response.club_id1 || playerClubId === response.club_id2) {
+                                                            playerContainer.classList.add('col-6', 'col-sm-4', 'justify-content-center', 'align-items-center', 'm-0', 'mb-4', 'px-sm-1');
+                                                            let clickableContent = document.createElement('a');
+                                                            clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
+                                                            clickableContent.classList.add('text-dark');
+                                                            clickableContent.innerHTML =
+                                                                '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-3 border-md-5 ' +
+                                                                'border-darkgreen rounded-3 rounded-lg-4 player-img-size m-0 w-75" alt=" "/>' +
+                                                                '<div class="d-flex justify-content-center align-items-center w-100 m-0 mt-2 p-0">' +
+                                                                '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
+                                                                '</span></div>';
+                                                            playerContainer.appendChild(clickableContent);
+                                                        }
+                                                        if (playerClubId === response.club_id1)
+                                                            playerCardsSquad1.appendChild(playerContainer)
+                                                        else if (playerClubId === response.club_id2)
+                                                            playerCardsSquad2.appendChild(playerContainer)
+                                                        else
+                                                            console.log('Found player with club_id:', playerClubId + '. instead of', response.club_id1, 'or', response.club_id2)
+                                                    })
+                                                } else
+                                                    playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
                                             })
                                             .catch(err => {
                                                 if (err.response.status === 404)
