@@ -9,8 +9,7 @@ const {json} = require("express");
  * @param code {string} - a 'domestic_league_code' */
 router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
     /** @note _domesticLeagueCode_ can be 'null' to query international competitions */
-    const value = (req.params.domesticLeagueCode) ? String(req.params.domesticLeagueCode) : null;
-    fetch('http://localhost:3002/competitions/get_national_competitions/' + value, {
+    fetch('http://localhost:3002/competitions/get_national_competitions/' + req.params.domesticLeagueCode, {
         headers: {'Content-Type': 'application/json'}, method: 'get'
     })
         .then(res => res.json())
