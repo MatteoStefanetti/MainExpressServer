@@ -125,9 +125,9 @@ router.get('/get_player_by_id/:id', function (req, res) {
         })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err))
+            .catch(err => res.status(404).json(err))
     } else {
-        console.error('Error! params of \'/players/get_players_by_id/\' are wrong!\n');
+        res.status(500).json(JSON.stringify('Error in \'/get_player_by_id/\' GET: id passed was null!'))
     }
 })
 
@@ -261,7 +261,10 @@ router.get('/get_last_appearances/:player_id', async (req, res) => {
         })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err))
+            .catch(err => res.status(404).send(JSON.stringify('Error occurred: ' + err)))
+    }
+    else {
+        res.status(500).json(JSON.stringify('Please insert a valid appearance to search'));
     }
 });
 
