@@ -125,9 +125,9 @@ router.get('/get_player_by_id/:id', function (req, res) {
         })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err))
+            .catch(err => res.status(404).json(err))
     } else {
-        console.error('Error! params of \'/players/get_players_by_id/\' are wrong!\n');
+        res.status(500).json(JSON.stringify('Error in \'/get_player_by_id/\' GET: id passed was null!'))
     }
 })
 
@@ -261,7 +261,10 @@ router.get('/get_last_appearances/:player_id', async (req, res) => {
         })
             .then(res => res.json())
             .then(json => res.status(200).json(json))
-            .catch(err => res.status(500).json(err))
+            .catch(err => res.status(404).send(JSON.stringify('Error occurred: ' + err)))
+    }
+    else {
+        res.status(500).json(JSON.stringify('Please insert a valid appearance to search'));
     }
 });
 
@@ -346,30 +349,6 @@ router.get('/get_visualize_game_by_id/:id', function (req, res) {
             .catch(err => res.status(404).json(err))
     } else
         res.status(500).json(JSON.stringify('Invalid \'id\' passed as input!'))
-})
-
-router.get('/get_starting_lineups/:game_id', (req, res) => {
-    /* #swagger.tags = ['Single Page']
-     #swagger.description = 'GET route that retrieves starting lineups data in base of a \'game_id\'.'
-     #swagger.parameters['game_id'] = {
-        in: 'path',
-        description: 'The game_id of the game we want to analyse.',
-        type: 'string',
-        required: 'true'
-    }
-    #swagger.responses[500] = {
-        description: 'Invalid \'game_id\' passed as input!'
-    }
-    */
-    if (req.params.game_id) {
-        fetch('http://localhost:3002/game_lineups/get_starting_lineups/' + String(req.params.game_id), {
-            headers: {'Content-Type': 'application/json'}, method: 'get'
-        })
-            .then(res => res.json())
-            .then(json => res.status(200).json(json))
-            .catch(err => res.status(404).json(err))
-    } else
-        res.status(500).json(JSON.stringify('Invalid \'game_id\' passed as input!'))
 })
 
 router.get('/get_events_of/:game_id', (req, res) => {

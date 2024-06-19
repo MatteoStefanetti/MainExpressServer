@@ -9,8 +9,7 @@ const {json} = require("express");
  * @param code {string} - a 'domestic_league_code' */
 router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
     /** @note _domesticLeagueCode_ can be 'null' to query international competitions */
-    const value = (req.params.domesticLeagueCode) ? String(req.params.domesticLeagueCode) : null;
-    fetch('http://localhost:3002/competitions/get_national_competitions/' + value, {
+    fetch('http://localhost:3002/competitions/get_national_competitions/' + req.params.domesticLeagueCode, {
         headers: {'Content-Type': 'application/json'}, method: 'get'
     })
         .then(res => res.json())
@@ -22,35 +21,22 @@ router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
  * @param id {string} - the `competition_id` of the competition we are asking for games.
  * @param season {string} - the year to filter the games in base of their season column. */
 router.get('/get_games_by_league/:id/:season', function (req, res) {
-    fetch('http://localhost:8081/games/get_games_of_league/' + String(req.params.id) +
-        '/' + String(req.params.season), {
-        headers: {'Content-Type': 'application/json'}, method: 'get'
-    })
-        .then(res => res.json())
-        .then(json => res.status(200).json(json))
-        .catch(err => res.status(500).json(err))
+    if (req.params.id && req.params.season) {
+        fetch('http://localhost:8081/games/get_games_of_league/' + String(req.params.id) +
+            '/' + String(req.params.season), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'id\' or \'season\' passed as input!'))
 })
-
-/** Retrieves games by the name of a club.
- *
- * @param clubName The name of the club
- * @return list {@link array} of maps representing the games involving the club, each containing game data
- *
-router.get('games/query_games_by_name/:clubName', function (req, res) {
-    fetch('http://localhost:8081/games/query_games_by_name/' + String(req.params.clubName), {
-        headers: {'Content-Type': 'application/json'}, method: 'get'
-    })
-        .then(res => res.json())
-        .then(json => res.status(200).json(json))
-        .catch(err => res.status(500).json(err))
-})
-    */
 
 /**
- * Endpoint for retrieving games involving two specific clubs.
+ * Endpoint for retrieving games involving a club.
  *
- * @param clubName1 The name of the first club
- * @param clubName2 The name of the second club
+ * @param clubName The name of the club
  * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
  */
 router.get('/query_games_by_name/:clubName', function (req, res) {

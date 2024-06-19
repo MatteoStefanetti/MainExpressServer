@@ -100,27 +100,38 @@ function startCompetitionClassesObserver() {
                 const domestic_league_code = document.getElementById('nationalSection').name
                 await makeAxiosGet('/competitions/get_competitions/' + String(domestic_league_code))
                     .then(data => {
-                        let competitionList = data.data
-                        if(!competitionList || competitionList.length === 0)
-                            console.error('Error! Invalid competitions list returned:', competitionList)
-                        try {
-                            competitionList.forEach(val => {
-                                getLastSeasonYear(val.competition_id)
-                                    .then(season => {
-                                        createAccordion('competition_nation', 'gamesAccordion', {
-                                            competition_id: val.competition_id,
-                                            competition_name: retrieveCompetitionName(val.competition_name),
-                                            competition_season: season.data})
-                                    })
-                                    .catch(err => {
-                                        console.error('Error occurred retrieving last season of competition:', val.competition_id, '\n', err)
-                                    })
-                            })
-                        } catch (err) {
-                            console.error(err)
+                        if (data.data && Array.isArray(data.data) && data.data.length) {
+                            console.log(data.data)
+                            let competitionList = data.data
+                            try {
+                                competitionList.forEach(val => {
+                                    getLastSeasonYear(val.competition_id)
+                                        .then(season => {
+                                            createAccordion('competition_nation', 'gamesAccordion', {
+                                                competition_id: val.competition_id,
+                                                competition_name: retrieveCompetitionName(val.competition_name),
+                                                competition_season: season.data})
+                                        })
+                                        .catch(err => {
+                                            console.error('Error occurred retrieving last season of competition:', val.competition_id, '\n', err)
+                                        })
+                                })
+                            } catch (err) {
+                                // error handling for single element
+                                console.log(err)    // SIGNALING
+                            }
+                        } else {
+                            // DONE
+                            document.getElementById('nationalSection').classList.add('row', 'justify-content-center')
+                            document.getElementById('nationalSection').innerHTML = '<hr class="w-75 mt-5 mb-2 col-12"><span class="mt-2 h4 text-center">No competitions found.</span>'
                         }
                     })
-                    .catch(err => console.error('Error! \'/get_competition/:code\' went wrong:', err))
+                    .catch(err => {
+                        // DONE
+                        console.log('Something went wrong in \'/get_competition/:code\'.', err) // SIGNALING
+                        document.getElementById('nationalSection').classList.add('row', 'justify-content-center')
+                        document.getElementById('nationalSection').innerHTML = '<hr class="w-75 mt-5 mb-2 col-12"><span class="mt-2 h4 text-center">No competitions found.</span>'
+                    })
                 showChargingSpinner(null, false)
                 mutation.target.classList.remove('send-get')
             }

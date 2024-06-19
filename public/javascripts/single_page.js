@@ -39,11 +39,21 @@ async function initSinglePage() {
 
                         await makeAxiosGet(`/single_page/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
-                                const playerClubValue = '<a class="text-decoration-underline" href="' + getUrlForSinglePage({type: 'club', id: data.data.current_club_id})
-                                    +'">'+dataClub.data.clubName+'</a>'
+                                const playerClubValue = '<a class="text-decoration-underline" href="' + getUrlForSinglePage({
+                                        type: 'club',
+                                        id: data.data.current_club_id
+                                    })
+                                    + '">' + dataClub.data.clubName + '</a>'
                                 createParagraphForSP(titleDiv, true, 'Current Club', playerClubValue, 'p')
                             })
-                            .catch(err => console.error(err));
+                            .catch(err => {
+                                //DONE
+                                if (err.response.status === 404) {
+                                    createParagraphForSP(titleDiv, true, 'Current Club', 'N/A', 'p');
+                                } else {
+                                    console.error(err);
+                                }
+                            });
 
                         let dateAndLocationOfBirth = data.data.date_of_birth ? new Date(data.data.date_of_birth).toLocaleDateString() : 'N/A';
                         dateAndLocationOfBirth += ' - ' + ((data.data.city_of_birth) ?? 'No city') + ', ' + ((data.data.country_of_birth) ?? 'No country');
@@ -69,7 +79,13 @@ async function initSinglePage() {
                         await createAccordion('single_page/pl/last_appearances', 'accordions',
                             {id: 'appearAccordItem_' + idParams})
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => {
+                        //DONE
+                        if (err.response.status === 404)
+                            notFoundPage('Player')
+                        else
+                            console.error(err)
+                    });
             }
             break;
         case 'club':
@@ -94,7 +110,14 @@ async function initSinglePage() {
                                     '" alt=" " style="width: 1.6rem; height: 1rem">'
                                 createParagraphForSP(titleDiv, true, 'Nationality', nationalityValue, 'p')
                             })
-                            .catch(err => console.log(err, ': No flag or name have been found for the nationality.'))
+                            .catch(err => {
+                                    //TODO revision
+                                    if (err.response.status === 404)
+                                        createParagraphForSP(titleDiv, true, 'Nationality', 'N/A', 'p')
+                                    else
+                                        console.error(err, ': No flag or name have been found for the nationality.')
+                                }
+                            )
 
                         createParagraphForSP(info1, true, 'Last Season', data.data.last_season,
                             'p', 'ms-1', 'ms-md-3')
@@ -127,7 +150,13 @@ async function initSinglePage() {
                             {id: 'pastPlayers_' + idParams});
                         // @todo insert accordions
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => {
+                        //DONE
+                        if (err.response.status === 404)
+                            notFoundPage('Club')
+                        else
+                            console.error(err)
+                    });
             }
             break;
         case 'game':
@@ -257,6 +286,7 @@ async function initSinglePage() {
 
                                 let substitutionsArray = [];
                                 let cardsArray = [];
+
                                 // Querying game_events
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
@@ -264,6 +294,7 @@ async function initSinglePage() {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
                                             console.log('cards:', cardsArray)       // @todo remove: debug only
+                                            console.log('substitutions:', substitutionsArray)       // @todo remove: debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -281,6 +312,8 @@ async function initSinglePage() {
                                                 String(countParam1), 'p', 'ms-1', 'ms-md-2')
                                             createParagraphForSP(info2, true, 'Substitutions',
                                                 String(countParam2), 'p', 'ms-1', 'ms-md-2')
+                                            // @todo put info about game events
+
                                         } else
                                             console.log('game_events not found for game:', response.game_id)
                                     })
@@ -290,35 +323,12 @@ async function initSinglePage() {
                                         } else
                                             console.error(err)
                                     })
-
-                                // Starting Lineups
-                                await makeAxiosGet('/single_page/get_starting_lineups/' + String(response.game_id))
-                                    .then(startingLineup => {
-                                        if (startingLineup.data.length) {
-                                            console.log(startingLineup.data) // debug
-                                            let startingLuDiv = document.createElement('div')
-                                            startingLuDiv.id = 'startingLineUp'
-                                            startingLuDiv.innerHTML = '<p class="h3 pt-1 ms-2 ms-md-4 mb-0 mt-3">Starting Lineup</p>' +
-                                                '<hr class="mt-1 mb-3 w-100 opacity-50">'
-                                            infoDiv.insertAdjacentElement('afterend', startingLuDiv)
-                                            // @todo Starting Lineup
-
-                                        } else
-                                            console.log('Starting Lineups not found for game:', response.game_id);
-                                    })
-                                    .catch(err => {
-                                        if (err.response.status === 404)
-                                            console.log('Starting Lineups not found for game:', response.game_id);  // SIGNALING
-                                        else console.error(err)
-                                    })
-
-                                // @todo add players ref and game_events accordion
                                 // players section
                                 let playersDivTitle = document.createElement('div')
                                 playersDivTitle.classList.add('custom-section', 'rounded-2', 'm-1', 'py-2', 'px-3', 'fs-5')
                                 playersDivTitle.innerText = 'Players'
                                 let playersDiv = document.createElement('div')
-                                playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'py-1', 'px-sm-2')
+                                playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-center', 'align-items-start', 'py-2', 'px-2', 'px-lg-2', 'mb-3')
                                 document.getElementById('accordions').insertAdjacentElement('afterend', playersDivTitle)
                                 playersDivTitle.insertAdjacentElement('afterend', playersDiv)
                                 await makeAxiosGet(`/single_page/get_appearances_of_game/${response.game_id}`)
@@ -326,44 +336,76 @@ async function initSinglePage() {
                                         const idsArray = appearances.data.map(el => el.player_id).join(',')
                                         // creating player cards
                                         await makeAxiosGet(`/single_page/get_players_by_ids/${idsArray}`)
-                                            .then(cards => {
-                                                cards.data.forEach(elem => {
-                                                    const playerContainer = document.createElement('div');
-                                                    playerContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xl-2', 'justify-content-center', 'align-items-center', 'mb-4', 'px-1');
-
-                                                    let clickableContent = document.createElement('a');
-                                                    clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
-                                                    clickableContent.classList.add('text-dark');
-                                                    clickableContent.innerHTML =
-                                                        '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-5 ' +
-                                                        'border-darkgreen rounded-4 player-img-size w-75" alt=" "/>' +
-                                                        '<div class="d-flex justify-content-center align-items-center w-100 my-2 p-0">' +
-                                                        '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
-                                                        '</span></div>';
-                                                    playerContainer.appendChild(clickableContent);
-                                                    playersDiv.appendChild(playerContainer)
-                                                })
+                                            .then(player_cards => {
+                                                if (player_cards.data.length && Array.isArray(player_cards.data)) {
+                                                    // We create 2 containers for the squad players
+                                                    playersDiv.classList.add('justify-content-sm-evenly', 'flex-column', 'flex-sm-row')
+                                                    const playerCardsContainer1 = document.createElement('div')
+                                                    const playerCardsContainer2 = document.createElement('div')
+                                                    playerCardsContainer1.classList.add('d-flex', 'justify-content-center', 'align-items-start', 'flex-wrap', 'bg-light', 'border-start', 'border-4', 'border-darkgreen', 'rounded-3', 'col-12', 'col-sm-5', 'p-1', 'pt-3', 'm-0', 'mb-4', 'mb-sm-0')
+                                                    playerCardsContainer2.classList.add('d-flex', 'justify-content-center', 'align-items-start', 'flex-wrap', 'bg-light', 'border-start', 'border-4', 'border-danger', 'rounded-3', 'col-12', 'col-sm-5', 'p-1', 'pt-3', 'm-0', 'ms-mb-2')
+                                                    playersDiv.style.boxSizing = 'border-box !important';
+                                                    const playerCardsSquad1 = document.createElement('div')
+                                                    const playerCardsSquad2 = document.createElement('div')
+                                                    playerCardsSquad1.classList.add('d-flex', 'flex-wrap', 'w-100', 'p-1', 'pt-3', 'px-md-3')
+                                                    playerCardsSquad2.classList.add('d-flex', 'flex-wrap', 'w-100', 'p-1', 'pt-3', 'px-md-3')
+                                                    playersDiv.append(playerCardsContainer1, playerCardsContainer2)
+                                                    playerCardsContainer1.appendChild(playerCardsSquad1)
+                                                    playerCardsContainer2.appendChild(playerCardsSquad2)
+                                                    player_cards.data.forEach(elem => {
+                                                        const playerContainer = document.createElement('div');
+                                                        const playerClubId = appearances.data.filter(el => el.player_id === elem.playerId)[0].player_club_id
+                                                        if (playerClubId === response.club_id1 || playerClubId === response.club_id2) {
+                                                            playerContainer.classList.add('col-6', 'col-sm-4', 'justify-content-center', 'align-items-center', 'm-0', 'mb-4', 'px-sm-1');
+                                                            let clickableContent = document.createElement('a');
+                                                            clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
+                                                            clickableContent.classList.add('text-dark');
+                                                            clickableContent.innerHTML =
+                                                                '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-3 border-md-5 ' +
+                                                                'border-darkgreen rounded-3 rounded-lg-4 player-img-size m-0 w-75" alt=" "/>' +
+                                                                '<div class="d-flex justify-content-center align-items-center w-100 m-0 mt-2 p-0">' +
+                                                                '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
+                                                                '</span></div>';
+                                                            playerContainer.appendChild(clickableContent);
+                                                        }
+                                                        if (playerClubId === response.club_id1)
+                                                            playerCardsSquad1.appendChild(playerContainer)
+                                                        else if (playerClubId === response.club_id2)
+                                                            playerCardsSquad2.appendChild(playerContainer)
+                                                        else
+                                                            console.log('Found player with club_id:', playerClubId + '. instead of', response.club_id1, 'or', response.club_id2)
+                                                    })
+                                                } else
+                                                    playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
                                             })
                                             .catch(err => {
+                                                //DONE
                                                 if (err.response.status === 404)
                                                     playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
                                                 else console.error(err)
                                             })
                                     })
                                     .catch(err => {
+                                        //DONE
                                         if (err.response.status === 404)
                                             playersDiv.innerHTML = '<span class="h5 text-center">No players found.</span>'
                                         else console.error(err)
                                     })
                             })
                             .catch(err => {
-                                console.error(err)
-                                // @todo handle error of game not found
+                                //DONE
+                                if (err.response.status === 404)
+                                    notFoundPage('Game')
+                                else
+                                    console.error(err)
                             })
                     })
                     .catch(err => {
-                        console.error(err)
-                        // @todo handle error
+                        //DONE
+                        if (err.response.status === 404)
+                            notFoundPage('Game')
+                        else
+                            console.error(err)
                     })
             }
             break;
@@ -388,17 +430,35 @@ async function initSinglePage() {
 
                 await makeAxiosGet('/single_page/get_all_season/' + String(idParams))
                     .then(async seasons => {
-                        seasons.data.forEach(season => {
+                        if (seasons.data.length) {
+                            seasons.data.forEach(season => {
+                                let optionSeason = document.createElement('option');
+                                optionSeason.value = season;
+                                optionSeason.innerText = season;
+                                seasonSelect.appendChild(optionSeason);
+                                if (seasonParams === String(season)) {
+                                    optionSeason.selected = true;
+                                }
+                            });
+                        } else {
                             let optionSeason = document.createElement('option');
-                            optionSeason.value = season;
-                            optionSeason.innerText = season;
+                            optionSeason.innerText = 'No season found.';
                             seasonSelect.appendChild(optionSeason);
-                            if (seasonParams === String(season)) {
-                                optionSeason.selected = true;
-                            }
-                        });
+                            optionSeason.selected = true;
+                            seasonSelect.disabled = true;
+                        }
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => {
+                        //DONE
+                        if (err.response.status === 404) {
+                            let optionSeason = document.createElement('option');
+                            optionSeason.innerText = 'No season found.';
+                            seasonSelect.appendChild(optionSeason);
+                            optionSeason.selected = true;
+                            seasonSelect.disabled = true;
+                        } else
+                            console.error(err);
+                    });
 
                 seasonSelect.addEventListener('change', (event) => {
                     window.location.replace(getUrlForSinglePage({
@@ -418,12 +478,11 @@ async function initSinglePage() {
                             .then(async nation => {
                                 if (nation.data.length) {
                                     nation.data = nation.data[0];   // only element that has to be here!
-                                    nationalityValue = nation.data.country_name +
-                                        '<img class="img-fluid mx-1 rounded-1" src="' + nation.data.flag_url +
-                                        '" alt=" " style="width: 1.6rem; height: 1rem">'
+                                    nationalityValue = nation.data.country_name + '<img class="img-fluid mx-1 rounded-1" src="' + nation.data.flag_url + '" alt=" " style="width: 1.6rem; height: 1rem">'
                                 }
                             })
-                            .catch(ignored => {})
+                            .catch(ignored => {
+                            })
                         nationalityValue = nationalityValue ?? 'International <span class="bi bi-globe-americas"></span>';
                         createParagraphForSP(titleDiv, true, 'Nationality', nationalityValue, 'p')
 
@@ -482,7 +541,13 @@ async function initSinglePage() {
                                     placingDiv.appendChild(clubContainer);
                                 })
                             })
-                            .catch(err => console.error(err));
+                            .catch(err => {
+                                //DONE
+                                if (err.response.status === 404)
+                                    placingDiv.innerHTML = '<span class="h6 text-center fw-bold">No clubs found...</span>';
+                                else
+                                    console.error(err);
+                            });
 
                         await createAccordion('single_page/co/last_season_games', 'accordions', {
                             id: 'lastSeasonGames_' + idParams,
@@ -490,18 +555,28 @@ async function initSinglePage() {
                         });
                     })
                     .catch(err => {
-                        console.log(err);
+                        //DONE
+                        if (err.response.status === 404)
+                            notFoundPage('Competition')
+                        else
+                            console.error(err);
                     })
             }
             //TODO: single_page initialization for competition
             break;
         default:
-            //TODO: error type not supported
+            notFoundPage('Page');
             break;
     }
     showChargingSpinner(null, false)
 }
 
+/**openAccordion for the last games of a competition.
+ *
+ * @param id {string} The id of the competition that has the games.
+ * @param season {number} The year of the season of the competition.
+ * @throws Error if 'id' or 'season' are null or undefined.
+ * @throws Error if GET route fails.*/
 async function openAccordionCompetitionLastGames(id, season) {
     this.disabled = true
     if (!id || !season) {
@@ -513,7 +588,7 @@ async function openAccordionCompetitionLastGames(id, season) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
-        await makeAxiosGet('/competitions/get_games_by_league/' + String(competition_id) + '/' + String(season))
+        await makeAxiosGet('/competitions/get_games_by_league/' + String(idParams) + '/' + String(season))
             .then(data => {
                 let dataResponse = data.data;
                 let unList = document.createElement('ul');
@@ -533,10 +608,14 @@ async function openAccordionCompetitionLastGames(id, season) {
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
-                console.error(err);
-                this.disabled = false
-                throw new Error('Error occurred during \'/get_last_appearance\' GET');
-                //TODO: check errors
+                //DONE
+                if (err.response.status === 404)
+                    document.getElementById(id).firstElementChild.innerHTML = '<span>No Games found...</span>'
+                else {
+                    console.error(err);
+                    this.disabled = false
+                    throw new Error('Error occurred during \'/get_last_appearance\' GET');
+                }
             })
         showChargingSpinner(null, false);
     }
@@ -589,10 +668,10 @@ async function openAccordionPastMember(id) {
                     createLoadMoreElement(playerList, 'morePlayers', showMore.bind(null, playerList, MAX_ELEMENTS_TO_SHOW));
             })
             .catch(err => {
+                //DONE
                 if (err.response.status === 404) {
-                    console.log('No past players found.');  // SIGNALING
                     playerList.classList.add('d-flex', 'w-100', 'justify-content-center', 'align-items-center')
-                    playerList.innerHTML = '<span class="text-center">No past players found.</span>'
+                    playerList.innerHTML = '<span class="text-center">No past players found...</span>'
                 } else
                     console.error(err)
             });
@@ -601,6 +680,26 @@ async function openAccordionPastMember(id) {
         showChargingSpinner(null, false);
     }
     this.disabled = false
+}
+
+/**
+ * Function to create a not found content for a single page.
+ *
+ * @param sp {string} indicate the single page type.*/
+function notFoundPage(sp) {
+    let containerDiv = document.getElementById('contentHeight').firstElementChild
+    containerDiv.innerHTML = '<div class="row d-flex align-items-center justify-content-center"><span class="h1 col-12 text-center">No ' + sp + ' found. </span></div>';
+    let goBackButton = document.createElement('button');
+    goBackButton.classList.add('d-flex', 'btn', 'btn-lightgreen', 'rounded-4', 'text-center', 'align-content-center');
+    goBackButton.innerText = 'Go Back';
+    goBackButton.addEventListener('click', function () {
+        history.back();
+    })
+    let buttonDiv = document.createElement('div');
+    buttonDiv.appendChild(goBackButton);
+    buttonDiv.classList.add('d-flex', 'justify-content-center');
+    containerDiv.firstElementChild.appendChild(buttonDiv);
+    containerDiv.classList.add('d-flex', 'align-items-center', 'justify-content-center');
 }
 
 /**
@@ -645,10 +744,14 @@ async function openAccordionClubMember(id) {
                 });
             })
             .catch(err => {
-                console.log(err);
-                this.disabled = false
-                throw new Error('Error occurred during \'/get_current_players\' GET');
-                //TODO: check errors
+                //DONE
+                if (err.response.status === 404)
+                    playerList.innerHTML = '<span class="text-center p-0">No active players found...</span>';
+                else {
+                    console.log(err);
+                    this.disabled = false
+                    throw new Error('Error occurred during \'/get_current_players\' GET');
+                }
             });
         document.getElementById(id).firstElementChild.appendChild(playerList);
         showChargingSpinner(null, false);
@@ -694,16 +797,21 @@ async function openAccordionPlayerValuation(id) {
                     month: 'numeric'
                 }));
                 drawChart(dataResponse, canvasElem)
+                canvasContainer.appendChild(canvasElem);
+                document.getElementById(id).firstElementChild.appendChild(canvasContainer);
             })
             .catch(err => {
-                console.error(err);
-                this.disabled = false
-                throw new Error('Error occurred during \'/get_valuations_of_player\' GET');
-                //TODO: check errors
+                //DONE
+                if (err.response.status === 404)
+                    document.getElementById(id).firstElementChild.innerHTML = '<span class="text-center p-0">No valuations found...</span>'
+                else {
+                    console.error(err);
+                    this.disabled = false
+                    throw new Error('Error occurred during \'/get_valuations_of_player\' GET');
+                }
             });
 
-        canvasContainer.appendChild(canvasElem);
-        document.getElementById(id).firstElementChild.appendChild(canvasContainer);
+
         showChargingSpinner(null, false);
     }
     this.disabled = false
@@ -749,9 +857,13 @@ async function openAccordionClubLastGames(id) {
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
-                console.error(err);
-                throw new Error('Error occurred during \'/get_last_games_by_club\' GET');
-                //TODO: check errors
+                //DONE
+                if (err.response.status === 404)
+                    document.getElementById(id).firstElementChild.innerHTML = '<span class="text-center p-0">No games found.</span>';
+                else {
+                    console.error(err);
+                    throw new Error('Error occurred during \'/get_last_games_by_club\' GET');
+                }
             });
 
         showChargingSpinner(null, false);
@@ -778,18 +890,34 @@ async function openAccordionPlayerAppearances(id) {
         showChargingSpinner(null, true);
 
         await makeAxiosGet('/single_page/get_last_appearances/' + player_id)
-            .then(data => {
+            .then(async data => {
                 let dataResponse = data.data;
                 let unList = document.createElement('ul');
                 unList.classList.add('nav', 'flex-column');
 
                 let alternatorCounter = 0;
-                dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
-                        counter: alternatorCounter++,
-                        data: el
-                    }, {type: 'game', id: String(el.game_id)});
-                });
+                for (const el of dataResponse) {
+                    await makeAxiosGet(`/single_page/get_visualize_game_by_id/${el.game_id}`)
+                        .then(visGame => {
+                            let response = visGame.data;
+                            let resKey = Object.keys(el);
+
+                            for (let key of resKey) {
+                                const transformedKey = castCamelCaseToSneakCase(key)
+                                if (!response[transformedKey])
+                                    response[transformedKey] = el[key];
+                            }
+
+                            createDynamicListItem(window, 'appearance', dataResponse.length, unList, {
+                                counter: alternatorCounter++,
+                                data: response
+                            }, {type: 'game', id: String(el.game_id)});
+                        })
+                        .catch(err => {
+                            //DONE
+                            console.error(err);
+                        })
+                }
 
                 if (dataResponse.length > 20)
                     createLoadMoreElement(unList, 'gamesId', showMore.bind(null, unList, 20));
@@ -797,10 +925,14 @@ async function openAccordionPlayerAppearances(id) {
                 document.getElementById(id).firstElementChild.appendChild(unList);
             })
             .catch(err => {
-                console.error(err);
-                this.disabled = false
-                throw new Error('Error occurred during \'/get_last_appearance\' GET');
-                //TODO: check errors
+                //DONE
+                if (err.response.status === 404)
+                    document.getElementById(id).firstElementChild.innerHTML = '<span class="text-center p-0">No appearances found...</span>';
+                else {
+                    console.error(err);
+                    this.disabled = false
+                    throw new Error('Error occurred during \'/get_last_appearance\' GET');
+                }
             });
 
         showChargingSpinner(null, false);
