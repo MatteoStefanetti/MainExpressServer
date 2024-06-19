@@ -21,13 +21,17 @@ router.get('/get_competitions/:domesticLeagueCode', function (req, res) {
  * @param id {string} - the `competition_id` of the competition we are asking for games.
  * @param season {string} - the year to filter the games in base of their season column. */
 router.get('/get_games_by_league/:id/:season', function (req, res) {
-    fetch('http://localhost:8081/games/get_games_of_league/' + String(req.params.id) +
-        '/' + String(req.params.season), {
-        headers: {'Content-Type': 'application/json'}, method: 'get'
-    })
-        .then(res => res.json())
-        .then(json => res.status(200).json(json))
-        .catch(err => res.status(500).json(err))
+    if (req.params.id && req.params.season) {
+        fetch('http://localhost:8081/games/get_games_of_league/' + String(req.params.id) +
+            '/' + String(req.params.season), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(404).json(err))
+    } else
+        res.status(500).json(JSON.stringify('Invalid \'id\' or \'season\' passed as input!'))
 })
 
-module.exports = router;module.exports = router;
+module.exports = router;
+module.exports = router;
