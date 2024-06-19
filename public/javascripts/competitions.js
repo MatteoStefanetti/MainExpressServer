@@ -68,7 +68,7 @@ async function sendCompetitionQuery(ev) {
                             {type: 'game', id: String(element.gameId)});
                     })
                     // Adding the 'load more...' element
-                    if (dataList.size > 30)
+                    if (dataList.length > 30)
                         createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
                 })
                 .catch(err => {
