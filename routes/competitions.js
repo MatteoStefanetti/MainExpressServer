@@ -40,9 +40,7 @@ router.get('/get_games_by_league/:id/:season', function (req, res) {
  * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
  */
 router.get('/query_games_by_name/:clubName', function (req, res) {
-    console.log('found route req')
     if (req.params.clubName) {
-        console.log(req.params.clubName)
         fetch('http://localhost:8081/games/query_games_by_name/' + String(req.params.clubName), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         })
@@ -50,7 +48,6 @@ router.get('/query_games_by_name/:clubName', function (req, res) {
             .then(json => res.status(200).json(json))
             .catch(err => res.status(500).json(err))
     } else {
-        console.log(req.params.clubName, 'in err')
         res.status(500).end('erroneous param')
     }
 })
@@ -63,9 +60,7 @@ router.get('/query_games_by_name/:clubName', function (req, res) {
  * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
  */
 router.get('/query_games_by_double_name/:clubName1/:clubName2', function (req, res) {
-    console.log('found route req')
     if (req.params.clubName1 && req.params.clubName2) {
-        console.log(req.params.clubName1, req.params.clubName2)
         fetch('http://localhost:8081/games/query_games_by_double_name/' + String(req.params.clubName1) + '/' + String(req.params.clubName2), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         })
@@ -73,7 +68,25 @@ router.get('/query_games_by_double_name/:clubName1/:clubName2', function (req, r
             .then(json => res.status(200).json(json))
             .catch(err => res.status(500).json(err))
     } else {
-        console.log(req.params.clubName1, req.params.clubName2, 'in err')
+        res.status(500).end('erroneous params')
+    }
+})
+
+/**
+ * Endpoint for retrieving games involving two specific clubs.
+ *
+ * @param gameDate The date when games were played
+ * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
+ */
+router.get('/query_games_by_date/:gameDate', function (req, res) {
+    if (req.params.gameDate) {
+        fetch('http://localhost:8081/games/query_games_by_date/' + String(req.params.gameDate), {
+            headers: {'Content-Type': 'application/json'}, method: 'get'
+        })
+            .then(res => res.json())
+            .then(json => res.status(200).json(json))
+            .catch(err => res.status(500).json(err))
+    } else {
         res.status(500).end('erroneous params')
     }
 })

@@ -38,53 +38,52 @@ function changeBtnColors(otherBtn) {
 
 async function sendCompetitionQuery(ev) {
     let formData = extractFormData('searchGameBy', true)
-    if (this.id === 'submitGameForm_Club') {
-        if (formData.gameSearchClub1 || formData.gameSearchClub2) {
-            let route = (formData.gameSearchClub1 !== '' && formData.gameSearchClub2 !== '') ?
-                'competitions/query_games_by_double_name' : 'competitions/query_games_by_name'
-            route += formData.gameSearchClub1 ? '/' + formData.gameSearchClub1 : ''
-            route += formData.gameSearchClub2 ? '/' + formData.gameSearchClub2 : ''
-            await makeAxiosGet(''+route)
-                .then(data => {
-                    if(!data.data) {
-                        console.log(data)
-                        throw Error("games not found")
-                    }
-                    let dataList = data.data
-
-                    // @todo: hide elements
-                    Array.prototype.forEach.call(document.getElementsByTagName('iframe'),
-                            el => {el.classList.add('d-none')})
-
-                    // fill ul
-                    let unList = document.getElementById('gamesResults');
-                    unList.replaceChildren();
-                    unList.classList.add('nav', 'px-2', 'flex-column');
-                    unList.classList.remove('d-none');
-                    let elementCounter = 0;
-                    dataList.forEach(element => {
-                        createDynamicListItem(window, 'game', dataList.length, unList,
-                            {counter: elementCounter++, data: element},
-                            {type: 'game', id: String(element.gameId)});
-                    })
-                    // Adding the 'load more...' element
-                    if (dataList.length > 30)
-                        createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
-                })
-                .catch(err => {
-                    console.log('axiousGet went wrong', err)
-                    showModalMessage(true, 'game');
-                })
-        } else
-            showModalMessage(false, 'game')
+    let dataList, searchPromise
+    if (this.id === 'submitGameForm_Club' && (formData.gameSearchClub1 || formData.gameSearchClub2)) {
+        let route = (formData.gameSearchClub1 !== '' && formData.gameSearchClub2 !== '') ?
+            'competitions/query_games_by_double_name' : 'competitions/query_games_by_name'
+        route += formData.gameSearchClub1 ? '/' + formData.gameSearchClub1 : ''
+        route += formData.gameSearchClub2 ? '/' + formData.gameSearchClub2 : ''
+        searchPromise =  makeAxiosGet(''+route)
+    } else if (formData.gameSearchDate) {
+        searchPromise =  makeAxiosGet('competitions/query_games_by_date/' + String(formData.gameSearchDate))
     } else {
-        if (formData.gameSearchDate) {
-            // @todo await makeAxiosGet()
-            
-
-        } else
-            showModalMessage(false, 'game')
+        console.error('erroneous params in compentition query')
+        showModalMessage(false, 'game')
     }
+    if (searchPromise) {
+        Promise.resolve(searchPromise)
+            .then(data => {
+                if(!data.data) {
+                    throw Error("games not found")
+                }
+                dataList = data.data
+
+                // hide elements
+                Array.prototype.forEach.call(document.getElementsByTagName('iframe'),
+                    el => {el.classList.add('d-none')})
+
+                // fill ul
+                let unList = document.getElementById('gamesResults');
+                unList.replaceChildren();
+                unList.classList.add('nav', 'px-2', 'flex-column');
+                unList.classList.remove('d-none');
+                let elementCounter = 0;
+                dataList.forEach(element => {
+                    createDynamicListItem(window, 'game', dataList.length, unList,
+                        {counter: elementCounter++, data: element},
+                        {type: 'game', id: String(element.gameId)});
+                })
+                // Adding the 'load more...' element
+                if (dataList.length > 30)
+                    createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
+            })
+            .catch(err => {
+            console.error('axiousGet went wrong', err)
+            showModalMessage(true, 'game');
+        })
+    }
+
     ev.preventDefault();
 }
 
