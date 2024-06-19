@@ -232,10 +232,9 @@ async function openAccordionGames(window, id) {
                 window.document.getElementById('gamesAccordion').appendChild(unList)
                 let alternatorCounter = 0;
                 dataResponse.forEach(el => {
-                    createDynamicListItem(window, 'game', dataResponse.length, unList, {
-                        counter: alternatorCounter++,
-                        data: el
-                    }, {type: 'game', id: String(el.gameId)});
+                    createDynamicListItem(window, 'game', dataResponse.length, unList,
+                        {counter: alternatorCounter++, data: el},
+                        {type: 'game', id: String(el.gameId)});
                 });
                 window.document.getElementById(id).firstElementChild.appendChild(unList);
                 if (dataResponse.length > 20) {
@@ -266,7 +265,7 @@ async function openAccordionGames(window, id) {
  * @param item {object} The object filled with 3 fields:
  * - `counter`: the element-counter that provides various features, as like the alternated color of the list items
  * - `data`: The data to show. It is another object which requires an internal *id* field.
- * 'item' should be set as: `{counter: <(number >= 0)>, id: <string>, text: <string>}`
+ * - 'item' should be set as: `{counter: <(number >= 0)>, id: <string>, text: <string>}`
  * @param params {object} the params for the single_page.html to link up to the listItem.
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
 function createDynamicListItem(window, type, size, unorderedList, item, params) {

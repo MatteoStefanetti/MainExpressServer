@@ -12,8 +12,10 @@ function setButtonsListener() {
     let clubsBtn = document.getElementById('selectionByClubsBtn')
     let dateBtn = document.getElementById('selectionByDateBtn')
     document.getElementById('searchGameBy').addEventListener('submit', (ev) => ev.preventDefault())
-    document.getElementById('submitGameForm_Club').addEventListener('click', sendCompetitionQuery.bind(this))
-    document.getElementById('submitGameForm_Date').addEventListener('click', sendCompetitionQuery.bind(this))
+    document.getElementById('submitGameForm_Club').addEventListener('click', sendCompetitionQuery
+        .bind(document.getElementById('submitGameForm_Club')))
+    document.getElementById('submitGameForm_Date').addEventListener('click', sendCompetitionQuery
+        .bind(document.getElementById('submitGameForm_Date')))
     clubsBtn.addEventListener('click', changeBtnColors.bind(clubsBtn, dateBtn))
     dateBtn.addEventListener('click', changeBtnColors.bind(dateBtn, clubsBtn))
 }
@@ -38,13 +40,47 @@ async function sendCompetitionQuery(ev) {
     let formData = extractFormData('searchGameBy', true)
     if (this.id === 'submitGameForm_Club') {
         if (formData.gameSearchClub1 || formData.gameSearchClub2) {
-            // @todo await makeAxiosGet()
+            let route = (formData.gameSearchClub1 !== '' && formData.gameSearchClub2 !== '') ?
+                'competitions/query_games_by_double_name' : 'competitions/query_games_by_name'
+            route += formData.gameSearchClub1 ? '/' + formData.gameSearchClub1 : ''
+            route += formData.gameSearchClub2 ? '/' + formData.gameSearchClub2 : ''
+            await makeAxiosGet(''+route)
+                .then(data => {
+                    if(!data.data) {
+                        console.log(data)
+                        throw Error("games not found")
+                    }
+                    let dataList = data.data
 
+                    // @todo: hide elements
+                    Array.prototype.forEach.call(document.getElementsByTagName('iframe'),
+                            el => {el.classList.add('d-none')})
+
+                    // fill ul
+                    let unList = document.getElementById('gamesResults');
+                    unList.replaceChildren();
+                    unList.classList.add('nav', 'px-2', 'flex-column');
+                    unList.classList.remove('d-none');
+                    let elementCounter = 0;
+                    dataList.forEach(element => {
+                        createDynamicListItem(window, 'game', dataList.length, unList,
+                            {counter: elementCounter++, data: element},
+                            {type: 'game', id: String(element.gameId)});
+                    })
+                    // Adding the 'load more...' element
+                    if (dataList.length > 30)
+                        createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
+                })
+                .catch(err => {
+                    console.log('axiousGet went wrong', err)
+                    showModalMessage(true, 'game');
+                })
         } else
             showModalMessage(false, 'game')
     } else {
         if (formData.gameSearchDate) {
             // @todo await makeAxiosGet()
+            
 
         } else
             showModalMessage(false, 'game')
