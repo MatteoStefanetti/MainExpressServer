@@ -915,6 +915,7 @@ async function openAccordionPlayerAppearances(id) {
                             }, {type: 'game', id: String(el.game_id)});
                         })
                         .catch(err => {
+                            //DONE
                             console.error(err);
                         })
                 }
