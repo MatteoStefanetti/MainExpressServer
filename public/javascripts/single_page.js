@@ -68,8 +68,7 @@ async function initSinglePage() {
                         createParagraphForSP(info2, data.data.value_eur > 0, 'Market Value', data.data.value_eur + ' €', 'p', 'ms-1', 'ms-md-3');
                         createParagraphForSP(info2, data.data.top_value_eur > 0, 'Highest Market Value', data.data.top_value_eur + ' €', 'p', 'ms-1', 'ms-md-3')
 
-                        const conditionExpirationDate = new Date(data.data.contract_expiration_date).getTime() === new Date(0).getTime();
-                        createParagraphForSP(info2, conditionExpirationDate, 'Contract Expiration Date', new Date(data.data.contract_expiration_date).toLocaleDateString(), 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info2, data.data.contract_expiration_date, 'Contract Expiration Date', new Date(data.data.contract_expiration_date).toLocaleDateString(), 'p', 'ms-1', 'ms-md-3');
                         createParagraphForSP(info2, data.data.agent_name, 'Agent Name', data.data.agent_name, 'p', 'ms-1', 'ms-md-3');
 
                         // The following line creates the valuation button:
@@ -290,7 +289,7 @@ async function initSinglePage() {
                                 // Querying game_events
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
-                                        if (events.data.length) {
+                                        if (events.data.length && Array.isArray(events.data)) {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
                                             console.log('cards:', cardsArray)       // @todo remove: debug only
@@ -313,7 +312,8 @@ async function initSinglePage() {
                                             createParagraphForSP(info2, true, 'Substitutions',
                                                 String(countParam2), 'p', 'ms-1', 'ms-md-2')
                                             // @todo put info about game events
-
+                                            createAccordion('single_page/ga/events', 'accordions',
+                                                {id: 'eventsTimeline', events: events.data})
                                         } else
                                             console.log('game_events not found for game:', response.game_id)
                                     })
@@ -562,7 +562,6 @@ async function initSinglePage() {
                             console.error(err);
                     })
             }
-            //TODO: single_page initialization for competition
             break;
         default:
             notFoundPage('Page');

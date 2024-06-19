@@ -143,11 +143,12 @@ async function createAccordion(visualize, fatherId, params) {
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionClubs.bind(accordionButton, params.local_competition_code));
             break;
-        case 'single_page/ga/appearances':
-            strIdValue = params.id;
-            spanTitle.innerText = 'Appearances';
+        case 'single_page/ga/events':
+            strIdValue = params.id
+            spanTitle.innerText = 'Events Timeline';
+            spanTitle.classList.add('h5');
             accordionButton.appendChild(spanTitle);
-            // @todo fix: accordionButton.addEventListener('click', openAccordionGameEvents.bind(accordionButton, strIdValue));
+            accordionButton.addEventListener('click', openAccordionEvents.bind(accordionButton, params));
             break;
         case 'single_page/pl/player_valuations':
             strIdValue = params.id;
@@ -243,13 +244,45 @@ async function openAccordionGames(window, id) {
             })
             .catch(err => {
                 if (err.response.status === 404)
-                    window.document.getElementById(id).firstElementChild.innerHTML = '<span class="text-align p-1">No Games found...</span>'
+                    window.document.getElementById(id).firstElementChild.innerHTML = '<span class="d-block text-center mx-auto p-1">No Games found.</span>'
                 else {
                     console.error(err);
                     throw new Error('Error occurred during \'/get_games_by_league\' GET');
                 }
             })
         showChargingSpinner(window, false)
+    }
+}
+
+/** This function creates HTML elements to display the game_events data passed in `params`.
+ * @param params {object} The list of game_Events, **already retrieved by the single_page** to show some data.
+ * The params passed has 2 fields:
+ *      - `id` - a {@link string} representing the id of the accordion body in which the events are contained
+ *      - `events` - an {@link array} of events.
+ * @throws TypeError when the argument is null or undefined*/
+function openAccordionEvents (params) {
+    if (!params || !params.id)
+        throw new TypeError('"null" or "undefined" parameter passed to \'openAccordionEvents\' function!')
+    if (document.getElementById(params.id).firstElementChild.children.length === 0) {
+        showChargingSpinner(null, true)
+        console.log(params.events)
+        if (params.events && Array.isArray(params.events) && params.events.length) {
+            let unList = document.createElement('ul');
+            unList.classList.add('nav', 'flex-column');
+            document.getElementById(params.id).appendChild(unList)
+
+            let alternatorCounter = 0;
+            params.events.forEach(el => {
+                createDynamicListItem(window, 'event', params.events.length, unList,
+                    {counter: alternatorCounter++, data: el},
+                    {type: 'player', id: String(el.player_id)});
+            });
+            document.getElementById(params.id).firstElementChild.appendChild(unList);
+            if (params.events.length > 15)
+                createLoadMoreElement(unList, params.id, showMore.bind(null, unList, 15))
+        } else
+            document.getElementById(params.id).firstElementChild.innerHTML = '<span class="d-block text-center mx-auto h6 p-1">No events found.</span>'
+        showChargingSpinner(null, false)
     }
 }
 
@@ -263,10 +296,10 @@ async function openAccordionGames(window, id) {
  * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
  *  to which add item created.
  * @param item {object} The object filled with 3 fields:
- * - `counter`: the element-counter that provides various features, as like the alternated color of the list items
+ * - `counter`: the element-counter that provides features like the alternated color of the list items (must be >= 0)
  * - `data`: The data to show. It is another object which requires an internal *id* field.
- * - 'item' should be set as: `{counter: <(number >= 0)>, id: <string>, text: <string>}`
  * @param params {object} the params for the single_page.html to link up to the listItem.
+ * @example item = {counter: <number>, data: {id: <string>, text: <string>}}
  * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
 function createDynamicListItem(window, type, size, unorderedList, item, params) {
     if (!window || !type || !size || !unorderedList || !item || item.counter < 0 || !item.data) {
@@ -295,6 +328,41 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
     let dateDiv = window.document.createElement('div')
     dateDiv.classList.add('mx-3', 'd-flex', 'justify-content-center')
     switch (type) {
+        case 'event':
+            // club ids are consistent with the clubs in the dataset!
+            listItem.removeChild(listItemLink)
+            if (!document.getElementById(item.data.minute)) {
+                listItem.id = item.data.minute
+                listItem.classList.add('d-flex', 'align-items-center');
+                listItemLink.classList.add('flex-grow-1');
+                let containerDivElem = document.createElement('div');
+                containerDivElem.classList.add('row', 'align-items-stretch');
+
+                let minuteDiv = document.createElement('div');
+                minuteDiv.classList.add('d-flex', 'col-2', 'align-self-center', 'my-1', 'rounded-3', 'bg-secondary');
+                const minute =  item.data.minute > 90 ? '90+' + (item.data.minute-90) : item.data.minute;
+                minuteDiv.innerHTML = '<span class="h5 fw-bold text-center">' + minute + '\'</span>'
+
+                let squad1Div = document.createElement('div');
+                squad1Div.classList.add('d-flex', 'col-5', 'align-items-center', 'py-1', 'px-0', 'flex-column', 'h5');
+                let squad2Div = squad1Div.cloneNode(true);
+                squad1Div.classList.add('justify-content-end', 'pe-1', 'text-end')
+                squad2Div.classList.add('justify-content-start', 'ps-1', 'text-start')
+
+                // ...
+
+            } else {    // the minute element has already been created.
+                // finding first club id
+                const elementHREF = document.getElementById('info1').firstElementChild.href
+                const club_id1 = Number(elementHREF.slice(lementHREF.indexOf('&id=') + 4))
+                console.log('numbers:', Number(item.data.club_id), club_id1)        // debug only: @todo remove it
+                if (Number(item.data.club_id) === club_id1) {
+
+                } else {
+
+                }
+            }
+            break;
         case 'game':
             listItem.id = item.data.gameId;
             listItem.classList.add('d-flex', 'align-items-center');
@@ -305,10 +373,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
             let leftDiv = document.createElement('div');
             leftDiv.classList.add('d-flex', 'justify-content-center', 'align-items-center', 'w-100', 'p-2', 'flex-column', 'h5', 'text-center');
-
             let centerDiv = document.createElement('div');
             centerDiv.classList.add('d-flex', 'align-self-center', 'flex-column', 'p-1');
-
             let rightDiv = leftDiv.cloneNode(true);
 
             let dateSmDiv = document.createElement('div');
