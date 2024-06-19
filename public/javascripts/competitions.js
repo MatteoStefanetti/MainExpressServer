@@ -44,17 +44,17 @@ async function sendCompetitionQuery(ev) {
                 'competitions/query_games_by_double_name' : 'competitions/query_games_by_name'
             route += formData.gameSearchClub1 ? '/' + formData.gameSearchClub1 : ''
             route += formData.gameSearchClub2 ? '/' + formData.gameSearchClub2 : ''
-            console.log(route)
             await makeAxiosGet(''+route)
                 .then(data => {
                     if(!data.data) {
                         console.log(data)
                         throw Error("games not found")
                     }
-                    let dataList = data.data;
+                    let dataList = data.data
 
                     // @todo: hide elements
-                    document.getElementById('clubAccordion').classList.add('d-none');
+                    Array.prototype.forEach.call(document.getElementsByTagName('iframe'),
+                            el => {el.classList.add('d-none')})
 
                     // fill ul
                     let unList = document.getElementById('gamesResults');
@@ -63,10 +63,9 @@ async function sendCompetitionQuery(ev) {
                     unList.classList.remove('d-none');
                     let elementCounter = 0;
                     dataList.forEach(element => {
-                        createDynamicListItem(window, 'game', dataList.size, unList, {
-                                counter: elementCounter++, data: element
-                            },
-                            {type: 'game', id: element.gameId});
+                        createDynamicListItem(window, 'game', dataList.length, unList,
+                            {counter: elementCounter++, data: element},
+                            {type: 'game', id: String(element.gameId)});
                     })
                     // Adding the 'load more...' element
                     if (dataList.size > 30)
@@ -81,6 +80,7 @@ async function sendCompetitionQuery(ev) {
     } else {
         if (formData.gameSearchDate) {
             // @todo await makeAxiosGet()
+            
 
         } else
             showModalMessage(false, 'game')

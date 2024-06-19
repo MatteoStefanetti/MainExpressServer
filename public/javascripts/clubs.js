@@ -135,6 +135,7 @@ function searchClubs(event) {
                     });
                 }
                 document.getElementById('clubAccordion').classList.add('d-none');
+
                 let unList = document.getElementById('clubResults');
                 unList.replaceChildren();
                 unList.classList.add('nav', 'px-2', 'flex-column');
