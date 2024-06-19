@@ -75,12 +75,12 @@ router.get('/query_games_by_double_name/:clubName1/:clubName2', function (req, r
 /**
  * Endpoint for retrieving games involving two specific clubs.
  *
- * @param gameDate The date when games were played
+ * @param gameDate The date when games were played. Must be sent as yyyy-mm-dd
  * @return ResponseEntity containing the  List of games involving both clubs if found, or a NOT_FOUND response if no games were found
  */
 router.get('/query_games_by_date/:gameDate', function (req, res) {
     if (req.params.gameDate) {
-        fetch('http://localhost:8081/games/query_games_by_date/' + String(req.params.gameDate), {
+        fetch('http://localhost:8081/games/query_games_by_date/' + (req.params.gameDate), {
             headers: {'Content-Type': 'application/json'}, method: 'get'
         })
             .then(res => res.json())

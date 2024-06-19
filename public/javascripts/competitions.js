@@ -79,9 +79,8 @@ async function sendCompetitionQuery(ev) {
                     createLoadMoreElement(unList, unList.id, showMore.bind(null, unList, 30));
             })
             .catch(err => {
-            console.error('axiousGet went wrong', err)
-            showModalMessage(true, 'game');
-        })
+                showModalMessage(true, 'game')
+            })
     }
 
     ev.preventDefault();
