@@ -1,10 +1,10 @@
-let chatUserName = 'Guest_' + Math.floor(Math.random()*10000);
+let chatUserName = 'Guest_' + Math.floor(Math.random() * 10000);
 let roomName = 'global';
 const chatSocket = io();
 let chat_messages = {}
 
 // This creates the localStorage variable for the chat, if it doesn't exist yet!
-if(!localStorage.getItem('isChatOpened'))
+if (!localStorage.getItem('isChatOpened'))
     localStorage.setItem('isChatOpened', 'false')
 
 
@@ -22,22 +22,22 @@ function initChat() {
             document.getElementById('closeChat').onclick = closeChat;
             document.getElementById('acceptTermsBtn').onclick = acceptedTerms;
             document.getElementById('declineTermsBtn').onclick = closeChat;
-            document.getElementById("submitForm").onclick =  submitChatForm;
-            document.getElementById("leaveButton").onclick =  leaveRoom;
+            document.getElementById("submitForm").onclick = submitChatForm;
+            document.getElementById("leaveButton").onclick = leaveRoom;
             document.getElementById('sendMsgBtn').addEventListener('click', sendMessage)
             document.getElementById('textField').addEventListener('submit', sendMessage)
-            if(localStorage.getItem('acceptedChatTerms')) {
+            if (localStorage.getItem('acceptedChatTerms')) {
                 closeChatTerms();
-                if(localStorage.getItem('connectedRoom')) {
-                    if(localStorage.getItem('connectedRoom') !== 'false') {
+                if (localStorage.getItem('connectedRoom')) {
+                    if (localStorage.getItem('connectedRoom') !== 'false') {
                         const room = !localStorage.getItem('connectedRoom') ? roomName : localStorage.getItem('connectedRoom')
                         const name = !localStorage.getItem('chatUserName') ? chatUserName : localStorage.getItem('chatUserName')
-                        connectToRoom( room, name, false)
+                        connectToRoom(room, name, false)
                     }
                 }
             }
             initChatSocket()
-            if(localStorage.getItem('isChatOpened') === 'true')
+            if (localStorage.getItem('isChatOpened') === 'true')
                 openChat()
         })
         .catch(err => console.error('unable to retrieve chat page\n', err));
@@ -46,52 +46,61 @@ function initChat() {
 /** Function used to set the initial chat divs and buttons at every page-load.
  * Called by the init function. */
 function toggleChatElements() {
-    if(localStorage.getItem('isChatOpened') !== 'true')
+    if (localStorage.getItem('isChatOpened') !== 'true')
         openChat()
     else
         closeChat()
 }
 
-function hideNode( node ) {
-    if(node instanceof HTMLElement) {
+/**Hide a html element by adding the d-none class
+ * @param node The html element to hide*/
+function hideNode(node) {
+    if (node instanceof HTMLElement) {
         node.classList.add('d-none')
-    }
-    else
+    } else
         console.error("wrong element:", node, "is not a HTMLElement")
 }
 
-function showNode( node ) {
-    if(node instanceof HTMLElement)
+/**Show a html element by removing the d-none class
+ * @param node The html element to show*/
+function showNode(node) {
+    if (node instanceof HTMLElement)
         node.classList.remove('d-none');
     else
         console.error("wrong element:", node, "is not a HTMLElement")
 }
 
 /**
+ *It hides the hideForChat element and chatButton on bottom-right side of the screen, and shows the chatDiv element
  *
+ * @param hideBigAdv If it is false the function will show chat without hiding the adv
+ * @param hideChatAdv If it is true the function will not show the adv on top of the chatDiv
  **/
-function openChat(hideBigAdv=true, hideChatAdv = false) {
+function openChat(hideBigAdv = true, hideChatAdv = false) {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
     const btnDiv = document.getElementById('btnDiv');
     localStorage.setItem('isChatOpened', 'true');
-    if(hideBigAdv) {
+    if (hideBigAdv) {
         hideNode(hideForChat)
         hideNode(btnDiv)
     }
 
-    if(!chatDiv.classList.contains('d-lg-flex')) {
+    if (!chatDiv.classList.contains('d-lg-flex')) {
         chatDiv.classList.add('d-lg-flex')
     }
     showNode(chatDiv)
-    if(hideChatAdv) {
+    if (hideChatAdv) {
         hideNode(document.getElementById('chatAdv'))
     } else {
         showNode(document.getElementById('chatAdv'))
     }
 }
 
-function closeChat(hideChat=true) {
+/**It hides the chatDiv showing the big adv.
+ *
+ * @param hideChat If it is false the function will not hide the chat*/
+function closeChat(hideChat = true) {
     const hideForChat = document.getElementById('hideForChat');
     const chatDiv = document.getElementById('chatDiv');
     const btnDiv = document.getElementById('btnDiv');
@@ -99,8 +108,8 @@ function closeChat(hideChat=true) {
     showNode(hideForChat)
     showNode(btnDiv)
 
-    if(hideChat) {
-        if(chatDiv.classList.contains('d-lg-flex')) {
+    if (hideChat) {
+        if (chatDiv.classList.contains('d-lg-flex')) {
             localStorage.setItem('isChatOpened', 'false');
             chatDiv.classList.remove('d-lg-flex')
         }
@@ -108,11 +117,13 @@ function closeChat(hideChat=true) {
     }
 }
 
-/** Function called whenever the chat button is clicked. */
-function clickChatBtn () {
-    if(window.innerWidth >= 992) { //set chat on side
+/** Function called whenever the chat button is clicked.
+ *
+ * It checks the window size and move the chatDiv in the right position*/
+function clickChatBtn() {
+    if (window.innerWidth >= 992) { //set chat on side
         let chatHeader = document.getElementById('chatHeader')
-        if(chatHeader.parentElement.id !== 'chatLandingElement') {  //chat was inside offcanvas, needs to be moved on the side
+        if (chatHeader.parentElement.id !== 'chatLandingElement') {  //chat was inside offcanvas, needs to be moved on the side
             let chatBody = document.getElementById('chatBody')
             let chatTerms = document.getElementById('chatTerms')
             let chatLandingElements = document.getElementById("chatLandingElems") //where to append chatHeader and chatBody
@@ -127,14 +138,17 @@ function clickChatBtn () {
         }
     }
     toggleChatElements();
-    if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
+    if (!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
         showChatTerms();
 }
 
+/**Function called whenever the chat button in the navbar is clicked.
+
+ It checks the window size and move the chatDiv in the right position*/
 function clickNavbarBtn(attr) {
-    if(window.innerWidth < 992) { //set chat in offcanvas
+    if (window.innerWidth < 992) { //set chat in offcanvas
         let chatHeader = document.getElementById('chatHeader')
-        if(chatHeader.parentElement.id !== 'chatOffCanvas') {
+        if (chatHeader.parentElement.id !== 'chatOffCanvas') {
             closeChat()
             let chatBody = document.getElementById('chatBody')
             let chatTerms = document.getElementById('chatTerms')
@@ -150,21 +164,21 @@ function clickNavbarBtn(attr) {
             showNode(chatBody)
         }
     }
-    if(!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
+    if (!localStorage.getItem('acceptedChatTerms'))  // Add here "|| true" to make terms to display every time.
         showChatTerms();
 }
 
 /** Function called to show the chat **terms** in the chat div. */
 function showChatTerms() {
     let chatTerms = document.getElementById('chatTerms');
-    if(chatTerms.classList.contains('d-none'))
+    if (chatTerms.classList.contains('d-none'))
         chatTerms.classList.remove('d-none');
     setTermsHeight(chatTerms);
 }
 
 /** Function used to set the **height** of the terms-div dynamically.
  * @param chatTerms {HTMLElement} It is the DOM element of the chat terms. */
-function setTermsHeight(chatTerms){
+function setTermsHeight(chatTerms) {
     let loginRect = document.getElementById('submitForm').getBoundingClientRect();
     chatTerms.style.minHeight = '100px';
     chatTerms.style.height = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
@@ -172,9 +186,9 @@ function setTermsHeight(chatTerms){
 }
 
 /** Function called when the terms are accepted.
- * @note It must show the terms only one per device. */
-function acceptedTerms(){
-    if(!localStorage.getItem('acceptedChatTerms'))
+ * @note It must show the terms only once*/
+function acceptedTerms() {
+    if (!localStorage.getItem('acceptedChatTerms'))
         localStorage.setItem('acceptedChatTerms', 'true');
     closeChatTerms();
 }
@@ -182,7 +196,7 @@ function acceptedTerms(){
 /** This function only assures to close the chat terms. */
 function closeChatTerms() {
     let chatTerms = document.getElementById('chatTerms');
-    if(!chatTerms.classList.contains('d-none'))
+    if (!chatTerms.classList.contains('d-none'))
         document.getElementById('chatTerms').classList.add('d-none');
 }
 
@@ -192,13 +206,13 @@ function closeChatTerms() {
 function initChatSocket() {
     chatSocket.on('joined', function (room, userId) {
         if (userId === chatUserName) {
-            hideLoginInterface(room, userId)
-            writeOnChat('mainServer', 'You entered in room "' + room + '"' )
+            hideLoginInterface()
+            writeOnChat('mainServer', 'You entered in room "' + room + '"')
             let chatHeader = document.getElementById("chatHeader")
-            chatHeader.classList.add('bg-light','border_bottom')
+            chatHeader.classList.add('bg-light', 'border_bottom')
 
             let chatName = document.getElementById('chatName')
-            chatName.innerHTML =roomName
+            chatName.innerHTML = roomName
             chatName.classList.remove('d-none')
 
             let chatLoginHeader = document.getElementById("chatLoginHeader")
@@ -212,10 +226,10 @@ function initChatSocket() {
     })
 
     /** It receives a list of all rooms opened with the server and add them to the list of rooms in the chat form*/
-    chatSocket.on("rooms list", (list)=>{
+    chatSocket.on("rooms list", (list) => {
         let roomsList = document.getElementById("roomsList")
         let node
-        for( let room of list){
+        for (let room of list) {
             node = document.createElement('option')
             node.value = room
             roomsList.appendChild(node)
@@ -223,7 +237,7 @@ function initChatSocket() {
     })
 
     chatSocket.on('chat', function (userId, chatText) {
-        if(userId !== null)
+        if (userId !== null)
             writeOnChat(userId, chatText)
     })
 
@@ -239,12 +253,14 @@ function initChatSocket() {
  * Called when 'click' event occurs on login submitForm
  *  extract and stores form's data
  *  calls connectToRoom, which connects to socket
+ *
+ *  @param event The click event on submitFormButton
  */
 function submitChatForm(event) {//connect button function
     let formData = extractFormData("chatLoginForm", false);
     const room = !formData.customRoom ? roomName : formData.customRoom
     const name = !formData.customName ? chatUserName : formData.customName
-    connectToRoom( room, name, formData.makePublic)
+    connectToRoom(room, name, formData.makePublic)
 
     event.preventDefault();
 }
@@ -267,6 +283,8 @@ function connectToRoom(room, userName, makePublic) {
 /**
  * Called when 'click' event occurs on leaveButton
  *  hide login section, and sets chat section
+ *
+ *   @param event The click event on leaveButton
  */
 function leaveRoom(event) {
     chatSocket.emit('leave conversation', roomName, chatUserName)
@@ -277,7 +295,7 @@ function leaveRoom(event) {
     document.getElementById('leaveBtnDiv').classList.add('d-none')
 
     let chatHeader = document.getElementById("chatHeader")
-    chatHeader.classList.remove('bg-light','border_bottom')
+    chatHeader.classList.remove('bg-light', 'border_bottom')
     document.getElementById('messages').replaceChildren() //replace children with null
     document.getElementById('submitForm').disabled = false
     localStorage.setItem('connectedRoom', 'false')
@@ -289,11 +307,13 @@ function leaveRoom(event) {
  * extract and clears form's input
  * check if it's void
  * write on chat and emit msg to the socket
+ *
+ *  @param event The click event on the sendMsgBtn
  * */
-function sendMessage(event){
+function sendMessage(event) {
     let text = String(extractFormData('textField', false).textInput).trim();
     document.getElementById('textInput').value = '';
-    if(!text || text.length < 1) {
+    if (!text || text.length < 1) {
         console.error("Error on text string");
         event.preventDefault();
         return; // @todo end this case (what to do ?)
@@ -303,22 +323,22 @@ function sendMessage(event){
 }
 
 
-/** It appends the given html text to the chat div
+/** It appends the given html text to messages div
  * @param userId {string} who sent the message
  * @param text {string} message content
  * */
 function writeOnChat(userId, text) {
     // handle userId == null case
-    if(text && String(text).trim().length !== 0){
+    if (text && String(text).trim().length !== 0) {
         let msgNode = document.createElement('div')
-        msgNode.classList.add('my-1', 'mx-5',  'p-2')
-        if(userId === 'mainServer') {
+        msgNode.classList.add('my-1', 'mx-5', 'p-2')
+        if (userId === 'mainServer') {
             msgNode.classList.add('ps-3', 'pe-3', 'text-center')
             msgNode.innerHTML = '<i>' + text + '</i>'
         } else {
             msgNode.classList.add('rounded-4')
             const sender = userId === chatUserName ? "You" : userId
-            if(sender === "You")
+            if (sender === "You")
                 msgNode.classList.add('me-2', 'border', 'self-message', 'text-end')
             else
                 msgNode.classList.add('ms-2', 'border', 'other-message', 'text-start')
@@ -327,17 +347,15 @@ function writeOnChat(userId, text) {
         }
 
         let msgContainer = document.getElementById('messages');
-        if(msgContainer.childElementCount >= 20)
+        if (msgContainer.childElementCount >= 20)
             msgContainer.removeChild(msgContainer.lastChild);
         msgContainer.insertBefore(msgNode, msgContainer.firstChild);
     } else
         console.error('Text to send is null.')
 }
 
-/** It hides the initial form and shows the chat.
- * @param room the selected room
- * @param userId the userName */
-function hideLoginInterface(room, userId) {
+/** It hides the initial form and shows the chat.*/
+function hideLoginInterface() {
     document.getElementById('loginForm').classList.add('d-none')
     document.getElementById('chat').classList.remove('d-none')
 }
