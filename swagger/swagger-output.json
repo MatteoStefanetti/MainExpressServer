@@ -150,6 +150,78 @@
           "200": {
             "description": "OK"
           },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/competitions/query_games_by_name/{clubName}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "clubName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/competitions/query_games_by_double_name/{clubName1}/{clubName2}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "clubName1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "clubName2",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/competitions/query_games_by_date/{gameDate}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "gameDate",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -335,6 +407,9 @@
           "200": {
             "description": "OK"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -469,6 +544,9 @@
           "200": {
             "description": "OK"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -555,34 +633,6 @@
           },
           "500": {
             "description": "Invalid 'id' passed as input!"
-          }
-        }
-      }
-    },
-    "/single_page/get_starting_lineups/{game_id}": {
-      "get": {
-        "tags": [
-          "Single Page"
-        ],
-        "description": "GET route that retrieves starting lineups data in base of a \\'game_id\\'.",
-        "parameters": [
-          {
-            "name": "game_id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "The game_id of the game we want to analyse."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Invalid 'game_id' passed as input!"
           }
         }
       }
@@ -674,6 +724,34 @@
           },
           "500": {
             "description": "Invalid 'id' passed as input!"
+          }
+        }
+      }
+    },
+    "/single_page/get_players_by_ids/{list}": {
+      "get": {
+        "tags": [
+          "Single Page"
+        ],
+        "description": "GET route that retrieves PlayerCard, given a list of \\'id\\'s.",
+        "parameters": [
+          {
+            "name": "list",
+            "in": "path",
+            "required": true,
+            "type": "array",
+            "description": "The list of player_id of the playerCards to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Invalid 'list' of ids passed as input!"
           }
         }
       }
