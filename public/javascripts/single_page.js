@@ -1105,7 +1105,10 @@ function createGoalEvent(data, firstSquad) {
                     container.append(iconSpan, nameSpan)
                     container.classList.add('d-flex', 'align-items-center', 'mx-1')
                     element.appendChild(container)
-                    element.classList.add('flex-column', 'flex-sm-row')
+                    if (firstSquad) {
+                        element.classList.add('flex-row-reverse')
+                        container.classList.add('flex-row-reverse')
+                    }
                 } else
                     console.log('player_name not found for', data.player_id)
             })
