@@ -1031,3 +1031,101 @@ function createParagraphForSP(fatherElem, condition, labelText, value, ...classL
     parElem.innerHTML = (condition) ? label + value : label + 'N/A';
     fatherElem.appendChild(parElem);
 }
+
+/** It creates a **general** event element.
+ * @param data {object} The object containing the info to display. It will call a specific creator function.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createGeneralEventElement(data, firstSquad) {
+    const returnableElement = document.createElement('div')
+    const iconSpan = document.createElement('span')
+    const textSpan = document.createElement('span')
+    iconSpan.id = data.game_event_id
+
+    textSpan.classList.add('fw-bold', 'fs-6', 'px-1')
+    textSpan.innerText = data.player_name
+
+    // container div for the single event
+    returnableElement.classList.add('d-flex', 'align-items-center', 'mx-0', 'my-1', 'my-md-2')
+    if (firstSquad) {
+        returnableElement.classList.add('flex-row-reverse')
+        textSpan.classList.add('me-1', 'text-end')
+    } else {
+        returnableElement.classList.add('flex-row')
+        textSpan.classList.add('ms-1', 'text-start')
+    }
+    returnableElement.appendChild(iconSpan)
+    returnableElement.appendChild(textSpan)
+    return returnableElement
+}
+
+/** It creates a **card** event with info contained in `data`.
+ * @param data {object} The object containing the info to display. It shall use the snake_case.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createCardEvent(data, firstSquad) {
+    const element = createGeneralEventElement(data, firstSquad)
+    const iconSpan = element.children.namedItem(data.game_event_id)
+    iconSpan.classList.add('bi', 'bi-square-fill', 'py-1', 'fs-6')
+    if (String(data.event_description).toLowerCase().includes('red'))
+        iconSpan.classList.add('text-danger')
+    else
+        iconSpan.classList.add('text-warning')
+    return element
+}
+
+/** It creates a **goal** event with info contained in `data`.
+ * @param data {object} The object containing the info to display. It shall use the snake_case.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createGoalEvent(data, firstSquad) {
+    const element = createGeneralEventElement(data, firstSquad)
+    const iconImg = document.createElement('img')
+    iconImg.src = "../images/soccer-ball-icon.svg"
+    iconImg.classList.add('img-fluid', 'mx-auto')
+    iconImg.style.width = '1.4rem'
+    iconImg.style.height = '1.4rem'
+    element.replaceChild(iconImg, element.children.namedItem(data.game_event_id))
+
+    if (data.player_assist_id !== undefined && data.player_assist_id !== -1)
+        retrievePlayerName(data.player_assist_id)
+            .then(player => {
+                if (player.data && player.data.last_name) {
+                    const container = document.createElement('div')
+                    const nameSpan = document.createElement('span')
+                    const iconSpan = document.createElement('span')
+
+                    nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
+                    nameSpan.classList.add('fs-6', 'px-1')
+                    iconSpan.classList.add('bg-secondary', 'bg-opacity-25', 'fs-7', 'fw-bold', 'text-center')
+                    iconSpan.innerText = 'A'
+                    // The following styles will make a circle around the text.
+                    iconSpan.style.width = '1.3rem'
+                    iconSpan.style.height = '1.3rem'
+                    iconSpan.style.lineHeight = '1.3rem'
+                    iconSpan.style.borderRadius = '1.3rem';
+
+                    container.append(iconSpan, nameSpan)
+                    container.classList.add('d-flex', 'align-items-center', 'mx-1')
+                    element.appendChild(container)
+                    element.classList.add('flex-column', 'flex-sm-row')
+                } else
+                    console.log('player_name not found for', data.player_id)
+            })
+            .catch(err => {
+                if (err.response && err.response.status === 404)
+                    console.log('player_name not found for', data.player_id)
+            })
+    return element
+}
+
+/** It creates a **substitution** event with info contained in `data`.
+ * @param data {object} The object containing the info to display. It shall use the snake_case.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createSubstitutionEvent(data, firstSquad) {
+
+}
+
+/** It performs an axios GET returning a Promise with the results.
+ * @param player_id - the player_id to use for the GET route.
+ * @returns {Promise<*>} where, if gone well, should let us retrieve the **name** of the player. */
+async function retrievePlayerName(player_id) {
+    return await makeAxiosGet(`/single_page/get_player_by_id/${player_id}`)
+}

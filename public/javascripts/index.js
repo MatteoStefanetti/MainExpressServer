@@ -271,14 +271,15 @@ function openAccordionEvents (params) {
             unList.classList.add('nav', 'flex-column');
             document.getElementById(params.id).appendChild(unList)
 
+            const size = new Set(params.events.map(el => el.minute)).size
             let alternatorCounter = 0;
             params.events.forEach(el => {
-                createDynamicListItem(window, 'event', params.events.length, unList,
+                createDynamicListItem(window, 'event', size, unList,
                     {counter: alternatorCounter++, data: el},
                     {type: 'player', id: String(el.player_id)});
             });
             document.getElementById(params.id).firstElementChild.appendChild(unList);
-            if (params.events.length > 15)
+            if (size > 15)
                 createLoadMoreElement(unList, params.id, showMore.bind(null, unList, 15))
         } else
             document.getElementById(params.id).firstElementChild.innerHTML = '<span class="d-block text-center mx-auto h6 p-1">No events found.</span>'
@@ -320,7 +321,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
     }
     listItem.classList.add('nav-item');
-    if (item.counter !== (size - 1))
+    if (item.counter !== (size - 1) && type !== 'event')
         listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
     let desktopBtn = document.createElement('div');
     let rightDiv = window.document.createElement('div')
@@ -331,37 +332,72 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
         case 'event':
             // club ids are consistent with the clubs in the dataset!
             listItem.removeChild(listItemLink)
+            // finding first club id
+            const elementHREF = document.getElementById('info1').firstElementChild.href
+            const club_id1 = Number(elementHREF.slice(elementHREF.indexOf('&id=') + 4))
+            let squad1Div, squad2Div;
+            // Create or attach to the listItem with id == item.data.minute
             if (!document.getElementById(item.data.minute)) {
                 listItem.id = item.data.minute
-                listItem.classList.add('d-flex', 'align-items-center');
-                listItemLink.classList.add('flex-grow-1');
-                let containerDivElem = document.createElement('div');
-                containerDivElem.classList.add('row', 'align-items-stretch');
+                listItem.classList.add('d-flex', 'align-items-center', 'game-event-li');
+                const containerDivElem = document.createElement('div');
+                containerDivElem.classList.add('row', 'w-100', 'justify-content-between', 'align-items-stretch');
 
-                let minuteDiv = document.createElement('div');
-                minuteDiv.classList.add('d-flex', 'col-2', 'align-self-center', 'my-1', 'rounded-3', 'bg-secondary');
+                // creating the central element (minute displayer)
+                const minuteDiv = document.createElement('div');
+                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'my-1', 'rounded-3', 'bg-secondary', 'bg-opacity-50');
                 const minute =  item.data.minute > 90 ? '90+' + (item.data.minute-90) : item.data.minute;
                 minuteDiv.innerHTML = '<span class="h5 fw-bold text-center">' + minute + '\'</span>'
 
-                let squad1Div = document.createElement('div');
-                squad1Div.classList.add('d-flex', 'col-5', 'align-items-center', 'py-1', 'px-0', 'flex-column', 'h5');
-                let squad2Div = squad1Div.cloneNode(true);
-                squad1Div.classList.add('justify-content-end', 'pe-1', 'text-end')
-                squad2Div.classList.add('justify-content-start', 'ps-1', 'text-start')
+                // Creating the squad divs
+                squad1Div = document.createElement('div');
+                squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'py-1', 'px-0', 'flex-column', 'h5');
+                squad2Div = squad1Div.cloneNode(false);
+                squad1Div.classList.add('pe-1', 'align-items-end')
+                squad2Div.classList.add('ps-1', 'align-items-start')
 
-                // ...
-
-            } else {    // the minute element has already been created.
-                // finding first club id
-                const elementHREF = document.getElementById('info1').firstElementChild.href
-                const club_id1 = Number(elementHREF.slice(lementHREF.indexOf('&id=') + 4))
-                console.log('numbers:', Number(item.data.club_id), club_id1)        // debug only: @todo remove it
-                if (Number(item.data.club_id) === club_id1) {
-
-                } else {
-
-                }
+                // Appending the new item
+                containerDivElem.append(squad1Div, minuteDiv, squad2Div)
+                listItem.appendChild(containerDivElem)
+                unorderedList.appendChild(listItem)
+                if (size !== unorderedList.children.length)
+                    listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+            } else {
+                // the minute element has already been created.
+                listItem = document.getElementById(item.data.minute)
+                squad1Div = listItem.firstElementChild.firstElementChild
+                squad2Div = listItem.firstElementChild.lastElementChild
             }
+            const fatherDiv = (Number(item.data.club_id) === club_id1) ? squad1Div : squad2Div;
+            retrievePlayerName(item.data.player_id)
+                .then(player => {
+                    if (player.data.last_name) {
+                        item.data.player_name = setReducedName(player.data.last_name, player.data.player_name)
+                        const firstSquad = fatherDiv === squad1Div;
+                        switch (String(item.data.event_type)) {
+                            case 'Cards':
+                                fatherDiv.appendChild(createCardEvent(item.data, firstSquad))
+                                break;
+                            case 'Goals':
+                                fatherDiv.appendChild(createGoalEvent(item.data, firstSquad))
+                                break;
+                            case 'Substitutions':
+                                fatherDiv.appendChild(createSubstitutionEvent(item.data, firstSquad))
+                                break;
+                            default:
+                                console.error('Found invalid event_type:', item.data.event_type)
+                        }
+                        if (unorderedList.children.length > 15)
+                            listItem.classList.add('d-none')
+                    } else {
+                        console.log('Cannot retrieve data for an event.') // SIGNALING
+                    }
+                })
+                .catch(err => {
+                    if (err.response && err.response.status === 404)
+                        console.log('Error occurred in retrieval of a player name.')
+                    else console.error(err)
+                })
             break;
         case 'game':
             listItem.id = item.data.gameId;
@@ -511,7 +547,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         id: item.data.clubId2
                     }) + '">' + item.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
 
-            // @todo data retrieval
             let popOverContent = document.createElement('div')
             popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
             popOverContent.innerHTML =
