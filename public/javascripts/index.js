@@ -148,6 +148,7 @@ async function createAccordion(visualize, fatherId, params) {
             spanTitle.innerText = 'Events Timeline';
             spanTitle.classList.add('h5');
             accordionButton.appendChild(spanTitle);
+            accBody.classList.add('px-1', 'px-sm-2', 'px-md-4')
             accordionButton.addEventListener('click', openAccordionEvents.bind(accordionButton, params));
             break;
         case 'single_page/pl/player_valuations':
@@ -345,16 +346,18 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
                 // creating the central element (minute displayer)
                 const minuteDiv = document.createElement('div');
-                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'my-1', 'rounded-3', 'bg-secondary', 'bg-opacity-50');
+                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'h5', 'my-1', 'p-1', 'px-sm-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50');
                 const minute =  item.data.minute > 90 ? '90+' + (item.data.minute-90) : item.data.minute;
                 minuteDiv.innerHTML = '<span class="h5 fw-bold text-center">' + minute + '\'</span>'
+                minuteDiv.style.boxSizing = 'border-box';
 
                 // Creating the squad divs
                 squad1Div = document.createElement('div');
-                squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'py-1', 'px-0', 'flex-column', 'h5');
+                squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'p-0', 'flex-column');
+                squad1Div.style.boxSizing = 'border-box';
                 squad2Div = squad1Div.cloneNode(false);
-                squad1Div.classList.add('pe-1', 'align-items-end')
-                squad2Div.classList.add('ps-1', 'align-items-start')
+                squad1Div.classList.add('align-items-end')
+                squad2Div.classList.add('align-items-start')
 
                 // Appending the new item
                 containerDivElem.append(squad1Div, minuteDiv, squad2Div)

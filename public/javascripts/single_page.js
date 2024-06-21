@@ -1048,10 +1048,10 @@ function createGeneralEventElement(data, firstSquad) {
     returnableElement.classList.add('d-flex', 'align-items-center', 'mx-0', 'my-1', 'my-md-2')
     if (firstSquad) {
         returnableElement.classList.add('flex-row-reverse')
-        textSpan.classList.add('me-1', 'text-end')
+        textSpan.classList.add('me-1', 'text-center', 'text-sm-end')
     } else {
-        returnableElement.classList.add('flex-row')
-        textSpan.classList.add('ms-1', 'text-start')
+        returnableElement.classList.add('flex-sm-row')
+        textSpan.classList.add('ms-1', 'text-center', 'text-sm-start')
     }
     returnableElement.appendChild(iconSpan)
     returnableElement.appendChild(textSpan)
@@ -1079,11 +1079,11 @@ function createGoalEvent(data, firstSquad) {
     const element = createGeneralEventElement(data, firstSquad)
     const iconImg = document.createElement('img')
     iconImg.src = "../images/soccer-ball-icon.svg"
-    iconImg.classList.add('img-fluid', 'mx-auto')
+    iconImg.classList.add('img-fluid')
     iconImg.style.width = '1.4rem'
     iconImg.style.height = '1.4rem'
     element.replaceChild(iconImg, element.children.namedItem(data.game_event_id))
-
+    // assist div creation
     if (data.player_assist_id !== undefined && data.player_assist_id !== -1)
         retrievePlayerName(data.player_assist_id)
             .then(player => {
@@ -1093,7 +1093,7 @@ function createGoalEvent(data, firstSquad) {
                     const iconSpan = document.createElement('span')
 
                     nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
-                    nameSpan.classList.add('fs-6', 'px-1')
+                    nameSpan.classList.add('fs-6', 'px-1', 'text-center')
                     iconSpan.classList.add('bg-secondary', 'bg-opacity-25', 'fs-7', 'fw-bold', 'text-center')
                     iconSpan.innerText = 'A'
                     // The following styles will make a circle around the text.
@@ -1103,14 +1103,15 @@ function createGoalEvent(data, firstSquad) {
                     iconSpan.style.borderRadius = '1.3rem';
 
                     container.append(iconSpan, nameSpan)
-                    container.classList.add('d-flex', 'align-items-center', 'mx-1')
-                    element.appendChild(container)
+                    container.classList.add('d-flex', 'align-items-center', 'flex-row')
+                    element.insertAdjacentElement('afterend', container)
                     if (firstSquad) {
-                        element.classList.add('flex-row-reverse')
-                        container.classList.add('flex-row-reverse')
+                        element.classList.replace('flex-sm-row', 'flex-sm-row-reverse')
+                        container.classList.replace('flex-row', 'flex-row-reverse')
+                        nameSpan.classList.add('text-sm-end')
                     }
                 } else
-                    console.log('player_name not found for', data.player_id)
+                    console.log('player_name not found for', data.player_assist_id)
             })
             .catch(err => {
                 if (err.response && err.response.status === 404)
@@ -1123,7 +1124,38 @@ function createGoalEvent(data, firstSquad) {
  * @param data {object} The object containing the info to display. It shall use the snake_case.
  * @param firstSquad {boolean} If true, the element to create is for the first squad. */
 function createSubstitutionEvent(data, firstSquad) {
+    const element = createGeneralEventElement(data, firstSquad)
+    const iconSpan = element.children.namedItem(data.game_event_id)
+    iconSpan.classList.add('bi', 'bi-box-arrow-up', 'text-danger', 'py-1', 'fs-6', 'fw-bold')
+    // player_in div creation
+    if (data.player_in_id !== undefined && data.player_in_id !== -1)
+        retrievePlayerName(data.player_in_id)
+            .then(player => {
+                if (player.data && player.data.last_name) {
+                    const container = document.createElement('div')
+                    const nameSpan = document.createElement('span')
+                    const iconSpan = document.createElement('span')
 
+                    nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
+                    nameSpan.classList.add('fs-6', 'px-1', 'text-center')
+                    iconSpan.classList.add('bi', 'bi-box-arrow-in-up', 'text-lightgreen', 'fs-6', 'fw-bold')
+
+                    container.append(iconSpan, nameSpan)
+                    container.classList.add('d-flex', 'align-items-center', 'flex-row')
+                    element.insertAdjacentElement('afterend', container)
+                    if (firstSquad) {
+                        element.classList.replace('flex-sm-row', 'flex-sm-row-reverse')
+                        container.classList.replace('flex-row', 'flex-row-reverse')
+                        nameSpan.classList.add('text-sm-end')
+                    }
+                } else
+                    console.log('player_name not found for', data.player_in_id)
+            })
+            .catch(err => {
+                if (err.response && err.response.status === 404)
+                    console.log('player_name not found for', data.player_id)
+            })
+    return element
 }
 
 /** It performs an axios GET returning a Promise with the results.

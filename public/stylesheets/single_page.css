@@ -23,5 +23,11 @@
 
 .game-event-li:hover * , .game-event-li *:hover {
     text-decoration: none !important;
-    color: initial !important;  
+    color: initial !important;
+}
+
+@media (max-width: 576px) {
+    .h5 {
+        font-size: 1rem !important
+    }
 }
