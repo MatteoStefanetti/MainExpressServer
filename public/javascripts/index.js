@@ -255,21 +255,21 @@ async function openAccordionGames(window, id) {
     }
 }
 
-/** This function creates HTML elements to display the game_events data passed in `params`.
+/** This function creates HTML elements to display the game_events data passed in through `params`.
  * @param params {object} The list of game_Events, **already retrieved by the single_page** to show some data.
  * The params passed has 2 fields:
  *      - `id` - a {@link string} representing the id of the accordion body in which the events are contained
  *      - `events` - an {@link array} of events.
- * @throws TypeError when the argument is null or undefined*/
+ * @throws TypeError when the argument is _null_ or _undefined_. */
 function openAccordionEvents (params) {
     if (!params || !params.id)
         throw new TypeError('"null" or "undefined" parameter passed to \'openAccordionEvents\' function!')
-    if (document.getElementById(params.id).firstElementChild.children.length === 0) {
+    const accBody = document.getElementById(params.id).firstElementChild
+    if (accBody.children.length === 0) {
         showChargingSpinner(null, true)
         if (params.events && Array.isArray(params.events) && params.events.length) {
             let unList = document.createElement('ul');
             unList.classList.add('nav', 'flex-column');
-            document.getElementById(params.id).appendChild(unList)
 
             const size = new Set(params.events.map(el => el.minute)).size
             let alternatorCounter = 0;
@@ -278,11 +278,11 @@ function openAccordionEvents (params) {
                     {counter: alternatorCounter++, data: el},
                     {type: 'player', id: String(el.player_id)});
             });
-            document.getElementById(params.id).firstElementChild.appendChild(unList);
+            accBody.appendChild(unList);
             if (size > 15)
                 createLoadMoreElement(unList, params.id, showMore.bind(null, unList, 15))
         } else
-            document.getElementById(params.id).firstElementChild.innerHTML = '<span class="d-block text-center mx-auto h6 p-1">No events found.</span>'
+            accBody.innerHTML = '<span class="d-block text-center mx-auto h6 p-1">No events found.</span>'
         showChargingSpinner(null, false)
     }
 }
