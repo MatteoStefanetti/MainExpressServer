@@ -232,7 +232,6 @@ function initChatSocket() {
         /** Perhaps it could be launched by the {@link leaveRoom} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
-
 }
 
 /**
@@ -264,10 +263,8 @@ function connectToRoom(room, userName, makePublic) {
     chatSocket.emit('create or join', roomName, chatUserName, makePublic)
 }
 
-/**
- * Called when 'click' event occurs on leaveButton
- *  hide login section, and sets chat section
- */
+/** Called when 'click' event occurs on leaveButton
+ *  hide login section, and sets chat section */
 function leaveRoom(event) {
     chatSocket.emit('leave conversation', roomName, chatUserName)
     document.getElementById('loginForm').classList.remove('d-none')

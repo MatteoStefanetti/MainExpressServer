@@ -147,7 +147,6 @@ async function initSinglePage() {
 
                         await createAccordion('single_page/cl/past_players', 'accordions',
                             {id: 'pastPlayers_' + idParams});
-                        // @todo insert accordions
                     })
                     .catch(err => {
                         //DONE
@@ -309,7 +308,8 @@ async function initSinglePage() {
                                                 String(countParam1), 'p', 'ms-1', 'ms-md-2')
                                             createParagraphForSP(info2, true, 'Substitutions',
                                                 String(countParam2), 'p', 'ms-1', 'ms-md-2')
-                                            // @todo put info about game events
+
+                                            // info about game_events
                                             createAccordion('single_page/ga/events', 'accordions',
                                                 {id: 'eventsTimeline', events: events.data})
                                         } else
@@ -568,8 +568,7 @@ async function initSinglePage() {
     showChargingSpinner(null, false)
 }
 
-/**openAccordion for the last games of a competition.
- *
+/** openAccordion for the last games of a competition.
  * @param id {string} The id of the competition that has the games.
  * @param season {number} The year of the season of the competition.
  * @throws Error if 'id' or 'season' are null or undefined.
@@ -679,9 +678,7 @@ async function openAccordionPastMember(id) {
     this.disabled = false
 }
 
-/**
- * Function to create a not found content for a single page.
- *
+/** Function to create a not found content for a single page.
  * @param sp {string} indicate the single page type.*/
 function notFoundPage(sp) {
     let containerDiv = document.getElementById('contentHeight').firstElementChild
