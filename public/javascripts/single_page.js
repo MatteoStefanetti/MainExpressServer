@@ -68,8 +68,7 @@ async function initSinglePage() {
                         createParagraphForSP(info2, data.data.value_eur > 0, 'Market Value', data.data.value_eur + ' €', 'p', 'ms-1', 'ms-md-3');
                         createParagraphForSP(info2, data.data.top_value_eur > 0, 'Highest Market Value', data.data.top_value_eur + ' €', 'p', 'ms-1', 'ms-md-3')
 
-                        const conditionExpirationDate = new Date(data.data.contract_expiration_date).getTime() === new Date(0).getTime();
-                        createParagraphForSP(info2, conditionExpirationDate, 'Contract Expiration Date', new Date(data.data.contract_expiration_date).toLocaleDateString(), 'p', 'ms-1', 'ms-md-3');
+                        createParagraphForSP(info2, data.data.contract_expiration_date, 'Contract Expiration Date', new Date(data.data.contract_expiration_date).toLocaleDateString(), 'p', 'ms-1', 'ms-md-3');
                         createParagraphForSP(info2, data.data.agent_name, 'Agent Name', data.data.agent_name, 'p', 'ms-1', 'ms-md-3');
 
                         // The following line creates the valuation button:
@@ -148,7 +147,6 @@ async function initSinglePage() {
 
                         await createAccordion('single_page/cl/past_players', 'accordions',
                             {id: 'pastPlayers_' + idParams});
-                        // @todo insert accordions
                     })
                     .catch(err => {
                         //DONE
@@ -290,11 +288,9 @@ async function initSinglePage() {
                                 // Querying game_events
                                 await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
                                     .then(events => {
-                                        if (events.data.length) {
+                                        if (events.data.length && Array.isArray(events.data)) {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
-                                            console.log('cards:', cardsArray)       // @todo remove: debug only
-                                            console.log('substitutions:', substitutionsArray)       // @todo remove: debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -312,8 +308,10 @@ async function initSinglePage() {
                                                 String(countParam1), 'p', 'ms-1', 'ms-md-2')
                                             createParagraphForSP(info2, true, 'Substitutions',
                                                 String(countParam2), 'p', 'ms-1', 'ms-md-2')
-                                            // @todo put info about game events
 
+                                            // info about game_events
+                                            createAccordion('single_page/ga/events', 'accordions',
+                                                {id: 'eventsTimeline', events: events.data})
                                         } else
                                             console.log('game_events not found for game:', response.game_id)
                                     })
@@ -562,7 +560,6 @@ async function initSinglePage() {
                             console.error(err);
                     })
             }
-            //TODO: single_page initialization for competition
             break;
         default:
             notFoundPage('Page');
@@ -571,8 +568,7 @@ async function initSinglePage() {
     showChargingSpinner(null, false)
 }
 
-/**openAccordion for the last games of a competition.
- *
+/** openAccordion for the last games of a competition.
  * @param id {string} The id of the competition that has the games.
  * @param season {number} The year of the season of the competition.
  * @throws Error if 'id' or 'season' are null or undefined.
@@ -682,9 +678,7 @@ async function openAccordionPastMember(id) {
     this.disabled = false
 }
 
-/**
- * Function to create a not found content for a single page.
- *
+/** Function to create a not found content for a single page.
  * @param sp {string} indicate the single page type.*/
 function notFoundPage(sp) {
     let containerDiv = document.getElementById('contentHeight').firstElementChild
@@ -1031,4 +1025,140 @@ function createParagraphForSP(fatherElem, condition, labelText, value, ...classL
     const label = (!labelText) ? '' : '<b>' + labelText + ':</b> ';
     parElem.innerHTML = (condition) ? label + value : label + 'N/A';
     fatherElem.appendChild(parElem);
+}
+
+/** It creates a **general** event element.
+ * @param data {object} The object containing the info to display. It will call a specific creator function.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createGeneralEventElement(data, firstSquad) {
+    const returnableElement = document.createElement('div')
+    const iconSpan = document.createElement('span')
+    const textSpan = document.createElement('span')
+    iconSpan.id = data.game_event_id
+    iconSpan.classList.add('bi', 'py-1', 'fs-6', 'not-hoverable')
+
+    textSpan.classList.add('fw-bold', 'fs-6', 'px-1', 'not-hoverable')
+    textSpan.innerText = data.player_name
+
+    // container div for the single event
+    returnableElement.classList.add('d-flex', 'align-items-center', 'mx-0', 'my-1', 'my-md-2', 'not-hoverable')
+    if (firstSquad) {
+        returnableElement.classList.add('flex-row-reverse')
+        textSpan.classList.add('me-1', 'text-center', 'text-sm-end')
+    } else {
+        returnableElement.classList.add('flex-sm-row')
+        textSpan.classList.add('ms-1', 'text-center', 'text-sm-start')
+    }
+    returnableElement.appendChild(iconSpan)
+    returnableElement.appendChild(textSpan)
+    return returnableElement
+}
+
+/** It creates a **card** event with info contained in `data`.
+ * @param data {object} The object containing the info to display. It shall use the snake_case.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createCardEvent(data, firstSquad) {
+    const element = createGeneralEventElement(data, firstSquad)
+    const iconSpan = element.children.namedItem(data.game_event_id)
+    iconSpan.classList.add('bi-square-fill')
+    if (String(data.event_description).toLowerCase().includes('red'))
+        iconSpan.classList.add('text-danger')
+    else
+        iconSpan.classList.add('text-warning')
+    return element
+}
+
+/** It creates a **goal** event with info contained in `data`.
+ * @param data {object} The object containing the info to display. It shall use the snake_case.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createGoalEvent(data, firstSquad) {
+    const element = createGeneralEventElement(data, firstSquad)
+    const iconImg = document.createElement('img')
+    iconImg.src = "../images/soccer-ball-icon.svg"
+    iconImg.classList.add('img-fluid')
+    iconImg.style.width = '1.4rem'
+    iconImg.style.height = '1.4rem'
+    element.replaceChild(iconImg, element.children.namedItem(data.game_event_id))
+    // assist div creation
+    if (data.player_assist_id !== undefined && data.player_assist_id !== -1)
+        retrievePlayerName(data.player_assist_id)
+            .then(player => {
+                if (player.data && player.data.last_name) {
+                    const container = document.createElement('div')
+                    const nameSpan = document.createElement('span')
+                    const iconSpan = document.createElement('span')
+
+                    nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
+                    nameSpan.classList.add('fs-6', 'px-1', 'text-center', 'not-hoverable')
+                    iconSpan.classList.add('bg-secondary', 'bg-opacity-25', 'fs-7', 'fw-bold', 'text-center',
+                        'not-hoverable')
+                    iconSpan.innerText = 'A'
+                    // The following styles will make a circle around the text.
+                    iconSpan.style.width = '1.3rem'
+                    iconSpan.style.height = '1.3rem'
+                    iconSpan.style.lineHeight = '1.3rem'
+                    iconSpan.style.borderRadius = '1.3rem';
+
+                    container.append(iconSpan, nameSpan)
+                    container.classList.add('d-flex', 'align-items-center', 'flex-row', 'not-hoverable')
+                    element.insertAdjacentElement('afterend', container)
+                    if (firstSquad) {
+                        element.classList.replace('flex-sm-row', 'flex-sm-row-reverse')
+                        container.classList.replace('flex-row', 'flex-row-reverse')
+                        nameSpan.classList.add('text-sm-end')
+                    }
+                } else
+                    console.log('player_name not found for', data.player_assist_id)
+            })
+            .catch(err => {
+                if (err.response && err.response.status === 404)
+                    console.log('player_name not found for', data.player_id)
+            })
+    return element
+}
+
+/** It creates a **substitution** event with info contained in `data`.
+ * @param data {object} The object containing the info to display. It shall use the snake_case.
+ * @param firstSquad {boolean} If true, the element to create is for the first squad. */
+function createSubstitutionEvent(data, firstSquad) {
+    const element = createGeneralEventElement(data, firstSquad)
+    const iconSpan = element.children.namedItem(data.game_event_id)
+    iconSpan.classList.add('bi-box-arrow-up', 'text-danger')
+    // player_in div creation
+    if (data.player_in_id !== undefined && data.player_in_id !== -1)
+        retrievePlayerName(data.player_in_id)
+            .then(player => {
+                if (player.data && player.data.last_name) {
+                    const container = document.createElement('div')
+                    const nameSpan = document.createElement('span')
+                    const iconSpan2 = iconSpan.cloneNode(false)
+
+                    nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
+                    nameSpan.classList.add('fs-6', 'px-1', 'text-center', 'not-hoverable')
+                    iconSpan2.classList.replace('bi-box-arrow-up', 'bi-box-arrow-in-up')
+                    iconSpan2.classList.replace('text-danger', 'text-lightgreen')
+
+                    container.append(iconSpan2, nameSpan)
+                    container.classList.add('d-flex', 'align-items-center', 'flex-row', 'not-hoverable')
+                    element.insertAdjacentElement('afterend', container)
+                    if (firstSquad) {
+                        element.classList.replace('flex-sm-row', 'flex-sm-row-reverse')
+                        container.classList.replace('flex-row', 'flex-row-reverse')
+                        nameSpan.classList.add('text-sm-end')
+                    }
+                } else
+                    console.log('player_name not found for', data.player_in_id)
+            })
+            .catch(err => {
+                if (err.response && err.response.status === 404)
+                    console.log('player_name not found for', data.player_id)
+            })
+    return element
+}
+
+/** It performs an axios GET returning a Promise with the results.
+ * @param player_id - the player_id to use for the GET route.
+ * @returns {Promise<*>} where, if gone well, should let us retrieve the **name** of the player. */
+async function retrievePlayerName(player_id) {
+    return await makeAxiosGet(`/single_page/get_player_by_id/${player_id}`)
 }

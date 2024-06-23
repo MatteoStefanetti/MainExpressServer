@@ -143,11 +143,13 @@ async function createAccordion(visualize, fatherId, params) {
             accordionButton.appendChild(spanTitle);
             accordionButton.addEventListener('click', openAccordionClubs.bind(accordionButton, params.local_competition_code));
             break;
-        case 'single_page/ga/appearances':
-            strIdValue = params.id;
-            spanTitle.innerText = 'Appearances';
+        case 'single_page/ga/events':
+            strIdValue = params.id
+            spanTitle.innerText = 'Events Timeline';
+            spanTitle.classList.add('h5');
             accordionButton.appendChild(spanTitle);
-            // @todo fix: accordionButton.addEventListener('click', openAccordionGameEvents.bind(accordionButton, strIdValue));
+            accBody.classList.add('px-1', 'px-sm-2', 'px-md-4')
+            accordionButton.addEventListener('click', openAccordionEvents.bind(accordionButton, params));
             break;
         case 'single_page/pl/player_valuations':
             strIdValue = params.id;
@@ -243,7 +245,7 @@ async function openAccordionGames(window, id) {
             })
             .catch(err => {
                 if (err.response.status === 404)
-                    window.document.getElementById(id).firstElementChild.innerHTML = '<span class="text-align p-1">No Games found...</span>'
+                    window.document.getElementById(id).firstElementChild.innerHTML = '<span class="d-block text-center mx-auto p-1">No Games found.</span>'
                 else {
                     console.error(err);
                     throw new Error('Error occurred during \'/get_games_by_league\' GET');
@@ -253,21 +255,55 @@ async function openAccordionGames(window, id) {
     }
 }
 
+/** This function creates HTML elements to display the game_events data passed in through `params`.
+ * @param params {object} The list of game_Events, **already retrieved by the single_page** to show some data.
+ * The params passed has 2 fields:
+ *      - `id` - a {@link string} representing the id of the accordion body in which the events are contained
+ *      - `events` - an {@link array} of events.
+ * @throws TypeError when the argument is _null_ or _undefined_. */
+function openAccordionEvents (params) {
+    if (!params || !params.id)
+        throw new TypeError('"null" or "undefined" parameter passed to \'openAccordionEvents\' function!')
+    const accBody = document.getElementById(params.id).firstElementChild
+    if (accBody.children.length === 0) {
+        showChargingSpinner(null, true)
+        if (params.events && Array.isArray(params.events) && params.events.length) {
+            let unList = document.createElement('ul');
+            unList.classList.add('nav', 'flex-column');
+
+            const size = new Set(params.events.map(el => el.minute)).size
+            let alternatorCounter = 0;
+            params.events.forEach(el => {
+                createDynamicListItem(window, 'event', size, unList,
+                    {counter: alternatorCounter++, data: el},
+                    {type: 'player', id: String(el.player_id)});
+            });
+            accBody.appendChild(unList);
+            if (size > 15)
+                createLoadMoreElement(unList, params.id, showMore.bind(null, unList, 15))
+        } else
+            accBody.innerHTML = '<span class="d-block text-center mx-auto h6 p-1">No events found.</span>'
+        showChargingSpinner(null, false)
+    }
+}
+
 /** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
  * @param window {Window} it is the window parameter to avoid iframes problem.
  * @param type {string} a string representing the type of the listItem:
- * - *`'game'`* - for games
+ * - *`'appearance'`* - for appearances
  * - *`'club'`* - for clubs
+ * - *`'event'`* - for game_events
+ * - *`'game'`* - for games
  * @param size {number} The **size** of the set to show.
  *  This attribute is required to initially show only a part of the list.
  * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
  *  to which add item created.
  * @param item {object} The object filled with 3 fields:
- * - `counter`: the element-counter that provides various features, as like the alternated color of the list items
+ * - `counter`: the element-counter that provides features like the alternated color of the list items (must be >= 0)
  * - `data`: The data to show. It is another object which requires an internal *id* field.
- * - 'item' should be set as: `{counter: <(number >= 0)>, id: <string>, text: <string>}`
  * @param params {object} the params for the single_page.html to link up to the listItem.
- * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
+ * @example item = {counter: <number>, data: {id: <string>, text: <string>}}
+ * @throws TypeError - When one or more arguments are _undefined_, _null_ or _invalid_ (such as invalid **type** value). */
 function createDynamicListItem(window, type, size, unorderedList, item, params) {
     if (!window || !type || !size || !unorderedList || !item || item.counter < 0 || !item.data) {
         console.error(type, '\n', size, '\n', unorderedList, '\n', item.counter, '\n', item.data);
@@ -279,22 +315,106 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
     listItemLink.href = getUrlForSinglePage(params)
     listItem.appendChild(listItemLink);
-    if (size === 1 || item.counter % 2 !== 0) {
-        listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
-        listItem.style.backgroundImage =
-            'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
-            ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
-            'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
-    }
     listItem.classList.add('nav-item');
-    if (item.counter !== (size - 1))
-        listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+    if (type !== 'event') {
+        if (size === 1 || item.counter % 2 !== 0) {
+            listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+            listItem.style.backgroundImage =
+                'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+                ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+                'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
+        }
+        if (item.counter !== (size - 1))
+            listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+    }
     let desktopBtn = document.createElement('div');
     let rightDiv = window.document.createElement('div')
     rightDiv.classList.add('d-flex', 'align-items-center')
     let dateDiv = window.document.createElement('div')
     dateDiv.classList.add('mx-3', 'd-flex', 'justify-content-center')
     switch (type) {
+        case 'event':
+            // club ids are consistent with the clubs in the dataset!
+            listItem.removeChild(listItemLink)
+            // finding first club id
+            const elementHREF = document.getElementById('info1').firstElementChild.href
+            const club_id1 = Number(elementHREF.slice(elementHREF.indexOf('&id=') + 4))
+            let squad1Div, squad2Div;
+            // Create or attach to the listItem with id == item.data.minute
+            if (!document.getElementById(item.data.minute)) {
+                listItem.id = item.data.minute
+                listItem.classList.add('d-flex', 'align-items-center', 'not-hoverable');
+                const containerDivElem = document.createElement('div');
+                containerDivElem.classList.add('row', 'w-100', 'justify-content-between', 'align-items-stretch', 'not-hoverable');
+
+                // creating the central element (minute displayer)
+                const minuteDiv = document.createElement('div');
+                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'h5', 'my-1',
+                    'p-1', 'px-sm-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50', 'not-hoverable');
+                const minute =  item.data.minute > 90 ? '90+' + (item.data.minute-90) : item.data.minute;
+                minuteDiv.innerHTML = '<span class="h5 fw-bold text-center not-hoverable">' + minute + '\'</span>'
+                minuteDiv.style.boxSizing = 'border-box';
+
+                // Creating the squad divs
+                squad1Div = document.createElement('div');
+                squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'p-0', 'flex-column', 'not-hoverable');
+                squad1Div.style.boxSizing = 'border-box';
+                squad2Div = squad1Div.cloneNode(false);
+                squad1Div.classList.add('align-items-end')
+                squad2Div.classList.add('align-items-start')
+
+                // Appending the new item
+                containerDivElem.append(squad1Div, minuteDiv, squad2Div)
+                listItem.appendChild(containerDivElem)
+                unorderedList.appendChild(listItem)
+
+                // Events can return up on previous elements, we had to move this section here
+                if (size === 1 || unorderedList.children.length % 2 === 0) {
+                    listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+                    listItem.style.backgroundImage =
+                        'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+                        ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+                        'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
+                }
+                if (size !== unorderedList.children.length)
+                    listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+            } else {
+                // the minute element has already been created.
+                listItem = document.getElementById(item.data.minute)
+                squad1Div = listItem.firstElementChild.firstElementChild
+                squad2Div = listItem.firstElementChild.lastElementChild
+            }
+            const fatherDiv = (Number(item.data.club_id) === club_id1) ? squad1Div : squad2Div;
+            retrievePlayerName(item.data.player_id)
+                .then(player => {
+                    if (player.data.last_name) {
+                        item.data.player_name = setReducedName(player.data.last_name, player.data.player_name)
+                        const firstSquad = fatherDiv === squad1Div;
+                        switch (String(item.data.event_type)) {
+                            case 'Cards':
+                                fatherDiv.appendChild(createCardEvent(item.data, firstSquad))
+                                break;
+                            case 'Goals':
+                                fatherDiv.appendChild(createGoalEvent(item.data, firstSquad))
+                                break;
+                            case 'Substitutions':
+                                fatherDiv.appendChild(createSubstitutionEvent(item.data, firstSquad))
+                                break;
+                            default:
+                                console.error('Found invalid event_type:', item.data.event_type)
+                        }
+                        if (unorderedList.children.length > 15)
+                            listItem.classList.add('d-none')
+                    } else {
+                        console.log('Cannot retrieve data for an event.') // SIGNALING
+                    }
+                })
+                .catch(err => {
+                    if (err.response && err.response.status === 404)
+                        console.log('Error occurred in retrieval of a player name.')
+                    else console.error(err)
+                })
+            break;
         case 'game':
             listItem.id = item.data.gameId;
             listItem.classList.add('d-flex', 'align-items-center');
@@ -305,10 +425,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
             let leftDiv = document.createElement('div');
             leftDiv.classList.add('d-flex', 'justify-content-center', 'align-items-center', 'w-100', 'p-2', 'flex-column', 'h5', 'text-center');
-
             let centerDiv = document.createElement('div');
             centerDiv.classList.add('d-flex', 'align-self-center', 'flex-column', 'p-1');
-
             let rightDiv = leftDiv.cloneNode(true);
 
             let dateSmDiv = document.createElement('div');
@@ -445,7 +563,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                         id: item.data.clubId2
                     }) + '">' + item.data.clubName2 + '</a></b> <span class="bi bi-person-fill"></span>');
 
-            // @todo data retrieval
             let popOverContent = document.createElement('div')
             popOverContent.classList.add('d-flex', 'justify-content-around', 'position-relative')
             popOverContent.innerHTML =

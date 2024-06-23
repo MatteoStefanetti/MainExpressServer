@@ -20,3 +20,9 @@
     aspect-ratio: ratio(5/4);
     margin: 0 auto !important;
 }
+
+@media (max-width: 576px) {
+    .h5 {
+        font-size: 1rem !important
+    }
+}
