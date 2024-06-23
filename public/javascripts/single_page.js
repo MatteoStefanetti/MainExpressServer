@@ -292,8 +292,6 @@ async function initSinglePage() {
                                         if (events.data.length && Array.isArray(events.data)) {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
                                             cardsArray = events.data.filter(element => String(element.event_type) === 'Cards')
-                                            console.log('cards:', cardsArray)       // @todo remove: debug only
-                                            console.log('substitutions:', substitutionsArray)       // @todo remove: debug only
 
                                             // Counting cards & substitutions of the clubs
                                             let countParam1 = cardsArray.filter((element) =>
@@ -1040,12 +1038,13 @@ function createGeneralEventElement(data, firstSquad) {
     const iconSpan = document.createElement('span')
     const textSpan = document.createElement('span')
     iconSpan.id = data.game_event_id
+    iconSpan.classList.add('bi', 'py-1', 'fs-6', 'not-hoverable')
 
-    textSpan.classList.add('fw-bold', 'fs-6', 'px-1')
+    textSpan.classList.add('fw-bold', 'fs-6', 'px-1', 'not-hoverable')
     textSpan.innerText = data.player_name
 
     // container div for the single event
-    returnableElement.classList.add('d-flex', 'align-items-center', 'mx-0', 'my-1', 'my-md-2')
+    returnableElement.classList.add('d-flex', 'align-items-center', 'mx-0', 'my-1', 'my-md-2', 'not-hoverable')
     if (firstSquad) {
         returnableElement.classList.add('flex-row-reverse')
         textSpan.classList.add('me-1', 'text-center', 'text-sm-end')
@@ -1064,7 +1063,7 @@ function createGeneralEventElement(data, firstSquad) {
 function createCardEvent(data, firstSquad) {
     const element = createGeneralEventElement(data, firstSquad)
     const iconSpan = element.children.namedItem(data.game_event_id)
-    iconSpan.classList.add('bi', 'bi-square-fill', 'py-1', 'fs-6')
+    iconSpan.classList.add('bi-square-fill')
     if (String(data.event_description).toLowerCase().includes('red'))
         iconSpan.classList.add('text-danger')
     else
@@ -1093,8 +1092,9 @@ function createGoalEvent(data, firstSquad) {
                     const iconSpan = document.createElement('span')
 
                     nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
-                    nameSpan.classList.add('fs-6', 'px-1', 'text-center')
-                    iconSpan.classList.add('bg-secondary', 'bg-opacity-25', 'fs-7', 'fw-bold', 'text-center')
+                    nameSpan.classList.add('fs-6', 'px-1', 'text-center', 'not-hoverable')
+                    iconSpan.classList.add('bg-secondary', 'bg-opacity-25', 'fs-7', 'fw-bold', 'text-center',
+                        'not-hoverable')
                     iconSpan.innerText = 'A'
                     // The following styles will make a circle around the text.
                     iconSpan.style.width = '1.3rem'
@@ -1103,7 +1103,7 @@ function createGoalEvent(data, firstSquad) {
                     iconSpan.style.borderRadius = '1.3rem';
 
                     container.append(iconSpan, nameSpan)
-                    container.classList.add('d-flex', 'align-items-center', 'flex-row')
+                    container.classList.add('d-flex', 'align-items-center', 'flex-row', 'not-hoverable')
                     element.insertAdjacentElement('afterend', container)
                     if (firstSquad) {
                         element.classList.replace('flex-sm-row', 'flex-sm-row-reverse')
@@ -1126,7 +1126,7 @@ function createGoalEvent(data, firstSquad) {
 function createSubstitutionEvent(data, firstSquad) {
     const element = createGeneralEventElement(data, firstSquad)
     const iconSpan = element.children.namedItem(data.game_event_id)
-    iconSpan.classList.add('bi', 'bi-box-arrow-up', 'text-danger', 'py-1', 'fs-6', 'fw-bold')
+    iconSpan.classList.add('bi-box-arrow-up', 'text-danger')
     // player_in div creation
     if (data.player_in_id !== undefined && data.player_in_id !== -1)
         retrievePlayerName(data.player_in_id)
@@ -1134,14 +1134,15 @@ function createSubstitutionEvent(data, firstSquad) {
                 if (player.data && player.data.last_name) {
                     const container = document.createElement('div')
                     const nameSpan = document.createElement('span')
-                    const iconSpan = document.createElement('span')
+                    const iconSpan2 = iconSpan.cloneNode(false)
 
                     nameSpan.innerText = setReducedName(player.data.last_name, player.data.player_name)
-                    nameSpan.classList.add('fs-6', 'px-1', 'text-center')
-                    iconSpan.classList.add('bi', 'bi-box-arrow-in-up', 'text-lightgreen', 'fs-6', 'fw-bold')
+                    nameSpan.classList.add('fs-6', 'px-1', 'text-center', 'not-hoverable')
+                    iconSpan2.classList.replace('bi-box-arrow-up', 'bi-box-arrow-in-up')
+                    iconSpan2.classList.replace('text-danger', 'text-lightgreen')
 
-                    container.append(iconSpan, nameSpan)
-                    container.classList.add('d-flex', 'align-items-center', 'flex-row')
+                    container.append(iconSpan2, nameSpan)
+                    container.classList.add('d-flex', 'align-items-center', 'flex-row', 'not-hoverable')
                     element.insertAdjacentElement('afterend', container)
                     if (firstSquad) {
                         element.classList.replace('flex-sm-row', 'flex-sm-row-reverse')

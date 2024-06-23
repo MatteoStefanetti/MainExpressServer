@@ -266,7 +266,6 @@ function openAccordionEvents (params) {
         throw new TypeError('"null" or "undefined" parameter passed to \'openAccordionEvents\' function!')
     if (document.getElementById(params.id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true)
-        console.log(params.events)
         if (params.events && Array.isArray(params.events) && params.events.length) {
             let unList = document.createElement('ul');
             unList.classList.add('nav', 'flex-column');
@@ -291,8 +290,10 @@ function openAccordionEvents (params) {
 /** This function creates a listItem, filling it with dataList  to bind to {@link unorderedList}
  * @param window {Window} it is the window parameter to avoid iframes problem.
  * @param type {string} a string representing the type of the listItem:
- * - *`'game'`* - for games
+ * - *`'appearance'`* - for appearances
  * - *`'club'`* - for clubs
+ * - *`'event'`* - for game_events
+ * - *`'game'`* - for games
  * @param size {number} The **size** of the set to show.
  *  This attribute is required to initially show only a part of the list.
  * @param unorderedList {HTMLElement} The {@link HTMLElement}, _usually an `<ul>` or `<ol>` type_,
@@ -302,7 +303,7 @@ function openAccordionEvents (params) {
  * - `data`: The data to show. It is another object which requires an internal *id* field.
  * @param params {object} the params for the single_page.html to link up to the listItem.
  * @example item = {counter: <number>, data: {id: <string>, text: <string>}}
- * @throws TypeError - When one or more arguments are _undefined_ or _null_. */
+ * @throws TypeError - When one or more arguments are _undefined_, _null_ or _invalid_ (such as invalid **type** value). */
 function createDynamicListItem(window, type, size, unorderedList, item, params) {
     if (!window || !type || !size || !unorderedList || !item || item.counter < 0 || !item.data) {
         console.error(type, '\n', size, '\n', unorderedList, '\n', item.counter, '\n', item.data);
@@ -314,16 +315,18 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
 
     listItemLink.href = getUrlForSinglePage(params)
     listItem.appendChild(listItemLink);
-    if (size === 1 || item.counter % 2 !== 0) {
-        listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
-        listItem.style.backgroundImage =
-            'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
-            ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
-            'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
-    }
     listItem.classList.add('nav-item');
-    if (item.counter !== (size - 1) && type !== 'event')
-        listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+    if (type !== 'event') {
+        if (size === 1 || item.counter % 2 !== 0) {
+            listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+            listItem.style.backgroundImage =
+                'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+                ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+                'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
+        }
+        if (item.counter !== (size - 1))
+            listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+    }
     let desktopBtn = document.createElement('div');
     let rightDiv = window.document.createElement('div')
     rightDiv.classList.add('d-flex', 'align-items-center')
@@ -340,20 +343,21 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             // Create or attach to the listItem with id == item.data.minute
             if (!document.getElementById(item.data.minute)) {
                 listItem.id = item.data.minute
-                listItem.classList.add('d-flex', 'align-items-center', 'game-event-li');
+                listItem.classList.add('d-flex', 'align-items-center', 'not-hoverable');
                 const containerDivElem = document.createElement('div');
-                containerDivElem.classList.add('row', 'w-100', 'justify-content-between', 'align-items-stretch');
+                containerDivElem.classList.add('row', 'w-100', 'justify-content-between', 'align-items-stretch', 'not-hoverable');
 
                 // creating the central element (minute displayer)
                 const minuteDiv = document.createElement('div');
-                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'h5', 'my-1', 'p-1', 'px-sm-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50');
+                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'h5', 'my-1',
+                    'p-1', 'px-sm-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50', 'not-hoverable');
                 const minute =  item.data.minute > 90 ? '90+' + (item.data.minute-90) : item.data.minute;
-                minuteDiv.innerHTML = '<span class="h5 fw-bold text-center">' + minute + '\'</span>'
+                minuteDiv.innerHTML = '<span class="h5 fw-bold text-center not-hoverable">' + minute + '\'</span>'
                 minuteDiv.style.boxSizing = 'border-box';
 
                 // Creating the squad divs
                 squad1Div = document.createElement('div');
-                squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'p-0', 'flex-column');
+                squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'p-0', 'flex-column', 'not-hoverable');
                 squad1Div.style.boxSizing = 'border-box';
                 squad2Div = squad1Div.cloneNode(false);
                 squad1Div.classList.add('align-items-end')
@@ -363,6 +367,15 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 containerDivElem.append(squad1Div, minuteDiv, squad2Div)
                 listItem.appendChild(containerDivElem)
                 unorderedList.appendChild(listItem)
+
+                // Events can return up on previous elements, we had to move this section here
+                if (size === 1 || unorderedList.children.length % 2 === 0) {
+                    listItem.classList.add('bg-light'); /* for browsers that don't support gradients */
+                    listItem.style.backgroundImage =
+                        'linear-gradient(90deg, white, rgba(var(--custom-accordion-lightgrey-rgb), 0.5)' +
+                        ', rgba(var(--custom-accordion-lightgrey-rgb), 0.6), ' +
+                        'rgba(var(--custom-accordion-lightgrey-rgb), 0.5), white)';
+                }
                 if (size !== unorderedList.children.length)
                     listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
             } else {
