@@ -152,23 +152,23 @@ input:focus , button:not(.custom-accordion):focus {
   text-decoration: underline rgb(var(--bs-light-rgb));;
 }
 
-*:not(.accordion-body) .nav-item:hover {
+*:not(.accordion-body) .nav-item:not(.not-hoverable):hover {
   text-decoration: underline rgb(var(--bs-light-rgb));
   text-decoration-thickness: 1px;
 }
 
-.accordion-body .nav-item:hover *:not(.not-hoverable) {
+.accordion-body .nav-item:not(.not-hoverable):hover *:not(.not-hoverable) {
   color: var(--lightgreen);
   text-decoration: underline var(--lightgreen);
   text-decoration-thickness: 1px;
 }
 
-*:not(.accordion-body) .nav-item:active {
+*:not(.accordion-body) .nav-item:not(.not-hoverable):active {
   text-decoration: underline rgb(var(--bs-light-rgb));
   text-decoration-thickness: 0.1rem;
 }
 
-.accordion-body .nav-item:active {
+.accordion-body .nav-item:not(.not-hoverable):active {
   color: var(--darkgreen);
   text-decoration: underline var(--darkgreen);
   text-decoration-thickness: 0.1rem;

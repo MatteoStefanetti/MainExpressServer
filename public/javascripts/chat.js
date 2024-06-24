@@ -246,7 +246,6 @@ function initChatSocket() {
         /** Perhaps it could be launched by the {@link leaveRoom} function as "socket.disconnect('/chat')" */
         // @todo write on chat the exit message!
     })
-
 }
 
 /**
