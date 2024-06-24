@@ -8,16 +8,16 @@ function initPlayers() {
 }
 
 /** Function used to generate and display players,
- * triggered when the **searchBar** is used in the _player.html_ page. */
+ * triggered when the **searchBar** is used in the _player.html_ page.
+ *
+ * @param event The event to prevent
+ * */
 function searchPlayer(event) {
     document.getElementById('submitPlayerForm').disabled = true;
     let formData = extractFormData("searchPlayer", false);
     let player = formData.searchBar;
     if (player && player.length > 2) {
-        axios.get(`/get_players_by_name/${player}`, {
-            headers: {'Content-Type': 'application/json'},
-            method: 'get'
-        })
+        makeAxiosGet(`/get_players_by_name/${player}`)
             .then(data => {
                 let dataResponse = data.data
                 let playerList = document.getElementById('playersList')
@@ -70,7 +70,9 @@ function changePlayersFormPosition() {
     createPlayersForm();
 }
 
-/** The following code will be generated:
+/**Function used to create the responsive player form visible in the _player.html_ page.
+ *
+ * The following code will be generated:
  * ```
  * <div class="d-block d-sm-flex position-sticky top-form-container pt-md-3 mb-md-1">
  *    <p class="h4 fw-bold p-0 ps-md-2 mb-2 mb-sm-0 me-3 text-center">Players</p>
