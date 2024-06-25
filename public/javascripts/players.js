@@ -17,7 +17,7 @@ function searchPlayer(event) {
     let formData = extractFormData("searchPlayer", false);
     let player = formData.searchBar;
     if (player && player.length > 2) {
-        makeAxiosGet(`/get_players_by_name/${player}`)
+        makeAxiosGet(`/players/get_players_by_name/${player}`)
             .then(data => {
                 let dataResponse = data.data
                 let playerList = document.getElementById('playersList')

@@ -130,7 +130,8 @@ async function createAccordion(visualize, fatherId, params) {
             goCompetitionBtn.firstElementChild.style.width = '2.2rem';
             // Setting the Event-Listener functions
             goCompetitionBtn.addEventListener('click', () => {
-                window.location.href = getUrlForSinglePage(urlParams)})
+                window.location.href = getUrlForSinglePage(urlParams)
+            })
             accordionButton.addEventListener('click', actionWrapper.bind(accordionButton, urlParams));
             accordionButton.appendChild(spanTitle);
             accordionButton.appendChild(goCompetitionBtn);
@@ -261,7 +262,7 @@ async function openAccordionGames(window, id) {
  *      - `id` - a {@link string} representing the id of the accordion body in which the events are contained
  *      - `events` - an {@link array} of events.
  * @throws TypeError when the argument is _null_ or _undefined_. */
-function openAccordionEvents (params) {
+function openAccordionEvents(params) {
     if (!params || !params.id)
         throw new TypeError('"null" or "undefined" parameter passed to \'openAccordionEvents\' function!')
     const accBody = document.getElementById(params.id).firstElementChild
@@ -351,7 +352,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 const minuteDiv = document.createElement('div');
                 minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'h5', 'my-1',
                     'p-1', 'px-sm-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50', 'not-hoverable');
-                const minute =  item.data.minute > 90 ? '90+' + (item.data.minute-90) : item.data.minute;
+                const minute = item.data.minute > 90 ? '90+' + (item.data.minute - 90) : item.data.minute;
                 minuteDiv.innerHTML = '<span class="h5 fw-bold text-center not-hoverable">' + minute + '\'</span>'
                 minuteDiv.style.boxSizing = 'border-box';
 

@@ -37,7 +37,7 @@ async function initSinglePage() {
                         singlePageImg.src = data.data.image_url;
                         singlePageTitle.innerText = data.data.player_name;
 
-                        await makeAxiosGet(`/single_page/get_club_name_by_id/${data.data.current_club_id}`)
+                        await makeAxiosGet(`/single_page/player/get_club_name_by_id/${data.data.current_club_id}`)
                             .then(dataClub => {
                                 const playerClubValue = '<a class="text-decoration-underline" href="' + getUrlForSinglePage({
                                         type: 'club',
@@ -89,7 +89,7 @@ async function initSinglePage() {
             break;
         case 'club':
             if (idParams) {
-                await makeAxiosGet(`/single_page/get_club_by_id/${idParams}`)
+                await makeAxiosGet(`/single_page/club/get_club_by_id/${idParams}`)
                     .then(async data => {
                         console.log(data.data);
                         let infoDiv = document.getElementById('info')
@@ -159,7 +159,7 @@ async function initSinglePage() {
             break;
         case 'game':
             if (idParams) {
-                await makeAxiosGet('/single_page/get_game_by_id/' + String(idParams))
+                await makeAxiosGet('/single_page/game/get_game_by_id/' + String(idParams))
                     .then(async data => {
                         delete data.data.date
                         await makeAxiosGet(`/single_page/get_visualize_game_by_id/${idParams}`)
@@ -286,7 +286,7 @@ async function initSinglePage() {
                                 let cardsArray = [];
 
                                 // Querying game_events
-                                await makeAxiosGet('/single_page/get_events_of/' + String(response.game_id))
+                                await makeAxiosGet('/single_page/game/get_events_of/' + String(response.game_id))
                                     .then(events => {
                                         if (events.data.length && Array.isArray(events.data)) {
                                             substitutionsArray = events.data.filter(element => String(element.event_type) === 'Substitutions')
@@ -329,11 +329,11 @@ async function initSinglePage() {
                                 playersDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-center', 'align-items-start', 'py-2', 'px-2', 'px-lg-2', 'mb-3')
                                 document.getElementById('accordions').insertAdjacentElement('afterend', playersDivTitle)
                                 playersDivTitle.insertAdjacentElement('afterend', playersDiv)
-                                await makeAxiosGet(`/single_page/get_appearances_of_game/${response.game_id}`)
+                                await makeAxiosGet(`/single_page/game/get_appearances_of_game/${response.game_id}`)
                                     .then(async appearances => {
                                         const idsArray = appearances.data.map(el => el.player_id).join(',')
                                         // creating player cards
-                                        await makeAxiosGet(`/single_page/get_players_by_ids/${idsArray}`)
+                                        await makeAxiosGet(`/single_page/game/get_players_by_ids/${idsArray}`)
                                             .then(player_cards => {
                                                 if (player_cards.data.length && Array.isArray(player_cards.data)) {
                                                     // We create 2 containers for the squad players
@@ -426,7 +426,7 @@ async function initSinglePage() {
                 selectDiv.appendChild(seasonSelect);
                 seasonForm.appendChild(selectDiv);
 
-                await makeAxiosGet('/single_page/get_all_season/' + String(idParams))
+                await makeAxiosGet('/single_page/competition/get_all_season/' + String(idParams))
                     .then(async seasons => {
                         if (seasons.data.length) {
                             seasons.data.forEach(season => {
@@ -466,7 +466,7 @@ async function initSinglePage() {
                     }));
                 });
 
-                await makeAxiosGet('/single_page/get_competition_by_id/' + String(idParams))
+                await makeAxiosGet('/single_page/competition/get_competition_by_id/' + String(idParams))
                     .then(async data => {
                         singlePageImg.src = 'https://tmssl.akamaized.net/images/logo/header/' + String(data.data.competition_id).toLowerCase() + '.png';
                         singlePageTitle.innerHTML = retrieveCompetitionName(data.data.competition_name);
@@ -493,7 +493,7 @@ async function initSinglePage() {
 
                         placingDiv.classList.add('row', 'w-100', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
 
-                        await makeAxiosGet('/single_page/get_competition_placing/' + String(idParams) + '/' + String(seasonParams))
+                        await makeAxiosGet('/single_page/competition/get_competition_placing/' + String(idParams) + '/' + String(seasonParams))
                             .then(placing => {
                                 console.log(placing.data);
                                 placing.data.forEach(el => {
@@ -635,7 +635,7 @@ async function openAccordionPastMember(id) {
         showChargingSpinner(null, true);
 
         let playerList = document.createElement('div');
-        await makeAxiosGet('/single_page/get_past_players/' + club_id)
+        await makeAxiosGet('/single_page/club/get_past_players/' + club_id)
             .then(data => {
                 playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
                 let dataResponse = data.data;
@@ -716,7 +716,7 @@ async function openAccordionClubMember(id) {
 
         let playerList = document.createElement('div');
         playerList.classList.add('row', 'w-100', 'px-0', 'px-md-3', 'mb-4', 'justify-content-center-below-sm');
-        await makeAxiosGet('/single_page/get_current_players/' + club_id)
+        await makeAxiosGet('/single_page/club/get_current_players/' + club_id)
             .then(data => {
                 playerList.replaceChildren();
                 data.data.forEach((player) => {
@@ -782,7 +782,7 @@ async function openAccordionPlayerValuation(id) {
         let canvasElem = document.createElement('canvas')
         canvasElem.classList.add('w-100', 'h-100', 'border', 'rounded-2')
 
-        await makeAxiosGet('/single_page/get_valuations_of_player/' + player_id)
+        await makeAxiosGet('/single_page/player/get_valuations_of_player/' + player_id)
             .then(data => {
                 let dataResponse = data.data;
                 dataResponse.forEach(el => el.date = new Date(el.date).toLocaleDateString('en-GB', {
@@ -828,7 +828,7 @@ async function openAccordionClubLastGames(id) {
 
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
-        await makeAxiosGet('/single_page/get_last_games_by_club/' + club_id)
+        await makeAxiosGet('/single_page/club/get_last_games_by_club/' + club_id)
             .then(data => {
                 let dataResponse = data.data;
 
@@ -883,7 +883,7 @@ async function openAccordionPlayerAppearances(id) {
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
-        await makeAxiosGet('/single_page/get_last_appearances/' + player_id)
+        await makeAxiosGet('/single_page/player/get_last_appearances/' + player_id)
             .then(async data => {
                 let dataResponse = data.data;
                 let unList = document.createElement('ul');
