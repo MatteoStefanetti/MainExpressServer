@@ -10,9 +10,15 @@ router.get('/get_player_by_id/:id', function (req, res) {
     #swagger.description = 'GET route to retrieve data about a player.'
     #swagger.parameters['id'] = {
         in: 'path',
-        description: 'the player_id of the player to retrieve.',
+        description: 'the id of the player to retrieve.',
         type: 'number',
         required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
+    }
+    #swagger.responses[500] = {
+        description: 'Invalid \'id\' passed as input!'
     }
     */
     if (req.params.id) {
@@ -33,7 +39,7 @@ router.get('/get_nation_name_by_code/:code', (req, res) => {
     #swagger.description = 'GET route to retrieve name of a country in base of a `league_code`.'
     #swagger.parameters['code'] = {
         in: 'path',
-        description: 'a \`domestic_league_code\`.',
+        description: 'the code that identifies a nation.',
         type: 'string',
         required: 'true'
     }
@@ -61,6 +67,9 @@ router.get('/get_visualize_game_by_id/:id', function (req, res) {
         description: 'The game_id of the game we want to analyse.',
         type: 'string',
         required: 'true'
+    }
+    #swagger.responses[404] = {
+        description: 'Request content was not found.'
     }
     #swagger.responses[500] = {
         description: 'Invalid \'id\' passed as input!'

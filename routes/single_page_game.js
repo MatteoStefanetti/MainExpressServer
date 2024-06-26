@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const {json} = require("express");
 
 router.get('/get_game_by_id/:id', async (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Game']
     #swagger.description = 'GET route to retrieve data about a specific game.'
     #swagger.parameters['id'] = {
         in: 'path',
@@ -30,7 +30,7 @@ router.get('/get_game_by_id/:id', async (req, res) => {
 });
 
 router.get('/get_events_of/:game_id', (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Game']
      #swagger.description = 'GET route that retrieves game events data in base of a \'game_id\'.'
      #swagger.parameters['game_id'] = {
         in: 'path',
@@ -54,7 +54,7 @@ router.get('/get_events_of/:game_id', (req, res) => {
 });
 
 router.get('/get_appearances_of_game/:game_id', async (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Game']
      #swagger.description = 'GET route that retrieves appearances data in base of a \'game_id\'.'
      #swagger.parameters['game_id'] = {
         in: 'path',
@@ -78,7 +78,7 @@ router.get('/get_appearances_of_game/:game_id', async (req, res) => {
 });
 
 router.get('/get_players_by_ids/:list', async (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Game']
      #swagger.description = 'GET route that retrieves PlayerCard, given a list of \'id\'s.'
      #swagger.parameters['list'] = {
         in: 'path',

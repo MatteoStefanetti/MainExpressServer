@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const {json} = require("express");
 
 router.get('/get_competition_by_id/:id', async (req, res) => {
-    /*#swagger.tags = ['Single Page']
+    /*#swagger.tags = ['Single Page Competition']
     #swagger.description = 'GET route to retrieve data about a competition.'
     #swagger.parameters['id'] = {
         in: 'path',
@@ -30,7 +30,7 @@ router.get('/get_competition_by_id/:id', async (req, res) => {
 });
 
 router.get('/get_all_season/:id', async (req, res) => {
-    /*#swagger.tags = ['Single Page']
+    /*#swagger.tags = ['Single Page Competition']
     #swagger.description = 'GET route to retrieve all the seasons years.'
     #swagger.parameters['id'] = {
         in: 'path',
@@ -56,7 +56,7 @@ router.get('/get_all_season/:id', async (req, res) => {
 });
 
 router.get('/get_competition_placing/:id/:season', async (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Competition']
      #swagger.description = 'GET route that retrieves competition placing in base of an \'id\' and a \'season\'.'
      #swagger.parameters['id'] = {
         in: 'path',

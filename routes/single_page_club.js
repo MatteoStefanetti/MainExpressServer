@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const {json} = require("express");
 
 router.get('/get_club_by_id/:id', (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Club']
     #swagger.description = 'GET route to retrieve data about a club.'
     #swagger.parameters['id'] = {
         in: 'path',
@@ -29,7 +29,7 @@ router.get('/get_club_by_id/:id', (req, res) => {
 });
 
 router.get('/get_last_games_by_club/:clubId', function (req, res) {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Club']
     #swagger.description = 'GET route to retrieve an `array` with the last games of a club in base of its id.'
     #swagger.parameters['clubId'] {
         in: 'path',
@@ -60,7 +60,7 @@ router.get('/get_last_games_by_club/:clubId', function (req, res) {
 });
 
 router.get('/get_current_players/:clubId', function (req, res) {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Club']
     #swagger.description = 'GET route to retrieve the active squad of a club.'
     #swagger.parameters['clubId'] = {
         in: 'path',
@@ -91,7 +91,7 @@ router.get('/get_current_players/:clubId', function (req, res) {
 });
 
 router.get('/get_past_players/:clubId', function (req, res) {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Club']
      #swagger.description = 'It retrieves players are the players that stopped playing while in the club with `clubId`.'
      #swagger.parameters['clubId'] = {
         in: 'path',
