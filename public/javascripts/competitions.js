@@ -62,6 +62,7 @@ async function sendCompetitionQuery(ev) {
                 // hide elements
                 Array.prototype.forEach.call(document.getElementsByTagName('iframe'),
                     el => {el.classList.add('d-none')})
+                document.getElementById('nationalSection').classList.add('d-none')
 
                 // fill ul
                 let unList = document.getElementById('gamesResults');
