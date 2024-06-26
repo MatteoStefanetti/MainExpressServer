@@ -21,8 +21,19 @@
     margin: 0 auto !important;
 }
 
+.custom-tooltip {
+    --bs-tooltip-bg: #444;
+    --bs-tooltip-color: var(--bs-white);
+}
+
 @media (max-width: 576px) {
-    .h5 {
+    span.h6 {
+        font-size: 0.8rem !important
+    }
+}
+
+@media (max-width: 768px) {
+    span.h6 {
         font-size: 1rem !important
     }
 }
