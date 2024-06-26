@@ -3,6 +3,18 @@ const typeParams = urlParams.get('type');
 const idParams = urlParams.get('id');
 const MAX_ELEMENTS_TO_SHOW = 12;
 
+/**
+ * Called by the single_page.html page.
+ * It generates a different single page by the urlParams that was sent.
+ *
+ * The urlParams are a type param tha indicate the type of single page to generate, it can be:
+ * - 'player'
+ * - 'club'
+ * - 'game'
+ * - 'competition'
+ *
+ * The id params indicate the id code to identify the single page.
+ * */
 async function initSinglePage() {
     initChat()
     let infoTitle = document.getElementById('infoTitle');
@@ -356,13 +368,16 @@ async function initSinglePage() {
                                                         if (playerClubId === response.club_id1 || playerClubId === response.club_id2) {
                                                             playerContainer.classList.add('col-6', 'col-sm-4', 'justify-content-center', 'align-items-center', 'm-0', 'mb-4', 'px-sm-1');
                                                             let clickableContent = document.createElement('a');
-                                                            clickableContent.href = getUrlForSinglePage({type: 'player', id: String(elem.playerId)});
+                                                            clickableContent.href = getUrlForSinglePage({
+                                                                type: 'player',
+                                                                id: String(elem.playerId)
+                                                            });
                                                             clickableContent.classList.add('text-dark');
                                                             clickableContent.innerHTML =
                                                                 '<img src="' + elem.imageUrl + '" class="img-fluid d-block border border-3 border-md-5 ' +
                                                                 'border-darkgreen rounded-3 rounded-lg-4 player-img-size m-0 w-75" alt=" "/>' +
                                                                 '<div class="d-flex justify-content-center align-items-center w-100 m-0 mt-2 p-0">' +
-                                                                '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName)  +
+                                                                '   <span class="h6 text-center p-0">' + setReducedName(elem.playerLastName, elem.playerName) +
                                                                 '</span></div>';
                                                             playerContainer.appendChild(clickableContent);
                                                         }
@@ -580,7 +595,6 @@ async function openAccordionCompetitionLastGames(id, season) {
         throw new Error('Invalid argument to \'openAccordionCompetitionLastGames\' for \'' + id + '\' or \'' + season + '\'.');
     }
 
-    const competition_id = id.slice(id.indexOf('_') + 1);
     if (document.getElementById(id).firstElementChild.children.length === 0) {
         showChargingSpinner(null, true);
 
@@ -668,8 +682,10 @@ async function openAccordionPastMember(id) {
                 if (err.response.status === 404) {
                     playerList.classList.add('d-flex', 'w-100', 'justify-content-center', 'align-items-center')
                     playerList.innerHTML = '<span class="text-center">No past players found...</span>'
-                } else
-                    console.error(err)
+                } else {
+                    console.error(err);
+                    throw new Error('Error occurred during \'/get_past_players\' GET');
+                }
             });
 
         document.getElementById(id).firstElementChild.appendChild(playerList);
@@ -934,6 +950,11 @@ async function openAccordionPlayerAppearances(id) {
     this.disabled = false
 }
 
+/**
+ * Function to generate a chart of the valuation of a player, based on the input data.
+ *
+ * @param dataResponse The data to show in the chart
+ * @param canvasElem The canvas html element where to show the chart*/
 function drawChart(dataResponse, canvasElem) {
     const ctx = canvasElem.getContext('2d');
     if (window.innerWidth > 768) {

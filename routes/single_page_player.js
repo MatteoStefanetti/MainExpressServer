@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const {json} = require("express");
 
 router.get('/get_valuations_of_player/:player_id', (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Player']
     #swagger.description = 'GET route to retrieve valuation data about a player.'
     #swagger.parameters['player_id'] = {
         in: 'path',
@@ -33,7 +33,7 @@ router.get('/get_valuations_of_player/:player_id', (req, res) => {
 });
 
 router.get('/get_club_name_by_id/:club_id', function (req, res) {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Player']
     #swagger.description = 'GET route to retrieve the name of a club in base of its id.'
     #swagger.parameters['club_id'] = {
         in: 'path',
@@ -62,7 +62,7 @@ router.get('/get_club_name_by_id/:club_id', function (req, res) {
 });
 
 router.get('/get_last_appearances/:player_id', async (req, res) => {
-    /* #swagger.tags = ['Single Page']
+    /* #swagger.tags = ['Single Page Player']
     #swagger.description = 'GET route called by player single_page.'
     #swagger.parameters['player_id'] {
         in: 'path',

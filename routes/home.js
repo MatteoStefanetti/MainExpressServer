@@ -7,6 +7,15 @@ const {json} = require("express");
 
 /** GET route called by Home page. */
 router.get('/get_last_games', async (req, res) => {
+    /* #swagger.tags = ['Home']
+    #swagger.description = 'GET route to retrieve the list of the last 24 games.'
+    #swagger.responses[404] = {
+        description: 'Error occurred: Not Found'
+    }
+    #swagger.responses[500] = {
+        description: 'Error fetching games from JPA or Error in /get_last_games GET.'
+    }
+    */
     try {
         const response = await fetch('http://localhost:8081/games/get_last_games', {
             headers: {'Content-Type': 'application/json'}, method: 'get'
@@ -14,8 +23,8 @@ router.get('/get_last_games', async (req, res) => {
         if (!response.ok)
             res.status(500).json({error: 'Error fetching games from JPA'})
         const gamesList = await response.json();
-        if (!gamesList)
-            res.status(500).json({error: 'Response body is empty'})
+        if (!gamesList && !Array.isArray(gamesList.data))
+            res.status(404).json({error: 'Response body is empty'})
         res.status(200).json(gamesList)
     } catch (error) {
         console.error(error)
@@ -25,6 +34,15 @@ router.get('/get_last_games', async (req, res) => {
 
 /** GET route called by Home page. */
 router.get('/get_recent_clubs_news', async (req, res) => {
+    /* #swagger.tags = ['Home']
+    #swagger.description = 'GET route to retrieve the list of the 12 clubs that played recently.'
+    #swagger.responses[404] = {
+        description: 'Error occurred: Not Found'
+    }
+    #swagger.responses[500] = {
+        description: 'Error fetching clubs from JPA or Error in /get_recent_club_news GET.'
+    }
+    */
     try {
         const response = await fetch('http://localhost:8081/clubs/get_recent_clubs_news', {
             headers: {'Content-Type': 'application/json'}, method: 'get'
@@ -32,8 +50,8 @@ router.get('/get_recent_clubs_news', async (req, res) => {
         if (!response.ok)
             res.status(500).json({error: 'Error fetching clubs from JPA'})
         const clubsList = await response.json();
-        if (!clubsList)
-            res.status(500).json({error: 'Response body is empty'})
+        if (!clubsList && !Array.isArray(clubsList.data))
+            res.status(404).json({error: 'Response body is empty'})
         Array.from(clubsList).sort((st, nd) => {
             return st.clubName - nd.clubName
         })
@@ -46,6 +64,12 @@ router.get('/get_recent_clubs_news', async (req, res) => {
 
 /** GET route called by Home page. */
 router.get('/get_trend_players', async (req, res) => {
+    /* #swagger.tags = ['Home']
+    #swagger.description = 'GET route to retrieve the list of 24 players with the higher and more recent valuations.'
+    #swagger.responses[500] = {
+        description: 'Error retrieving two lists with different size or Error in /trend_players GET.'
+    }
+    */
     try {
         let filledList = [];
         const firstResponse = await fetch('http://localhost:3002/' +
