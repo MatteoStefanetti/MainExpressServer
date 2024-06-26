@@ -309,6 +309,10 @@ async function initSinglePage() {
                                             createParagraphForSP(info2, true, 'Substitutions',
                                                 String(countParam2), 'p', 'ms-1', 'ms-md-2')
 
+                                            // Checking the order of events array (by minute)
+                                            const isAllInvalid = events.data[events.data.length-1].minute === -1;
+                                            while (!isAllInvalid && events.data[0].minute === -1)
+                                                events.data.push(events.data.splice(0, 1)[0])   // moving -1 at the end.
                                             // info about game_events
                                             createAccordion('single_page/ga/events', 'accordions',
                                                 {id: 'eventsTimeline', events: events.data})
@@ -1044,10 +1048,10 @@ function createGeneralEventElement(data, firstSquad) {
     returnableElement.classList.add('d-flex', 'align-items-center', 'mx-0', 'my-1', 'my-md-2', 'not-hoverable')
     if (firstSquad) {
         returnableElement.classList.add('flex-row-reverse')
-        textSpan.classList.add('me-1', 'text-center', 'text-sm-end')
+        textSpan.classList.add('text-center', 'text-sm-end')
     } else {
         returnableElement.classList.add('flex-sm-row')
-        textSpan.classList.add('ms-1', 'text-center', 'text-sm-start')
+        textSpan.classList.add('text-center', 'text-sm-start')
     }
     returnableElement.appendChild(iconSpan)
     returnableElement.appendChild(textSpan)
@@ -1161,4 +1165,21 @@ function createSubstitutionEvent(data, firstSquad) {
  * @returns {Promise<*>} where, if gone well, should let us retrieve the **name** of the player. */
 async function retrievePlayerName(player_id) {
     return await makeAxiosGet(`/single_page/get_player_by_id/${player_id}`)
+}
+
+/** Function that creates a `<a>` element to create the tooltip for Shootout elements.
+ * @param fatherMinDiv {HTMLElement} The minute `<div>` father of the element to create.
+ * @param innerMinSpan {HTMLElement} The `<span>` to append inside the element to create.
+ * @param listItemId {string} The 'id' of the listItem to have the anchor pointing correctly. */
+function createShootoutTooltip(fatherMinDiv, innerMinSpan, listItemId) {
+    const minToolTip = document.createElement('a')
+    minToolTip.classList.add('m-0', 'p-0', 'text-center', 'not-hoverable')
+    minToolTip.href = '#' + listItemId
+    minToolTip.setAttribute('data-bs-toggle', 'tooltip')
+    minToolTip.setAttribute('container', 'body')
+    minToolTip.setAttribute('data-bs-custom-class', 'custom-tooltip')
+    minToolTip.title = 'Shootout'
+    minToolTip.setAttribute('data-bs-title', 'Shootout')
+    fatherMinDiv.appendChild(minToolTip)
+    minToolTip.appendChild(innerMinSpan)
 }

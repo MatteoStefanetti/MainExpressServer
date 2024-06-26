@@ -271,17 +271,25 @@ function openAccordionEvents(params) {
         if (params.events && Array.isArray(params.events) && params.events.length) {
             let unList = document.createElement('ul');
             unList.classList.add('nav', 'flex-column');
+            accBody.appendChild(unList);
 
-            const size = new Set(params.events.map(el => el.minute)).size
+            const size = new Set(params.events.map((el, index) => {
+                if (el.event_type === 'Shootout' || el.minute !== -1)
+                    return el.event_type === 'Shootout' ? (-100 - index + el.minute) : el.minute
+            })).size
+            console.log(size)
             let alternatorCounter = 0;
             params.events.forEach(el => {
                 createDynamicListItem(window, 'event', size, unList,
                     {counter: alternatorCounter++, data: el},
                     {type: 'player', id: String(el.player_id)});
             });
-            accBody.appendChild(unList);
             if (size > 15)
                 createLoadMoreElement(unList, params.id, showMore.bind(null, unList, 15))
+
+            // Enabling Bootstrap tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         } else
             accBody.innerHTML = '<span class="d-block text-center mx-auto h6 p-1">No events found.</span>'
         showChargingSpinner(null, false)
@@ -341,28 +349,42 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
             const elementHREF = document.getElementById('info1').firstElementChild.href
             const club_id1 = Number(elementHREF.slice(elementHREF.indexOf('&id=') + 4))
             let squad1Div, squad2Div;
+            // Every shootout has minute == -1
+            const isShootout = item.data.event_type === 'Shootout'
             // Create or attach to the listItem with id == item.data.minute
-            if (!document.getElementById(item.data.minute)) {
-                listItem.id = item.data.minute
+            if (isShootout || !document.getElementById(item.data.minute)) {
+                // We assign 1000+ as id of shootouts to make sure they are at the end of the list!
+                listItem.id = !isShootout ? item.data.minute : String(1000 + item.counter);
                 listItem.classList.add('d-flex', 'align-items-center', 'not-hoverable');
                 const containerDivElem = document.createElement('div');
                 containerDivElem.classList.add('row', 'w-100', 'justify-content-between', 'align-items-stretch', 'not-hoverable');
 
                 // creating the central element (minute displayer)
                 const minuteDiv = document.createElement('div');
-                minuteDiv.classList.add('d-flex', 'col-1', 'justify-content-center', 'align-self-center', 'h5', 'my-1',
-                    'p-1', 'px-sm-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50', 'not-hoverable');
-                const minute = item.data.minute > 90 ? '90+' + (item.data.minute - 90) : item.data.minute;
-                minuteDiv.innerHTML = '<span class="h5 fw-bold text-center not-hoverable">' + minute + '\'</span>'
-                minuteDiv.style.boxSizing = 'border-box';
+                minuteDiv.classList.add('d-flex', 'col-2', 'justify-content-center', 'align-self-center', 'h5', 'my-1',
+                    'p-1', 'px-0', 'rounded-3', 'bg-secondary', 'bg-opacity-50', 'not-hoverable');
+                const minSpan = document.createElement('span')
+                minSpan.classList.add('h6', 'fw-bold', 'm-0', 'px-1', 'px-md-2', 'text-center', 'not-hoverable')
+
+                let minute = '';
+                if (isShootout) {
+                    minute = 'S.o.'
+                    createShootoutTooltip(minuteDiv, minSpan, listItem.id)
+                } else {
+                    minute = (Number(listItem.id) > 90 ? '90+' + (Number(listItem.id) - 90) : listItem.id) + '\'';
+                    minuteDiv.appendChild(minSpan)
+                }
+                minSpan.innerText = minute
+                minSpan.style.boxSizing = 'border-box'
+                minuteDiv.style.boxSizing = 'border-box'
 
                 // Creating the squad divs
                 squad1Div = document.createElement('div');
                 squad1Div.classList.add('d-flex', 'flex-wrap', 'col-5', 'p-0', 'flex-column', 'not-hoverable');
                 squad1Div.style.boxSizing = 'border-box';
                 squad2Div = squad1Div.cloneNode(false);
-                squad1Div.classList.add('align-items-end')
-                squad2Div.classList.add('align-items-start')
+                squad1Div.classList.add('align-items-end', 'pe-2')
+                squad2Div.classList.add('align-items-start', 'ps-2')
 
                 // Appending the new item
                 containerDivElem.append(squad1Div, minuteDiv, squad2Div)
@@ -379,6 +401,8 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 }
                 if (size !== unorderedList.children.length)
                     listItem.classList.add('border-black', 'border-1', 'border-bottom', 'border-opacity-25');
+                if (size > 15 && unorderedList.children.length > 15)
+                    listItem.classList.add('d-none')
             } else {
                 // the minute element has already been created.
                 listItem = document.getElementById(item.data.minute)
@@ -396,6 +420,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                                 fatherDiv.appendChild(createCardEvent(item.data, firstSquad))
                                 break;
                             case 'Goals':
+                            case 'Shootout':    // all shootout will have no assist (by dataset)
                                 fatherDiv.appendChild(createGoalEvent(item.data, firstSquad))
                                 break;
                             case 'Substitutions':
@@ -404,8 +429,6 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                             default:
                                 console.error('Found invalid event_type:', item.data.event_type)
                         }
-                        if (unorderedList.children.length > 15)
-                            listItem.classList.add('d-none')
                     } else {
                         console.log('Cannot retrieve data for an event.') // SIGNALING
                     }
