@@ -1,8 +1,0 @@
-.self-message {
-    background-color: var(--lightgreen-disabled);
-    border-color: var(--lightgreen) !important;
-}
-
-.other-message {
-    background-color: var(--bs-light);
-}
