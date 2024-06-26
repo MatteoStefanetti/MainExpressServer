@@ -277,7 +277,6 @@ function openAccordionEvents(params) {
                 if (el.event_type === 'Shootout' || el.minute !== -1)
                     return el.event_type === 'Shootout' ? (-100 - index + el.minute) : el.minute
             })).size
-            console.log(size)
             let alternatorCounter = 0;
             params.events.forEach(el => {
                 createDynamicListItem(window, 'event', size, unList,
