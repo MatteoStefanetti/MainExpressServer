@@ -377,6 +377,7 @@ function createDynamicListItem(window, type, size, unorderedList, item, params) 
                 minSpan.innerText = minute
                 minSpan.style.boxSizing = 'border-box'
                 minuteDiv.style.boxSizing = 'border-box'
+                minuteDiv.style.maxWidth = '78px';
 
                 // Creating the squad divs
                 squad1Div = document.createElement('div');
