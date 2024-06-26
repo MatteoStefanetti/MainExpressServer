@@ -1,4 +1,3 @@
-
 /** Called by the competitions.html page. */
 function initCompetitions() {
     initChat()
@@ -24,7 +23,7 @@ function setButtonsListener() {
  * it will change the color of the buttons and the form inputs.
  * @param otherBtn {HTMLElement}  the other button of the group (will be modified). */
 function changeBtnColors(otherBtn) {
-    if(!this.classList.contains('btn-darkgreen')) {
+    if (!this.classList.contains('btn-darkgreen')) {
         this.classList.replace('btn-light', 'btn-darkgreen')
         otherBtn.classList.replace('btn-darkgreen', 'btn-light')
         for (let elem of document.getElementsByClassName('game-search-elements')) {
@@ -36,6 +35,11 @@ function changeBtnColors(otherBtn) {
     }
 }
 
+/**
+ * Function that extract data from the searchGameBy form and send the Axios according to the kind of search.
+ *
+ * @throws Error In case no game was found
+ * */
 async function sendCompetitionQuery(ev) {
     let formData = extractFormData('searchGameBy', true)
     let dataList, searchPromise
@@ -44,24 +48,26 @@ async function sendCompetitionQuery(ev) {
             'competitions/query_games_by_double_name' : 'competitions/query_games_by_name'
         route += formData.gameSearchClub1 ? '/' + formData.gameSearchClub1 : ''
         route += formData.gameSearchClub2 ? '/' + formData.gameSearchClub2 : ''
-        searchPromise =  makeAxiosGet(''+route)
+        searchPromise = makeAxiosGet('' + route)
     } else if (formData.gameSearchDate) {
-        searchPromise =  makeAxiosGet('competitions/query_games_by_date/' + String(formData.gameSearchDate))
+        searchPromise = makeAxiosGet('competitions/query_games_by_date/' + String(formData.gameSearchDate))
     } else {
-        console.error('erroneous params in compentition query')
+        console.error('erroneous params in competition query')
         showModalMessage(false, 'game')
     }
     if (searchPromise) {
         Promise.resolve(searchPromise)
             .then(data => {
-                if(!data.data) {
+                if (!data.data) {
                     throw Error("games not found")
                 }
                 dataList = data.data
 
                 // hide elements
                 Array.prototype.forEach.call(document.getElementsByTagName('iframe'),
-                    el => {el.classList.add('d-none')})
+                    el => {
+                        el.classList.add('d-none')
+                    })
 
                 // fill ul
                 let unList = document.getElementById('gamesResults');
@@ -108,7 +114,8 @@ function startCompetitionClassesObserver() {
                                             createAccordion('competition_nation', 'gamesAccordion', {
                                                 competition_id: val.competition_id,
                                                 competition_name: retrieveCompetitionName(val.competition_name),
-                                                competition_season: season.data})
+                                                competition_season: season.data
+                                            })
                                         })
                                         .catch(err => {
                                             console.error('Error occurred retrieving last season of competition:', val.competition_id, '\n', err)

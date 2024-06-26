@@ -24,7 +24,7 @@ async function initCarousel() {
     let state = 0;
     /* Defining which style to apply to the carousel */
     setHeader();
-    let retrieveStr = '', styleStr = '', elementsNumber = 12;
+    let retrieveStr = '', styleStr = '';
     const sliderWrapper = document.getElementById('slider-wrapper');
     if (window.name) {
         try {
@@ -150,8 +150,7 @@ function adjustIframeHeight(iframe) {
 /** Function used to toggle a carousel button, this will set the `visibility` of the button to _'hidden'_ or _'visible'_.
  * @param button {HTMLButtonElement} The button to disable or enable.
  * @param toDisable {boolean} This parameter is _true_ if the button has to be set **disabled**,
- * otherwise the button will be *enabled**.
- * @throws TypeError if button is */
+ * otherwise the button will be *enabled**.*/
 function toggleButton(button, toDisable) {
     button.disabled = Boolean(toDisable);
     if (toDisable)

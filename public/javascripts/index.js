@@ -70,11 +70,13 @@ async function getAllFlags() {
  * @param visualize {string} is the type of accordion defined by one of the following values:
  *  - 'competition_nation'
  *  - 'club_nation'
+ *  - 'single_page/ga/events'
  *  - 'single_page/pl/player_valuations'
  *  - 'single_page/pl/last_appearances'
+ *  - 'single_page/cl/last_games'
  *  - 'single_page/cl/players'
  *  - 'single_page/cl/past_players'
- *  - 'single_page/cl/last_games'
+ *  - 'single_page/co/last_season_games'
  * @param fatherId {string} is the accordion *id* to which bind the accordion-item to
  * @param params {object} is the structure containing the values to use in the accordion.
  * All the parameters passed as argument shall use the **snake_case** to define the names of the variables
