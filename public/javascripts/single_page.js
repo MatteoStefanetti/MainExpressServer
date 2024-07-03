@@ -41,7 +41,6 @@ async function initSinglePage() {
             if (idParams) {
                 await makeAxiosGet(`/single_page/get_player_by_id/${idParams}`)
                     .then(async data => {
-                        console.log(data.data);
                         let infoDiv = document.getElementById('info')
                         infoDiv.classList.add('bg-darkgreen', 'rounded-4', 'text-light', 'py-md-2', 'px-3')
                         infoDiv.previousElementSibling.remove()
@@ -103,7 +102,6 @@ async function initSinglePage() {
             if (idParams) {
                 await makeAxiosGet(`/single_page/club/get_club_by_id/${idParams}`)
                     .then(async data => {
-                        console.log(data.data);
                         let infoDiv = document.getElementById('info')
                         infoDiv.classList.add('bg-darkgreen', 'rounded-4', 'text-light', 'py-md-2', 'px-3')
                         infoDiv.previousElementSibling.remove()
@@ -513,7 +511,6 @@ async function initSinglePage() {
 
                         await makeAxiosGet('/single_page/competition/get_competition_placing/' + String(idParams) + '/' + String(seasonParams))
                             .then(placing => {
-                                console.log(placing.data);
                                 placing.data.forEach(el => {
                                     let clubContainer = document.createElement('div');
                                     clubContainer.classList.add('col-6', 'col-sm-4', 'col-md-3', 'col-xxl-2', 'justify-content-center', 'align-items-center', 'my-4', 'px-1');
@@ -642,7 +639,6 @@ async function openAccordionCompetitionLastGames(id, season) {
 async function openAccordionPastMember(id) {
     this.disabled = true
     if (!id) {
-        console.log(id);
         this.disabled = false
         throw new TypeError('Invalid argument passed to \'openAccordionPastMember(\'' + id + '\')');
     }
@@ -841,8 +837,6 @@ async function openAccordionClubLastGames(id) {
         console.error(id);
         throw new TypeError('Invalid argument passed to \'openAccordionClubLastGames\'!');
     }
-
-    console.log('id', id);
     const club_id = id.slice(id.indexOf('_') + 1);
 
     if (document.getElementById(id).firstElementChild.children.length === 0) {

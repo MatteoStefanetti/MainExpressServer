@@ -104,7 +104,6 @@ function startCompetitionClassesObserver() {
                 await makeAxiosGet('/competitions/get_competitions/' + String(domestic_league_code))
                     .then(data => {
                         if (data.data && Array.isArray(data.data) && data.data.length) {
-                            console.log(data.data)
                             let competitionList = data.data
                             try {
                                 competitionList.forEach(val => {

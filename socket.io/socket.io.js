@@ -36,7 +36,6 @@ module.exports = function(io) {
                  * @param room The effective chat in which the messages will be sent.
                  * @param userId It will be the username who left the room. */
                 socket.on('leave conversation', (room, userId) => { //check during tests if room exists
-                    console.log('leave conversation')
                     socket.leave(room, userId);
                     removeUserFromRoom(room)
                     socket.leave(room)
