@@ -122,7 +122,6 @@ async function initSinglePage() {
                                 createParagraphForSP(titleDiv, true, 'Nationality', nationalityValue, 'p')
                             })
                             .catch(err => {
-                                    //TODO revision
                                     if (err.response.status === 404)
                                         createParagraphForSP(titleDiv, true, 'Nationality', 'N/A', 'p')
                                     else

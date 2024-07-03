@@ -1,4 +1,4 @@
-let roomsMap = new Map([ //@todo: check if this is the right place for the object declaration
+let roomsMap = new Map([
     ['global', 1], // default chats start with 1 logged user (prevent deleting this chat, counting server as user)
     ['england', 1],
     ['emirates fa cup', 1]

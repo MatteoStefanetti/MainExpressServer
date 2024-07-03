@@ -182,7 +182,7 @@ function setTermsHeight(chatTerms) {
     let loginRect = document.getElementById('submitForm').getBoundingClientRect();
     chatTerms.style.minHeight = '100px';
     chatTerms.style.height = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
-    chatTerms.style.maxHeight = String((visualViewport.height - loginRect.bottom - 10)) + 'px'; //@todo: why this?
+    chatTerms.style.maxHeight = String((visualViewport.height - loginRect.bottom - 10)) + 'px';
 }
 
 /** Function called when the terms are accepted.
@@ -244,7 +244,6 @@ function initChatSocket() {
     chatSocket.on('disconnect', () => {
         //chatSocket.emit('leave conversation', roomName, chatUserName);
         /** Perhaps it could be launched by the {@link leaveRoom} function as "socket.disconnect('/chat')" */
-        // @todo write on chat the exit message!
     })
 }
 
@@ -315,7 +314,7 @@ function sendMessage(event) {
     if (!text || text.length < 1) {
         console.error("Error on text string");
         event.preventDefault();
-        return; // @todo end this case (what to do ?)
+        return;
     }
     chatSocket.emit("chat", roomName, chatUserName, text);
     event.preventDefault();
